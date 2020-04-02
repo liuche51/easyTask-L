@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="easyTask-L-core" />
+        <module name="easyTask-L-test" />
+      </profile>
+      <profile name="Annotation profile for easyTask-L" enabled="true">
+        <sourceOutputDir name="easyTask-L-core/target/generated-sources/annotations" />
+        <sourceTestOutputDir name="easyTask-L-core/target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="easyTask-L" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
