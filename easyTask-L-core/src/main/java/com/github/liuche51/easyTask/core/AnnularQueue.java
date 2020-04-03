@@ -1,6 +1,7 @@
 package com.github.liuche51.easyTask.core;
 
 
+import com.github.liuche51.easyTask.register.ZKUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +106,18 @@ public class AnnularQueue {
             throw new Exception("poolSize must >1");
         SQLlitePool.poolSize=count;
     }
+    /**
+     * set ZKServerName，default qty 15
+     * @param name
+     * @throws Exception
+     */
+    public void setZKServerName(String name) throws Exception{
+        if (isRunning)
+            throw new Exception("please before AnnularQueue started set");
+        if(name==null||"".equals(name))
+            throw new Exception("ZK_SERVER_NAME must not empty");
+        ZKUtil.ZK_SERVER_NAME=name;
+    }
     private void setDefaultThreadPool() {
         if (this.dispatchs == null)
             this.dispatchs = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -132,6 +145,7 @@ public class AnnularQueue {
         try {
             DbInit.init();
             recover();
+            ZKUtil.initZK();
             isRunning = true;
             setDefaultThreadPool();
             int lastSecond = 0;
