@@ -1,6 +1,7 @@
 package com.github.liuche51.easyTask.core;
 
 
+import com.github.liuche51.easyTask.backup.server.NettyServer;
 import com.github.liuche51.easyTask.register.ZKUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +119,18 @@ public class AnnularQueue {
             throw new Exception("ZK_SERVER_NAME must not empty");
         ZKUtil.ZK_SERVER_NAME=name;
     }
+    /**
+     * set ServerPort，default 1988
+     * @param port
+     * @throws Exception
+     */
+    public void setServerPort(int port) throws Exception{
+        if (isRunning)
+            throw new Exception("please before AnnularQueue started set");
+        if(port==0)
+            throw new Exception("ServerPort must not empty");
+        NettyServer.port=port;
+    }
     private void setDefaultThreadPool() {
         if (this.dispatchs == null)
             this.dispatchs = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -145,7 +158,8 @@ public class AnnularQueue {
         try {
             DbInit.init();
             recover();
-            ZKUtil.initZK();
+            ZKUtil.initZK();//启动与ZK的链接
+            NettyServer.getInstance().run();//启动组件的Netty服务端口
             isRunning = true;
             setDefaultThreadPool();
             int lastSecond = 0;
