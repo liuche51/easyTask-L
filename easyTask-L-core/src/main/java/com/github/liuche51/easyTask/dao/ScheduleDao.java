@@ -1,15 +1,18 @@
-package com.github.liuche51.easyTask.core;
+package com.github.liuche51.easyTask.dao;
 
+import com.github.liuche51.easyTask.core.AnnularQueue;
+import com.github.liuche51.easyTask.dto.Schedule;
+import com.github.liuche51.easyTask.core.TaskType;
+import com.github.liuche51.easyTask.core.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sqlite.SQLiteException;
 
 import java.sql.ResultSet;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-class ScheduleDao {
+public class ScheduleDao {
     private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
 
     public static boolean existTable() {
@@ -33,10 +36,11 @@ class ScheduleDao {
         try {
             if (!DbInit.hasInit)
                 DbInit.init();
-            String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,create_time) values('"
+            String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,backup,source,create_time) values('"
                     + schedule.getScheduleExt().getId() + "','" + schedule.getScheduleExt().getTaskClassPath() + "'," + schedule.getEndTimestamp()
                     + ",'" + schedule.getTaskType().name() + "'," + schedule.getPeriod() + ",'" + (schedule.getUnit() == null ? "" : schedule.getUnit().name())
-                    + "','" + Schedule.serializeMap(schedule.getParam()) + "','" + ZonedDateTime.now().toLocalTime() + "');";
+                    + "','" + Schedule.serializeMap(schedule.getParam()) + "','"+ schedule.getScheduleExt().getBackup() + ",'" + schedule.getScheduleExt().getSource() + ",'"
+                    + ZonedDateTime.now().toLocalTime() + "');";
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0) {
                 log.debug("任务:{} 已经持久化", schedule.getScheduleExt().getId());
@@ -63,9 +67,12 @@ class ScheduleDao {
                     String unit = resultSet.getString("unit");
                     String param = resultSet.getString("param");
                     String backup = resultSet.getString("backup");
+                    String source = resultSet.getString("source");
                     Schedule schedule = new Schedule();
                     schedule.getScheduleExt().setId(id);
                     schedule.getScheduleExt().setTaskClassPath(classPath);
+                    schedule.getScheduleExt().setBackup(backup);
+                    schedule.getScheduleExt().setSource(source);
                     schedule.setEndTimestamp(executeTime);
                     schedule.setParam(Schedule.deserializeMap(param));
                     if ("PERIOD".equals(taskType))

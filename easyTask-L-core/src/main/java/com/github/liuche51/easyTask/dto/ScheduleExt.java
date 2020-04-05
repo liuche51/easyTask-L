@@ -1,8 +1,10 @@
-package com.github.liuche51.easyTask.core;
+package com.github.liuche51.easyTask.dto;
 
-class ScheduleExt {
+public class ScheduleExt {
     private String id;
     private String taskClassPath;
+    private String backup;
+    private String source;
     private volatile String oldId;
     public String getId() {
         return id;
@@ -18,6 +20,22 @@ class ScheduleExt {
         this.taskClassPath = taskClassPath;
     }  public String getOldId() {
         return oldId;
+    }
+
+    public String getBackup() {
+        return backup;
+    }
+
+    public void setBackup(String backup) {
+        this.backup = backup;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public void setOldId(String oldId) {

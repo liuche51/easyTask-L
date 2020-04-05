@@ -1,5 +1,6 @@
-package com.github.liuche51.easyTask.core;
+package com.github.liuche51.easyTask.dao;
 
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ class DbInit {
            boolean exist=ScheduleDao.existTable();
            if(exist)
                return true;
+           //本地待运行的任务
            String sql = "CREATE TABLE \"schedule\" (\n" +
                    "\"id\"  TEXT NOT NULL,\n" +
                    "\"class_path\"  TEXT,\n" +
@@ -28,10 +30,34 @@ class DbInit {
                    "\"unit\"  TEXT,\n" +
                    "\"param\"  TEXT,\n" +
                    "\"backup\"  TEXT,\n" +
+                   "\"source\"  TEXT,\n" +
+                   "\"create_time\"  TEXT,\n" +
+                   "PRIMARY KEY (\"id\" ASC)\n" +
+                   ");";
+           //备份其他节点的任务
+           String sql2 = "CREATE TABLE \"schedule_bak\" (\n" +
+                   "\"id\"  TEXT NOT NULL,\n" +
+                   "\"class_path\"  TEXT,\n" +
+                   "\"execute_time\"  INTEGER,\n" +
+                   "\"task_type\"  TEXT,\n" +
+                   "\"period\"  INTEGER,\n" +
+                   "\"unit\"  TEXT,\n" +
+                   "\"param\"  TEXT,\n" +
+                   "\"backup\"  TEXT,\n" +
+                   "\"source\"  TEXT,\n" +
+                   "\"create_time\"  TEXT,\n" +
+                   "PRIMARY KEY (\"id\" ASC)\n" +
+                   ");";
+           //备份任务的follow节点
+           String sql3 = "CREATE TABLE \"backup_server\" (\n" +
+                   "\"id\"  INTEGER NOT NULL,\n" +
+                   "\"server\"  TEXT,\n" +
                    "\"create_time\"  TEXT,\n" +
                    "PRIMARY KEY (\"id\" ASC)\n" +
                    ");";
            SqliteHelper.executeUpdateForSync(sql);
+           SqliteHelper.executeUpdateForSync(sql2);
+           SqliteHelper.executeUpdateForSync(sql3);
            hasInit=true;
            log.debug("Sqlite 初始化完成。线程:{}",Thread.currentThread().getId());
            return true;

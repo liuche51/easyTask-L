@@ -1,4 +1,8 @@
-package com.github.liuche51.easyTask.core;
+package com.github.liuche51.easyTask.dto;
+
+import com.github.liuche51.easyTask.core.TaskType;
+import com.github.liuche51.easyTask.core.TimeUnit;
+import com.github.liuche51.easyTask.dao.ScheduleDao;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;

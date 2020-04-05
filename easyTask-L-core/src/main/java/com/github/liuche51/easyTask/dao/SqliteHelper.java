@@ -1,4 +1,4 @@
-package com.github.liuche51.easyTask.core;
+package com.github.liuche51.easyTask.dao;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

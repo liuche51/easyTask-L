@@ -1,6 +1,6 @@
 package com.github.liuche51.easyTask.test.task;
 
-import com.github.liuche51.easyTask.core.Schedule;
+import com.github.liuche51.easyTask.dto.Schedule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

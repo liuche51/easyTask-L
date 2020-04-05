@@ -1,5 +1,7 @@
-package com.github.liuche51.easyTask.core;
+package com.github.liuche51.easyTask.dao;
 
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.core.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
