@@ -4,7 +4,7 @@ import com.github.liuche51.easyTask.core.AnnularQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class DbInit {
+public class DbInit {
    private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
    public static boolean hasInit=false;//数据库是否已经初始化
 

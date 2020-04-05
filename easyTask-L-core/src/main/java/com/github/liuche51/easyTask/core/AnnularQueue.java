@@ -5,6 +5,7 @@ import com.github.liuche51.easyTask.backup.server.NettyServer;
 import com.github.liuche51.easyTask.dao.DbInit;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dto.Schedule;
+import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.register.ZKUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,15 +52,19 @@ public class AnnularQueue {
 
     private AnnularQueue() {
     }
-    Slice[] getSlices(){
+
+    Slice[] getSlices() {
         return slices;
     }
-    ExecutorService getDispatchs(){
+
+    ExecutorService getDispatchs() {
         return dispatchs;
     }
-    ExecutorService getWorkers(){
+
+    ExecutorService getWorkers() {
         return workers;
     }
+
     /**
      * set the Dispatch ThreadPool
      *
@@ -81,6 +86,7 @@ public class AnnularQueue {
             throw new Exception("please before AnnularQueue started set");
         this.workers = workers;
     }
+
     private void setDefaultThreadPool() {
         if (this.dispatchs == null)
             this.dispatchs = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -128,16 +134,16 @@ public class AnnularQueue {
                 lastSecond = second;
                 dispatchs.submit(new Runnable() {
                     public void run() {
-                        ConcurrentSkipListMap<String, Schedule> schedules = slice.getList();
-                        List<Schedule> willremove = new LinkedList<>();
-                        for (Map.Entry<String,Schedule> entry:schedules.entrySet()) {
-                            Schedule s=entry.getValue();
+                        ConcurrentSkipListMap<String, Task> schedules = slice.getList();
+                        List<Task> willremove = new LinkedList<>();
+                        for (Map.Entry<String, Task> entry : schedules.entrySet()) {
+                            Task s = entry.getValue();
                             if (System.currentTimeMillis() >= s.getEndTimestamp()) {
                                 Runnable proxy = (Runnable) new ProxyFactory(s).getProxyInstance();
                                 workers.submit(proxy);
                                 willremove.add(s);
                                 schedules.remove(entry.getKey());
-                                log.debug("工作任务:{} 已提交分片:{}", s.getScheduleExt().getId(),second);
+                                log.debug("工作任务:{} 已提交分片:{}", s.getScheduleExt().getId(), second);
                             }
                             //因为列表是已经按截止执行时间排好序的，可以节省后面元素的过期判断
                             else break;
@@ -156,21 +162,21 @@ public class AnnularQueue {
 
     }
 
-    public String submit(Schedule schedule) throws Exception {
+    public String submit(Task schedule) throws Exception {
         schedule.getScheduleExt().setId(Util.generateUniqueId());
         if (schedule.getTaskType().equals(TaskType.PERIOD)) {
             if (schedule.isImmediateExecute())
                 schedule.setEndTimestamp(ZonedDateTime.now().toInstant().toEpochMilli());
             else
-                schedule.setEndTimestamp(Schedule.getTimeStampByTimeUnit(schedule.getPeriod(), schedule.getUnit()));
+                schedule.setEndTimestamp(Task.getTimeStampByTimeUnit(schedule.getPeriod(), schedule.getUnit()));
         }
         String path = schedule.getClass().getName();
         schedule.getScheduleExt().setTaskClassPath(path);
         //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
         schedule.save();
         AddSchedule(schedule);
-        ZonedDateTime time = ZonedDateTime .ofInstant(new Timestamp(schedule.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
-        log.debug("已添加类型:{}任务:{}，所属分片:{} 预计执行时间:{} 线程ID:{}",schedule.getTaskType().name(), schedule.getScheduleExt().getId(), time.getSecond(), time.toLocalTime(),Thread.currentThread().getId());
+        ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(schedule.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
+        log.debug("已添加类型:{}任务:{}，所属分片:{} 预计执行时间:{} 线程ID:{}", schedule.getTaskType().name(), schedule.getScheduleExt().getId(), time.getSecond(), time.toLocalTime(), Thread.currentThread().getId());
         return schedule.getScheduleExt().getId();
     }
 
@@ -179,15 +185,15 @@ public class AnnularQueue {
      *
      * @param list
      */
-    public void submitNewPeriodSchedule(List<Schedule> list) {
-        for (Schedule schedule : list) {
+    public void submitNewPeriodSchedule(List<Task> list) {
+        for (Task schedule : list) {
             if (!TaskType.PERIOD.equals(schedule.getTaskType()))//周期任务需要重新提交新任务
                 continue;
             try {
-                schedule.setEndTimestamp(Schedule.getTimeStampByTimeUnit(schedule.getPeriod(), schedule.getUnit()));
+                schedule.setEndTimestamp(Task.getTimeStampByTimeUnit(schedule.getPeriod(), schedule.getUnit()));
                 AddSchedule(schedule);
-                int slice=AddSchedule(schedule);
-                log.debug("已重新提交周期任务:{}，所属分片:{}，线程ID:{}", schedule.getScheduleExt().getId(),slice,Thread.currentThread().getId());
+                int slice = AddSchedule(schedule);
+                log.debug("已重新提交周期任务:{}，所属分片:{}，线程ID:{}", schedule.getScheduleExt().getId(), slice, Thread.currentThread().getId());
             } catch (Exception e) {
                 log.error("submitNewPeriodSchedule exception！", e);
             }
@@ -202,19 +208,20 @@ public class AnnularQueue {
         try {
             for (Schedule schedule : list) {
                 try {
-                    Class c = Class.forName(schedule.getScheduleExt().getTaskClassPath());
+                    Task task = Task.valueOf(schedule);
+                    Class c = Class.forName(task.getScheduleExt().getTaskClassPath());
                     Object o = c.newInstance();
-                    Schedule schedule1 = (Schedule) o;//强转后设置id，o对象值也会变，所以强转后的task也是对象的引用而已
-                   schedule1.getScheduleExt().setId(schedule.getScheduleExt().getId());
-                    schedule1.setEndTimestamp(schedule.getEndTimestamp());
-                    schedule1.setPeriod(schedule.getPeriod());
-                    schedule1.setTaskType(schedule.getTaskType());
-                    schedule1.setUnit(schedule.getUnit());
-                    schedule1.getScheduleExt().setTaskClassPath(schedule.getScheduleExt().getTaskClassPath());
-                    schedule1.setParam(schedule.getParam());
+                    Task schedule1 = (Task) o;//强转后设置id，o对象值也会变，所以强转后的task也是对象的引用而已
+                    schedule1.getScheduleExt().setId(task.getScheduleExt().getId());
+                    schedule1.setEndTimestamp(task.getEndTimestamp());
+                    schedule1.setPeriod(task.getPeriod());
+                    schedule1.setTaskType(task.getTaskType());
+                    schedule1.setUnit(task.getUnit());
+                    schedule1.getScheduleExt().setTaskClassPath(task.getScheduleExt().getTaskClassPath());
+                    schedule1.setParam(task.getParam());
                     AddSchedule(schedule1);
                 } catch (Exception e) {
-                    log.error("schedule:{} recover fail.", schedule.getScheduleExt().getId());
+                    log.error("schedule:{} recover fail.", schedule.getId());
                 }
             }
             log.debug("easyTask recover success! count:{}", list.size());
@@ -225,15 +232,16 @@ public class AnnularQueue {
 
     /**
      * 将任务添加到时间分片中去。
+     *
      * @param schedule
      * @return
      */
-    private int AddSchedule(Schedule schedule) {
-        ZonedDateTime time =ZonedDateTime .ofInstant(new Timestamp(schedule.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
+    private int AddSchedule(Task schedule) {
+        ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(schedule.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
         int second = time.getSecond();
         Slice slice = slices[second];
-        ConcurrentSkipListMap<String,Schedule> list2 = slice.getList();
-        list2.put(schedule.getEndTimestamp()+"-"+Util.GREACE.getAndIncrement(),schedule);
+        ConcurrentSkipListMap<String, Task> list2 = slice.getList();
+        list2.put(schedule.getEndTimestamp() + "-" + Util.GREACE.getAndIncrement(), schedule);
         return second;
     }
 }

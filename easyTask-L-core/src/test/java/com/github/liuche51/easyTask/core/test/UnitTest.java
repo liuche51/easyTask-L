@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.core.test;
 
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.register.NodeData;
 import com.github.liuche51.easyTask.register.RegisterCenter;
 import com.github.liuche51.easyTask.register.ZKUtil;
@@ -12,7 +13,7 @@ public class UnitTest {
     @Test
     public void zkinit(){
         try {
-            ZKUtil.ZK_SERVER_NAME="server1";
+            EasyTaskConfig.getInstance().setZKServerName("server1");
             ZKUtil.initZK();
         } catch (Exception e) {
             e.printStackTrace();
@@ -20,8 +21,8 @@ public class UnitTest {
     }
     @Test
     public void register(){
-        ZKUtil.ZK_SERVER_NAME="server1";
         try {
+            EasyTaskConfig.getInstance().setZKServerName("server1");
             NodeData data=new NodeData();
             data.setBackupCount(0);
             data.setTaskCount(111);

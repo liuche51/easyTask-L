@@ -1,7 +1,7 @@
 package com.github.liuche51.easyTask.core;
 
 import com.github.liuche51.easyTask.dao.ScheduleDao;
-import com.github.liuche51.easyTask.dto.Schedule;
+import com.github.liuche51.easyTask.dto.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +11,8 @@ import java.lang.reflect.Proxy;
 
 class ProxyFactory {
     private static Logger log = LoggerFactory.getLogger(ProxyFactory.class);
-    private Schedule target;
-    public ProxyFactory(Schedule target) {
+    private Task target;
+    public ProxyFactory(Task target) {
         this.target = target;
     }
 

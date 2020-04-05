@@ -1,6 +1,6 @@
 package com.github.liuche51.easyTask.dto;
 
-public class ScheduleExt {
+public class TaskExt {
     private String id;
     private String taskClassPath;
     private String backup;

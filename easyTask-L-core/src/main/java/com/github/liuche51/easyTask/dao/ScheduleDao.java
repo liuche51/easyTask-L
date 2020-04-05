@@ -2,6 +2,7 @@ package com.github.liuche51.easyTask.dao;
 
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dto.Schedule;
+import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.core.TaskType;
 import com.github.liuche51.easyTask.core.TimeUnit;
 import org.slf4j.Logger;
@@ -37,17 +38,17 @@ public class ScheduleDao {
             if (!DbInit.hasInit)
                 DbInit.init();
             String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,backup,source,create_time) values('"
-                    + schedule.getScheduleExt().getId() + "','" + schedule.getScheduleExt().getTaskClassPath() + "'," + schedule.getEndTimestamp()
-                    + ",'" + schedule.getTaskType().name() + "'," + schedule.getPeriod() + ",'" + (schedule.getUnit() == null ? "" : schedule.getUnit().name())
-                    + "','" + Schedule.serializeMap(schedule.getParam()) + "','"+ schedule.getScheduleExt().getBackup() + ",'" + schedule.getScheduleExt().getSource() + ",'"
+                    + schedule.getId() + "','" + schedule.getClassPath() + "'," + schedule.getExecuteTime()
+                    + ",'" + schedule.getTaskType() + "'," + schedule.getPeriod() + ",'" + (schedule.getUnit() == null ? "" : schedule.getUnit())
+                    + "','" + schedule.getParam() + "','"+ schedule.getBackup() + ",'" + schedule.getSource() + ",'"
                     + ZonedDateTime.now().toLocalTime() + "');";
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0) {
-                log.debug("任务:{} 已经持久化", schedule.getScheduleExt().getId());
+                log.debug("任务:{} 已经持久化", schedule.getId());
                 return true;
             }
         } catch (Exception e) {
-            log.error("ScheduleDao.save Exception taskId:{} :{}", schedule.getScheduleExt().getId(), e);
+            log.error("ScheduleDao.save Exception taskId:{} :{}", schedule.getId(), e);
         }
         return false;
     }
@@ -62,40 +63,24 @@ public class ScheduleDao {
                     String id = resultSet.getString("id");
                     String classPath = resultSet.getString("class_path");
                     Long executeTime = resultSet.getLong("execute_time");
-                    Integer taskType = resultSet.getInt("task_type");
+                    String taskType = resultSet.getString("task_type");
                     Long period = resultSet.getLong("period");
                     String unit = resultSet.getString("unit");
                     String param = resultSet.getString("param");
                     String backup = resultSet.getString("backup");
                     String source = resultSet.getString("source");
-                    Schedule schedule = new Schedule();
-                    schedule.getScheduleExt().setId(id);
-                    schedule.getScheduleExt().setTaskClassPath(classPath);
-                    schedule.getScheduleExt().setBackup(backup);
-                    schedule.getScheduleExt().setSource(source);
-                    schedule.setEndTimestamp(executeTime);
-                    schedule.setParam(Schedule.deserializeMap(param));
-                    if ("PERIOD".equals(taskType))
-                        schedule.setTaskType(TaskType.PERIOD);
-                    else if ("ONECE".equals(taskType))
-                        schedule.setTaskType(TaskType.ONECE);
-                    schedule.setPeriod(period.longValue());
-                    switch (unit) {
-                        case "DAYS":
-                            schedule.setUnit(TimeUnit.DAYS);
-                            break;
-                        case "HOURS":
-                            schedule.setUnit(TimeUnit.HOURS);
-                            break;
-                        case "MINUTES":
-                            schedule.setUnit(TimeUnit.MINUTES);
-                            break;
-                        case "SECONDS":
-                            schedule.setUnit(TimeUnit.SECONDS);
-                            break;
-                        default:
-                            break;
-                    }
+                    String createTime=resultSet.getString("create_time");
+                    Schedule schedule=new Schedule();
+                    schedule.setId(id);
+                    schedule.setClassPath(classPath);
+                    schedule.setExecuteTime(executeTime);
+                    schedule.setTaskType(taskType);
+                    schedule.setPeriod(period);
+                    schedule.setUnit(unit);
+                    schedule.setParam(param);
+                    schedule.setBackup(backup);
+                    schedule.setSource(source);
+                    schedule.setCreateTime(createTime);
                     list.add(schedule);
                 } catch (Exception e) {
                     log.error("ScheduleDao.selectAll a item exception:{}", e);

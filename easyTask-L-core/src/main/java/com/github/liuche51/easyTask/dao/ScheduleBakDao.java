@@ -1,15 +1,12 @@
 package com.github.liuche51.easyTask.dao;
 
 import com.github.liuche51.easyTask.core.*;
-import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.time.ZonedDateTime;
-import java.util.LinkedList;
-import java.util.List;
 
 class ScheduleBakDao {
     private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);

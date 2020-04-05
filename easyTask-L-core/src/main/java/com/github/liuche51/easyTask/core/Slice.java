@@ -1,17 +1,17 @@
 package com.github.liuche51.easyTask.core;
 
-import com.github.liuche51.easyTask.dto.Schedule;
+import com.github.liuche51.easyTask.dto.Task;
 
 import java.util.concurrent.ConcurrentSkipListMap;
 
 class Slice {
-    private ConcurrentSkipListMap<String, Schedule> list=new ConcurrentSkipListMap<String,Schedule>();;
+    private ConcurrentSkipListMap<String, Task> list=new ConcurrentSkipListMap<String, Task>();;
 
-    public ConcurrentSkipListMap<String,Schedule> getList() {
+    public ConcurrentSkipListMap<String, Task> getList() {
         return list;
     }
 
-    public void setList(ConcurrentSkipListMap<String,Schedule> list) {
+    public void setList(ConcurrentSkipListMap<String, Task> list) {
         this.list = list;
     }
 }
