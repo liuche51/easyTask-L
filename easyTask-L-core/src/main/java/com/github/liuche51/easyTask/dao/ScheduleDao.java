@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,18 +38,19 @@ public class ScheduleDao {
         try {
             if (!DbInit.hasInit)
                 DbInit.init();
+            schedule.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,backup,source,create_time) values('"
                     + schedule.getId() + "','" + schedule.getClassPath() + "'," + schedule.getExecuteTime()
-                    + ",'" + schedule.getTaskType() + "'," + schedule.getPeriod() + ",'" + (schedule.getUnit() == null ? "" : schedule.getUnit())
-                    + "','" + schedule.getParam() + "','"+ schedule.getBackup() + ",'" + schedule.getSource() + ",'"
-                    + ZonedDateTime.now().toLocalTime() + "');";
+                    + ",'" + schedule.getTaskType() + "'," + schedule.getPeriod() + ",'" + schedule.getUnit()
+                    + "','" + schedule.getParam() + "','"+ schedule.getBackup() + "','" + schedule.getSource() + "','"
+                    + schedule.getCreateTime() + "');";
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0) {
                 log.debug("任务:{} 已经持久化", schedule.getId());
                 return true;
             }
         } catch (Exception e) {
-            log.error("ScheduleDao.save Exception taskId:{} :{}", schedule.getId(), e);
+            log.error("ScheduleDao.save Exception taskId:"+schedule.getId(), e);
         }
         return false;
     }
