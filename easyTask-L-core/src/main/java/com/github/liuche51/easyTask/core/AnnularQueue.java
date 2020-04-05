@@ -79,58 +79,6 @@ public class AnnularQueue {
             throw new Exception("please before AnnularQueue started set");
         this.workers = workers;
     }
-
-    /**
-     * set Task Store Path.example  C:\\db
-     * @param path
-     * @throws Exception
-     */
-    public void setTaskStorePath(String path) throws Exception {
-        if (isRunning)
-            throw new Exception("please before AnnularQueue started set");
-        SQLlitePool.dbFilePath = path + "\\easyTask.db";
-        File file = new File(path);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-    }
-
-    /**
-     * set SQLlitePool Size，default qty 15
-     * @param count
-     * @throws Exception
-     */
-    public void setSQLlitePoolSize(int count) throws Exception{
-        if (isRunning)
-            throw new Exception("please before AnnularQueue started set");
-        if(count<1)
-            throw new Exception("poolSize must >1");
-        SQLlitePool.poolSize=count;
-    }
-    /**
-     * set ZKServerName，default qty 15
-     * @param name
-     * @throws Exception
-     */
-    public void setZKServerName(String name) throws Exception{
-        if (isRunning)
-            throw new Exception("please before AnnularQueue started set");
-        if(name==null||"".equals(name))
-            throw new Exception("ZK_SERVER_NAME must not empty");
-        ZKUtil.ZK_SERVER_NAME=name;
-    }
-    /**
-     * set ServerPort，default 1988
-     * @param port
-     * @throws Exception
-     */
-    public void setServerPort(int port) throws Exception{
-        if (isRunning)
-            throw new Exception("please before AnnularQueue started set");
-        if(port==0)
-            throw new Exception("ServerPort must not empty");
-        NettyServer.port=port;
-    }
     private void setDefaultThreadPool() {
         if (this.dispatchs == null)
             this.dispatchs = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());

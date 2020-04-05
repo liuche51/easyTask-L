@@ -1,14 +1,14 @@
 package com.github.liuche51.easyTask.core.test;
 
 import com.github.liuche51.easyTask.register.NodeData;
-import com.github.liuche51.easyTask.register.ZKServiceImpl;
+import com.github.liuche51.easyTask.register.RegisterCenter;
 import com.github.liuche51.easyTask.register.ZKUtil;
 import org.junit.Test;
 
 import java.util.List;
 
 public class UnitTest {
-    private ZKServiceImpl zKServiceImpl=new ZKServiceImpl();
+    private RegisterCenter zKServiceImpl=new RegisterCenter();
     @Test
     public void zkinit(){
         try {

@@ -62,6 +62,7 @@ class ScheduleDao {
                     Long period = resultSet.getLong("period");
                     String unit = resultSet.getString("unit");
                     String param = resultSet.getString("param");
+                    String backup = resultSet.getString("backup");
                     Schedule schedule = new Schedule();
                     schedule.getScheduleExt().setId(id);
                     schedule.getScheduleExt().setTaskClassPath(classPath);

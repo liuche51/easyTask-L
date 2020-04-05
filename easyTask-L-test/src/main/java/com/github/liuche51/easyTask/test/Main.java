@@ -1,9 +1,6 @@
 package com.github.liuche51.easyTask.test;
 
-import com.github.liuche51.easyTask.core.AnnularQueue;
-import com.github.liuche51.easyTask.core.Monitor;
-import com.github.liuche51.easyTask.core.TaskType;
-import com.github.liuche51.easyTask.core.TimeUnit;
+import com.github.liuche51.easyTask.core.*;
 import com.github.liuche51.easyTask.test.task.CusTask1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +19,15 @@ public class Main {
         allcustomSimpleSetTest();
     }
     static void allcustomSimpleSetTest(){
+        EasyTaskConfig config=EasyTaskConfig.getInstance();
         try {
-            annularQueue.setTaskStorePath("C:\\db\\");
+            config.setTaskStorePath("C:\\db\\");
+            config.setSQLlitePoolSize(10);
+            config.setBackupCount(1);
             annularQueue.setDispatchThreadPool( new ThreadPoolExecutor(4, 4, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>()));
             annularQueue.setWorkerThreadPool( new ThreadPoolExecutor(4, 8, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>()));
-            annularQueue.setSQLlitePoolSize(10);
             annularQueue.start();
             CusTask1 task1 = new CusTask1();
             task1.setEndTimestamp(ZonedDateTime.now().plusSeconds(10).toInstant().toEpochMilli());

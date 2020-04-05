@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.backup.server;
 
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -20,7 +21,6 @@ public class NettyServer {
 	private static NettyServer singleton = null;
 	private final EventLoopGroup bossGroup = new NioEventLoopGroup(); // 用来接收进来的连接
 	private final EventLoopGroup workerGroup = new NioEventLoopGroup();// 用来处理已经被接收的连接
-	public static int port=2020;//本机服务端口
 	private Channel channel;
 	public static NettyServer getInstance() {
 		if (singleton == null) {
@@ -38,7 +38,7 @@ public class NettyServer {
 	 * 启动服务
 	 */
 	public ChannelFuture run() {
-		InetSocketAddress address = new InetSocketAddress(port);
+		InetSocketAddress address = new InetSocketAddress(EasyTaskConfig.getInstance().getServerPort());
 		ChannelFuture f = null;
 		try {
 			ServerBootstrap b = new ServerBootstrap();

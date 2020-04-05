@@ -1,4 +1,5 @@
 package com.github.liuche51.easyTask.register;
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 public class ZKUtil {
     private static Logger log = LoggerFactory.getLogger(ZKUtil.class);
-    public static  String ZK_SERVER_NAME="";
     //会话超时时间
     private static  int SESSION_TIMEOUT = 30 * 1000;
 
@@ -44,11 +44,11 @@ public class ZKUtil {
         //测试检查某个节点是否存在
         try {
             CuratorFramework client=getClient();
-            Stat stat1 = client.checkExists().forPath("/"+ZK_SERVER_NAME);
+            Stat stat1 = client.checkExists().forPath("/"+ EasyTaskConfig.getInstance().getzKServerName());
             if(stat1!=null) return;
             else {
                 //创建当前微服务的名称的永久节点
-                client.create().forPath("/"+ZK_SERVER_NAME,null);
+                client.create().forPath("/"+ EasyTaskConfig.getInstance().getzKServerName(),null);
             }
         } catch (Exception e) {
            log.error("initZK error.",e);

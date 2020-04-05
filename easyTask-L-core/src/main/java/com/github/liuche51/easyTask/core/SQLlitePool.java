@@ -11,12 +11,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 class SQLlitePool {
     final static Logger logger = LoggerFactory.getLogger(SqliteHelper.class);
     private static String driver = "org.sqlite.JDBC";
-    /**
-     * 任务持久化保存路径。可以自定义
-     */
-    public static String dbFilePath = null;
     private static ConcurrentLinkedDeque<Connection> pool;//支持并发
-    public static int poolSize = Runtime.getRuntime().availableProcessors() * 2;
     private static SQLlitePool singleton = null;
 
     public static SQLlitePool getInstance() {
@@ -35,10 +30,10 @@ class SQLlitePool {
 
     public void init() {
         try {
-            if (dbFilePath == null || dbFilePath.equals("")) {
-                dbFilePath = Util.getDefaultDbDirect() + "/easyTask.db";//注意“/”符号目前测试兼容Windows和Linux，不要改成“\”符号不兼容Linux
+            if (EasyTaskConfig.getInstance().getTaskStorePath() == null || EasyTaskConfig.getInstance().getTaskStorePath().equals("")) {
+                EasyTaskConfig.getInstance().setTaskStorePath(Util.getDefaultDbDirect() + "/easyTask.db");//注意“/”符号目前测试兼容Windows和Linux，不要改成“\”符号不兼容Linux
             }
-            logger.debug("dbFilePath:{}", dbFilePath);
+            logger.debug("dbFilePath:{}", EasyTaskConfig.getInstance().getTaskStorePath());
             Class.forName(driver);
         }catch (Exception e){
             logger.error("sqlite init fail", e);
@@ -47,9 +42,9 @@ class SQLlitePool {
         if (pool != null && pool.size() > 0)
             return;
         pool = new ConcurrentLinkedDeque<Connection>();
-        for (int i = 0; i < poolSize; i++) {
+        for (int i = 0; i < EasyTaskConfig.getInstance().getsQLlitePoolSize(); i++) {
             try {
-                Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbFilePath);
+                Connection con = DriverManager.getConnection("jdbc:sqlite:" + EasyTaskConfig.getInstance().getTaskStorePath());
                 if (con == null) {
                     logger.debug("数据库连接创建失败，返回null值");
                 } else
@@ -67,7 +62,7 @@ class SQLlitePool {
         }
         try {
             Class.forName(driver);
-            Connection con = DriverManager.getConnection("jdbc:sqlite:" + dbFilePath);
+            Connection con = DriverManager.getConnection("jdbc:sqlite:" + EasyTaskConfig.getInstance().getTaskStorePath());
             if (con == null) {
                 logger.debug("数据库连接创建失败，返回null值");
             } else
@@ -79,7 +74,7 @@ class SQLlitePool {
     }
 
     public boolean freeConnection(Connection conn) {
-        if (pool.size() < SQLlitePool.poolSize && pool.size() > 0) {
+        if (pool.size() < EasyTaskConfig.getInstance().getsQLlitePoolSize() && pool.size() > 0) {
             pool.addLast(conn);
             return true;
         } else {

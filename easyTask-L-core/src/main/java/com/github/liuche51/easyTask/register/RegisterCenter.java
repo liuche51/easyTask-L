@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.register;
 
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
 import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
@@ -7,12 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class ZKServiceImpl {
-    private static Logger log = LoggerFactory.getLogger(ZKServiceImpl.class);
+public class RegisterCenter {
+    private static Logger log = LoggerFactory.getLogger(RegisterCenter.class);
 
-    public void register(NodeData data) {
+    public static void register(NodeData data) {
         try {
-            String path = "/" + ZKUtil.ZK_SERVER_NAME + "/" + Util.getLocalIP();
+            String path = "/" + EasyTaskConfig.getInstance().getzKServerName() + "/" + Util.getLocalIP();
             //创建临时节点
             ZKUtil.getClient().create().withMode(CreateMode.EPHEMERAL).forPath(path, data.toString().getBytes());
         } catch (Exception e) {
@@ -20,8 +21,8 @@ public class ZKServiceImpl {
         }
     }
 
-    public  List<String> getList() {
-        String path = "/" + ZKUtil.ZK_SERVER_NAME;
+    public static   List<String> getList() {
+        String path = "/" +  EasyTaskConfig.getInstance().getzKServerName();
         try {
             List<String> list = ZKUtil.getClient().getChildren().forPath(path);
             return list;
