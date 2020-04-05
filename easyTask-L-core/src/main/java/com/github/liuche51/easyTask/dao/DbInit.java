@@ -58,7 +58,7 @@ public class DbInit {
             if (!exist3) {
                 //备份任务的follow节点
                 String sql3 = "CREATE TABLE \"backup_server\" (\n" +
-                        "\"id\"  INTEGER NOT NULL,\n" +
+                        "\"id\"  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n" +
                         "\"server\"  TEXT,\n" +
                         "\"create_time\"  TEXT,\n" +
                         "PRIMARY KEY (\"id\" ASC)\n" +

@@ -7,7 +7,9 @@ public class BackupServer {
     private long id;
     private String server;
     private String createTime;
-
+    public BackupServer(String server){
+        this.server=server;
+    }
     public long getId() {
         return id;
     }

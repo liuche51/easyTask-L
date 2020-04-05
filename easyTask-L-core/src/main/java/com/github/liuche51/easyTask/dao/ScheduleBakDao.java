@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-class ScheduleBakDao {
+public class ScheduleBakDao {
     private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
 
     public static boolean existTable() {

@@ -7,10 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
-class BackupServerDao {
+public class BackupServerDao {
     private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
 
     public static boolean existTable() {
@@ -34,8 +35,9 @@ class BackupServerDao {
         try {
             if (!DbInit.hasInit)
                 DbInit.init();
+            backupServer.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             String sql = "insert into backup_server(id,server,create_time) values('"
-                    + backupServer.getId() + "','" + ZonedDateTime.now().toLocalTime() + "');";
+                    + backupServer.getId() + "','" + backupServer.getCreateTime()+ "');";
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0) {
                 return true;
