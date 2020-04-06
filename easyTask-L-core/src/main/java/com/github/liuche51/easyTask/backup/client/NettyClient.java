@@ -1,5 +1,7 @@
 package com.github.liuche51.easyTask.backup.client;
 
+import com.github.liuche51.easyTask.dto.ScheduleDto;
+import com.github.liuche51.easyTask.dto.proto.Dto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -8,6 +10,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
@@ -41,8 +47,12 @@ public class NettyClient {
 				@Override
 				protected void initChannel(SocketChannel socketChannel) {
 					// 解码编码
-					socketChannel.pipeline().addLast(new StringDecoder(CharsetUtil.UTF_8));
-					socketChannel.pipeline().addLast(new StringEncoder(CharsetUtil.UTF_8));
+					// 半包的处理
+					socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
+					// 需要解码的目标类
+					socketChannel.pipeline().addLast(new ProtobufDecoder(Dto.Frame.getDefaultInstance()));
+					socketChannel.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
+					socketChannel.pipeline().addLast(new ProtobufEncoder());
 					 // 自己的逻辑Handler
 					socketChannel.pipeline().addLast(new ClientHandler());
 				}

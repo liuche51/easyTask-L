@@ -104,4 +104,16 @@ public class Schedule {
         schedule.source=task.getScheduleExt().getSource();
         return schedule;
     }
+
+    /**
+     * 转换为protocol buffer对象
+     * @return
+     */
+    public ScheduleDto.Schedule toScheduleDto(){
+        ScheduleDto.Schedule.Builder builder=ScheduleDto.Schedule.newBuilder();
+        builder.setId(this.id).setClassPath(this.classPath).setExecuteTime(this.executeTime)
+                .setTaskType(this.taskType).setPeriod(this.period).setUnit(this.unit)
+                .setParam(this.param).setBackup(this.backup).setSource(this.source);
+        return builder.build();
+    }
 }

@@ -50,7 +50,9 @@ public class EasyTaskConfig {
         return backupCount;
     }
 
-    public void setBackupCount(int backupCount) {
+    public void setBackupCount(int backupCount) throws Exception {
+        if (AnnularQueue.isRunning)
+            throw new Exception("please before AnnularQueue started set");
         if (backupCount < 0) this.backupCount = 0;
         else if (backupCount > 2) this.backupCount = 2;
         else this.backupCount = backupCount;
@@ -67,6 +69,8 @@ public class EasyTaskConfig {
      * @throws Exception
      */
     public void setTaskStorePath(String path) throws Exception {
+        if (AnnularQueue.isRunning)
+            throw new Exception("please before AnnularQueue started set");
         this.taskStorePath = path + "\\easyTask.db";
         File file = new File(path);
         if (!file.exists()) {
@@ -85,6 +89,8 @@ public class EasyTaskConfig {
      * @throws Exception
      */
     public void setSQLlitePoolSize(int count) throws Exception {
+        if (AnnularQueue.isRunning)
+            throw new Exception("please before AnnularQueue started set");
         if (count < 1)
             throw new Exception("poolSize must >1");
         this.sQLlitePoolSize = count;
@@ -101,6 +107,8 @@ public class EasyTaskConfig {
      * @throws Exception
      */
     public void setZKServerName(String name) throws Exception {
+        if (AnnularQueue.isRunning)
+            throw new Exception("please before AnnularQueue started set");
         if (name == null || "".equals(name))
             throw new Exception("ZK_SERVER_NAME must not empty");
         this.zKServerName = name;
@@ -117,6 +125,8 @@ public class EasyTaskConfig {
      * @throws Exception
      */
     public void setServerPort(int port) throws Exception {
+        if (AnnularQueue.isRunning)
+            throw new Exception("please before AnnularQueue started set");
         if (port == 0)
             throw new Exception("ServerPort must not empty");
         this.serverPort = port;

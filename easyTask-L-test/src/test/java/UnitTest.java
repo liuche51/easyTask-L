@@ -1,4 +1,7 @@
 import com.github.liuche51.easyTask.backup.client.NettyClient;
+import com.github.liuche51.easyTask.dto.ScheduleDto;
+import com.github.liuche51.easyTask.dto.proto.Dto;
+import com.google.protobuf.ByteString;
 import io.netty.channel.Channel;
 import org.junit.Test;
 
@@ -12,7 +15,13 @@ public class UnitTest {
             Channel channel =client.getChannelFuture().channel();
             while (true){
                 Thread.sleep(2000);
-                channel.writeAndFlush("ddddd");
+                ScheduleDto.Schedule.Builder builder=ScheduleDto.Schedule.newBuilder();
+                builder.setId("sdfertert").setClassPath("com.github.liuche51.easyTask.test.task.CusTask1").setExecuteTime(1586078809995l)
+                        .setTaskType("PERIOD").setPeriod(30).setUnit("SECONDS")
+                        .setParam("birthday#;1986-1-1&;threadid#;1&;name#;Jack&;age#;32&");
+                Dto.Frame.Builder builder1=Dto.Frame.newBuilder();
+                builder1.setClassName("Schedule").setBytesBytes(builder.build().toByteString());
+                channel.writeAndFlush(builder1.build());
             }
 
         } catch (Exception e) {

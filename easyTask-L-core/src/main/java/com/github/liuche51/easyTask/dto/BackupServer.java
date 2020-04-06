@@ -4,17 +4,19 @@ package com.github.liuche51.easyTask.dto;
  * 数据备份的服务器
  */
 public class BackupServer {
-    private long id;
+    private Long id;
     private String server;
     private String createTime;
+    public BackupServer(){
+    }
     public BackupServer(String server){
         this.server=server;
     }
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,0 +1,12 @@
+option java_outer_classname = "ScheduleDto";//生成的数据访问类的类名
+message Schedule {
+  required string id = 1;
+  required string classPath = 2;
+  required int64 executeTime = 3;
+  required string taskType = 4;
+  optional  int64 period = 5;
+  required string unit = 6;
+  optional  string param = 7;
+  optional  string backup = 8;
+  optional  string source = 9;
+}

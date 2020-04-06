@@ -54,8 +54,8 @@ public class Main {
                 }
             };
             task2.setParam(param2);
-            annularQueue.submit(task1);
-            annularQueue.submit(task2);
+            //annularQueue.submit(task1);
+            //annularQueue.submit(task2);
             obj.wait();
         } catch (Exception e) {
             e.printStackTrace();

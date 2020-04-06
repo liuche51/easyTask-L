@@ -22,7 +22,7 @@ import java.util.concurrent.*;
 public class AnnularQueue {
     private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
     private static AnnularQueue singleton = null;
-    private static boolean isRunning = false;//防止所线程运行环形队列
+    static boolean isRunning = false;//防止所线程运行环形队列
     /**
      * 任务调度线程池
      */
