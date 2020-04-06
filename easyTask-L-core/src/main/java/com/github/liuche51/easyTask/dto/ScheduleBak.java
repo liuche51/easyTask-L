@@ -1,5 +1,7 @@
 package com.github.liuche51.easyTask.dto;
 
+import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
+
 public class ScheduleBak {
     private String id;
     private String classPath;
@@ -90,5 +92,18 @@ public class ScheduleBak {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+    public static ScheduleBak valueOf(ScheduleDto.Schedule dto){
+        ScheduleBak schedule=new ScheduleBak();
+        schedule.id=dto.getId();
+        schedule.classPath=dto.getClassPath();
+        schedule.executeTime=dto.getExecuteTime();
+        schedule.taskType=dto.getTaskType();
+        schedule.period=dto.getPeriod();
+        schedule.unit=dto.getUnit();
+        schedule.param=dto.getParam();
+        schedule.backup=dto.getBackup();
+        schedule.source=dto.getSource();
+        return schedule;
     }
 }

@@ -1,5 +1,7 @@
 package com.github.liuche51.easyTask.dto;
 
+import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
+
 public class Schedule {
     private String id;
     private String classPath;

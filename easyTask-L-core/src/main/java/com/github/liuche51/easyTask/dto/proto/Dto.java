@@ -9,35 +9,50 @@ public final class Dto {
   public interface FrameOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
 
-    // required string className = 1;
+    // required string interfaceName = 1;
     /**
-     * <code>required string className = 1;</code>
+     * <code>required string interfaceName = 1;</code>
+     */
+    boolean hasInterfaceName();
+    /**
+     * <code>required string interfaceName = 1;</code>
+     */
+    String getInterfaceName();
+    /**
+     * <code>required string interfaceName = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getInterfaceNameBytes();
+
+    // required string className = 2;
+    /**
+     * <code>required string className = 2;</code>
      */
     boolean hasClassName();
     /**
-     * <code>required string className = 1;</code>
+     * <code>required string className = 2;</code>
      */
     String getClassName();
     /**
-     * <code>required string className = 1;</code>
+     * <code>required string className = 2;</code>
      */
     com.google.protobuf.ByteString
         getClassNameBytes();
 
-    // required string bytes = 2;
+    // required string body = 3;
     /**
-     * <code>required string bytes = 2;</code>
+     * <code>required string body = 3;</code>
      */
-    boolean hasBytes();
+    boolean hasBody();
     /**
-     * <code>required string bytes = 2;</code>
+     * <code>required string body = 3;</code>
      */
-    String getBytes();
+    String getBody();
     /**
-     * <code>required string bytes = 2;</code>
+     * <code>required string body = 3;</code>
      */
     com.google.protobuf.ByteString
-        getBytesBytes();
+        getBodyBytes();
   }
   /**
    * Protobuf type {@code Frame}
@@ -92,12 +107,17 @@ public final class Dto {
             }
             case 10: {
               bitField0_ |= 0x00000001;
-              className_ = input.readBytes();
+              interfaceName_ = input.readBytes();
               break;
             }
             case 18: {
               bitField0_ |= 0x00000002;
-              bytes_ = input.readBytes();
+              className_ = input.readBytes();
+              break;
+            }
+            case 26: {
+              bitField0_ |= 0x00000004;
+              body_ = input.readBytes();
               break;
             }
           }
@@ -140,17 +160,60 @@ public final class Dto {
     }
 
     private int bitField0_;
-    // required string className = 1;
-    public static final int CLASSNAME_FIELD_NUMBER = 1;
-    private Object className_;
+    // required string interfaceName = 1;
+    public static final int INTERFACENAME_FIELD_NUMBER = 1;
+    private Object interfaceName_;
     /**
-     * <code>required string className = 1;</code>
+     * <code>required string interfaceName = 1;</code>
      */
-    public boolean hasClassName() {
+    public boolean hasInterfaceName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string className = 1;</code>
+     * <code>required string interfaceName = 1;</code>
+     */
+    public String getInterfaceName() {
+      Object ref = interfaceName_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          interfaceName_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string interfaceName = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getInterfaceNameBytes() {
+      Object ref = interfaceName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        interfaceName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    // required string className = 2;
+    public static final int CLASSNAME_FIELD_NUMBER = 2;
+    private Object className_;
+    /**
+     * <code>required string className = 2;</code>
+     */
+    public boolean hasClassName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required string className = 2;</code>
      */
     public String getClassName() {
       Object ref = className_;
@@ -167,7 +230,7 @@ public final class Dto {
       }
     }
     /**
-     * <code>required string className = 1;</code>
+     * <code>required string className = 2;</code>
      */
     public com.google.protobuf.ByteString
         getClassNameBytes() {
@@ -183,20 +246,20 @@ public final class Dto {
       }
     }
 
-    // required string bytes = 2;
-    public static final int BYTES_FIELD_NUMBER = 2;
-    private Object bytes_;
+    // required string body = 3;
+    public static final int BODY_FIELD_NUMBER = 3;
+    private Object body_;
     /**
-     * <code>required string bytes = 2;</code>
+     * <code>required string body = 3;</code>
      */
-    public boolean hasBytes() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
+    public boolean hasBody() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required string bytes = 2;</code>
+     * <code>required string body = 3;</code>
      */
-    public String getBytes() {
-      Object ref = bytes_;
+    public String getBody() {
+      Object ref = body_;
       if (ref instanceof String) {
         return (String) ref;
       } else {
@@ -204,22 +267,22 @@ public final class Dto {
             (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
         if (bs.isValidUtf8()) {
-          bytes_ = s;
+          body_ = s;
         }
         return s;
       }
     }
     /**
-     * <code>required string bytes = 2;</code>
+     * <code>required string body = 3;</code>
      */
     public com.google.protobuf.ByteString
-        getBytesBytes() {
-      Object ref = bytes_;
+        getBodyBytes() {
+      Object ref = body_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (String) ref);
-        bytes_ = b;
+        body_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -227,19 +290,24 @@ public final class Dto {
     }
 
     private void initFields() {
+      interfaceName_ = "";
       className_ = "";
-      bytes_ = "";
+      body_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
+      if (!hasInterfaceName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (!hasClassName()) {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasBytes()) {
+      if (!hasBody()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -251,10 +319,13 @@ public final class Dto {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getClassNameBytes());
+        output.writeBytes(1, getInterfaceNameBytes());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getBytesBytes());
+        output.writeBytes(2, getClassNameBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBytes(3, getBodyBytes());
       }
       getUnknownFields().writeTo(output);
     }
@@ -267,11 +338,15 @@ public final class Dto {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, getClassNameBytes());
+          .computeBytesSize(1, getInterfaceNameBytes());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, getBytesBytes());
+          .computeBytesSize(2, getClassNameBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, getBodyBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -389,10 +464,12 @@ public final class Dto {
 
       public Builder clear() {
         super.clear();
-        className_ = "";
+        interfaceName_ = "";
         bitField0_ = (bitField0_ & ~0x00000001);
-        bytes_ = "";
+        className_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
+        body_ = "";
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -424,11 +501,15 @@ public final class Dto {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.className_ = className_;
+        result.interfaceName_ = interfaceName_;
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.bytes_ = bytes_;
+        result.className_ = className_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.body_ = body_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -445,14 +526,19 @@ public final class Dto {
 
       public Builder mergeFrom(Frame other) {
         if (other == Frame.getDefaultInstance()) return this;
-        if (other.hasClassName()) {
+        if (other.hasInterfaceName()) {
           bitField0_ |= 0x00000001;
+          interfaceName_ = other.interfaceName_;
+          onChanged();
+        }
+        if (other.hasClassName()) {
+          bitField0_ |= 0x00000002;
           className_ = other.className_;
           onChanged();
         }
-        if (other.hasBytes()) {
-          bitField0_ |= 0x00000002;
-          bytes_ = other.bytes_;
+        if (other.hasBody()) {
+          bitField0_ |= 0x00000004;
+          body_ = other.body_;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -460,11 +546,15 @@ public final class Dto {
       }
 
       public final boolean isInitialized() {
+        if (!hasInterfaceName()) {
+          
+          return false;
+        }
         if (!hasClassName()) {
           
           return false;
         }
-        if (!hasBytes()) {
+        if (!hasBody()) {
           
           return false;
         }
@@ -490,16 +580,90 @@ public final class Dto {
       }
       private int bitField0_;
 
-      // required string className = 1;
-      private Object className_ = "";
+      // required string interfaceName = 1;
+      private Object interfaceName_ = "";
       /**
-       * <code>required string className = 1;</code>
+       * <code>required string interfaceName = 1;</code>
        */
-      public boolean hasClassName() {
+      public boolean hasInterfaceName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required string className = 1;</code>
+       * <code>required string interfaceName = 1;</code>
+       */
+      public String getInterfaceName() {
+        Object ref = interfaceName_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          interfaceName_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>required string interfaceName = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getInterfaceNameBytes() {
+        Object ref = interfaceName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          interfaceName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string interfaceName = 1;</code>
+       */
+      public Builder setInterfaceName(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        interfaceName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string interfaceName = 1;</code>
+       */
+      public Builder clearInterfaceName() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        interfaceName_ = getDefaultInstance().getInterfaceName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string interfaceName = 1;</code>
+       */
+      public Builder setInterfaceNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        interfaceName_ = value;
+        onChanged();
+        return this;
+      }
+
+      // required string className = 2;
+      private Object className_ = "";
+      /**
+       * <code>required string className = 2;</code>
+       */
+      public boolean hasClassName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required string className = 2;</code>
        */
       public String getClassName() {
         Object ref = className_;
@@ -513,7 +677,7 @@ public final class Dto {
         }
       }
       /**
-       * <code>required string className = 1;</code>
+       * <code>required string className = 2;</code>
        */
       public com.google.protobuf.ByteString
           getClassNameBytes() {
@@ -529,111 +693,111 @@ public final class Dto {
         }
       }
       /**
-       * <code>required string className = 1;</code>
+       * <code>required string className = 2;</code>
        */
       public Builder setClassName(
           String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000001;
+  bitField0_ |= 0x00000002;
         className_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string className = 1;</code>
+       * <code>required string className = 2;</code>
        */
       public Builder clearClassName() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = (bitField0_ & ~0x00000002);
         className_ = getDefaultInstance().getClassName();
         onChanged();
         return this;
       }
       /**
-       * <code>required string className = 1;</code>
+       * <code>required string className = 2;</code>
        */
       public Builder setClassNameBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000001;
+  bitField0_ |= 0x00000002;
         className_ = value;
         onChanged();
         return this;
       }
 
-      // required string bytes = 2;
-      private Object bytes_ = "";
+      // required string body = 3;
+      private Object body_ = "";
       /**
-       * <code>required string bytes = 2;</code>
+       * <code>required string body = 3;</code>
        */
-      public boolean hasBytes() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
+      public boolean hasBody() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required string bytes = 2;</code>
+       * <code>required string body = 3;</code>
        */
-      public String getBytes() {
-        Object ref = bytes_;
+      public String getBody() {
+        Object ref = body_;
         if (!(ref instanceof String)) {
           String s = ((com.google.protobuf.ByteString) ref)
               .toStringUtf8();
-          bytes_ = s;
+          body_ = s;
           return s;
         } else {
           return (String) ref;
         }
       }
       /**
-       * <code>required string bytes = 2;</code>
+       * <code>required string body = 3;</code>
        */
       public com.google.protobuf.ByteString
-          getBytesBytes() {
-        Object ref = bytes_;
+          getBodyBytes() {
+        Object ref = body_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (String) ref);
-          bytes_ = b;
+          body_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>required string bytes = 2;</code>
+       * <code>required string body = 3;</code>
        */
-      public Builder setBytes(
+      public Builder setBody(
           String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
-        bytes_ = value;
+  bitField0_ |= 0x00000004;
+        body_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string bytes = 2;</code>
+       * <code>required string body = 3;</code>
        */
-      public Builder clearBytes() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        bytes_ = getDefaultInstance().getBytes();
+      public Builder clearBody() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        body_ = getDefaultInstance().getBody();
         onChanged();
         return this;
       }
       /**
-       * <code>required string bytes = 2;</code>
+       * <code>required string body = 3;</code>
        */
-      public Builder setBytesBytes(
+      public Builder setBodyBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
-        bytes_ = value;
+  bitField0_ |= 0x00000004;
+        body_ = value;
         onChanged();
         return this;
       }
@@ -663,8 +827,9 @@ public final class Dto {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\tDto.proto\")\n\005Frame\022\021\n\tclassName\030\001 \002(\t\022" +
-      "\r\n\005bytes\030\002 \002(\tB\005B\003Dto"
+      "\n\tDto.proto\"?\n\005Frame\022\025\n\rinterfaceName\030\001 " +
+      "\002(\t\022\021\n\tclassName\030\002 \002(\t\022\014\n\004body\030\003 \002(\tB\005B\003" +
+      "Dto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -676,7 +841,7 @@ public final class Dto {
           internal_static_Frame_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Frame_descriptor,
-              new String[] { "ClassName", "Bytes", });
+              new String[] { "InterfaceName", "ClassName", "Body", });
           return null;
         }
       };

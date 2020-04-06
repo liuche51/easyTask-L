@@ -12,12 +12,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
 /**
- * <b>标题:    </b><br />
- * <pre>
- * </pre>
  *
- * @author 毛宇鹏
- * @date 创建于 上午9:13 2018/4/25
  */
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
     @Override

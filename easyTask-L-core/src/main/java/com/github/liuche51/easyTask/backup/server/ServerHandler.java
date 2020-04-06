@@ -1,6 +1,6 @@
 package com.github.liuche51.easyTask.backup.server;
 
-import com.github.liuche51.easyTask.dto.ScheduleDto;
+import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,12 +17,16 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 	public void channelRead0(ChannelHandlerContext ctx, Object msg) {
 		try {
 			Dto.Frame frame= (Dto.Frame) msg;
-			switch (frame.getClassName()){
-				case "Schedule":
-					ScheduleDto.Schedule schedule=ScheduleDto.Schedule.parseFrom(frame.getBytesBytes());
-					int y=0;
-					break;
+			switch (frame.getInterfaceName()){
+				case "ScheduleBackup":
+					switch (frame.getClassName()){
+						case "Schedule":
+							ScheduleDto.Schedule schedule=ScheduleDto.Schedule.parseFrom(frame.getBodyBytes());
+							int y=0;
+							break;
+					}
 			}
+
 
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
