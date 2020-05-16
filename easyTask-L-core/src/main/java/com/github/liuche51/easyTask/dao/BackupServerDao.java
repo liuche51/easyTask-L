@@ -36,7 +36,7 @@ public class BackupServerDao {
             if (!DbInit.hasInit)
                 DbInit.init();
             backupServer.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            String sql = "insert into backup_server(id,server,create_time) values('"
+            String sql = "insert into backup_server(server,create_time) values('"
                     + backupServer.getId() + "','" + backupServer.getCreateTime()+ "');";
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0) {
