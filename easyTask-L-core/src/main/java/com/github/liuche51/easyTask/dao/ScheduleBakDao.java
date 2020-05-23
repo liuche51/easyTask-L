@@ -34,7 +34,7 @@ public class ScheduleBakDao {
             if (!DbInit.hasInit)
                 DbInit.init();
             scheduleBak.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,backup,source,create_time) values('"
+            String sql = "insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,backup,source,create_time) values('"
                     + scheduleBak.getId() + "','" + scheduleBak.getClassPath() + "'," + scheduleBak.getExecuteTime()
                     + ",'" + scheduleBak.getTaskType() + "'," + scheduleBak.getPeriod() + ",'" + scheduleBak.getUnit()
                     + "','" + scheduleBak.getParam() + "','"+ scheduleBak.getBackup() + "','" + scheduleBak.getSource()
@@ -51,7 +51,7 @@ public class ScheduleBakDao {
     }
     public static boolean delete(String id) {
         try {
-            String sql = "delete FROM schedule where id='" + id + "';";
+            String sql = "delete FROM schedule_bak where id='" + id + "';";
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0)
                 log.debug("任务:{} 已经删除", id);
@@ -65,12 +65,12 @@ public class ScheduleBakDao {
     public static int getAllCount() {
         SqliteHelper helper = new SqliteHelper();
         try {
-            ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM schedule;");
+            ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM schedule_bak;");
             while (resultSet.next()) {
                 return resultSet.getInt(1);
             }
         } catch (Exception e) {
-            log.error("ScheduleDao.getAllCount Exception:{}", e);
+            log.error("ScheduleBakDao.getAllCount Exception:{}", e);
         } finally {
             helper.destroyed();
         }

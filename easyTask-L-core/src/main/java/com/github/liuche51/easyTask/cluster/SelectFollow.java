@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.cluster;
 
+import com.github.liuche51.easyTask.backup.client.ClientHandler;
 import com.github.liuche51.easyTask.backup.client.NettyClient;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.BackupServerDao;
@@ -22,7 +23,7 @@ public class SelectFollow {
             list=saveBackupServers(availableServers);
         }
         for (BackupServer server:list){
-            NettyClient client=new NettyClient(new InetSocketAddress(server.getServer(),EasyTaskConfig.getInstance().getServerPort()));
+            NettyClient client=new NettyClient(new InetSocketAddress(server.getServer(),EasyTaskConfig.getInstance().getServerPort()),new ClientHandler());
             ClusterService.FOLLOWS.add(client);
         }
     }

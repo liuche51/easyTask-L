@@ -1,6 +1,7 @@
 package com.github.liuche51.easyTask.dto;
 
 import com.github.liuche51.easyTask.cluster.LeaderToFollow;
+import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.TaskType;
 import com.github.liuche51.easyTask.core.TimeUnit;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
@@ -78,7 +79,7 @@ public class Task {
         Schedule schedule=Schedule.valueOf(this);
         ScheduleDao.save(schedule);
         //数据高可靠分布式存储
-        LeaderToFollow.syncDataToFollow(schedule);
+        LeaderService.syncDataToFollow(schedule);
     }
     /**
      * 获取周期性任务下次执行时间。已当前时间为基准计算下次而不是上次截止执行时间

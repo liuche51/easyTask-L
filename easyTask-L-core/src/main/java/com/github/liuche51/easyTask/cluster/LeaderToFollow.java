@@ -11,19 +11,9 @@ import io.netty.channel.Channel;
 /**
  * Leader Sync Data To Follows
  */
+@Deprecated
 public class LeaderToFollow {
-    public static void syncDataToFollow(Schedule schedule){
-        for (NettyClient client:ClusterService.FOLLOWS){
-            Channel channel=client.getChannelFuture().channel();
-            ScheduleDto.Schedule s=schedule.toScheduleDto();
-            Dto.Frame.Builder builder=Dto.Frame.newBuilder();
-            builder.setClassName("Schedule").setBodyBytes(s.toByteString());
-            channel.writeAndFlush(builder);
-        }
 
-    }
-    public static void saveScheduleBak(ScheduleDto.Schedule dto){
-        ScheduleBak bak=ScheduleBak.valueOf(dto);
-        ScheduleBakDao.save(bak);
-    }
+
+
 }

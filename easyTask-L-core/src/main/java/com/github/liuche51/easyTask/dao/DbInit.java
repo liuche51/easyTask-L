@@ -60,8 +60,7 @@ public class DbInit {
                 String sql3 = "CREATE TABLE \"backup_server\" (\n" +
                         "\"id\"  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n" +
                         "\"server\"  TEXT,\n" +
-                        "\"create_time\"  TEXT,\n" +
-                        "PRIMARY KEY (\"id\" ASC)\n" +
+                        "\"create_time\"  TEXT\n" +
                         ");";
                 SqliteHelper.executeUpdateForSync(sql3);
             }
