@@ -45,6 +45,10 @@ public class EasyTaskConfig {
      * 设置当前easyTask组件的集群服务端口号。默认2020
      */
     private int serverPort = 2020;
+    /**
+     * 设置集群通信调用超时时间。默认3秒
+     */
+    private int timeOut=3;
 
     public int getBackupCount() {
         return backupCount;
@@ -130,5 +134,13 @@ public class EasyTaskConfig {
         if (port == 0)
             throw new Exception("ServerPort must not empty");
         this.serverPort = port;
+    }
+
+    public int getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
     }
 }

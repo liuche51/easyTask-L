@@ -15,13 +15,25 @@ import org.apache.log4j.Logger;
 public class ClientHandler extends SimpleChannelInboundHandler<Object> {
     protected static final Logger log = Logger.getLogger(ClientHandler.class);
     private ChannelHandlerContext ctx;
+    /**
+     * 线程同步信号量。用于客户端同步调用服务端
+     */
     private ChannelPromise promise;
+    /**
+     * 同步调用时。返回服务端结果
+     */
 	private Object response;
+    public void setPromise(ChannelPromise promise){
+        this.promise=promise;
+    }
 
+    public Object getResponse() {
+        return response;
+    }
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
         // 收到消息直接打印输出
-        log.info("Received Server:" + ctx.channel().remoteAddress() + " send : " + msg);
+        log.debug("Received Server:" + ctx.channel().remoteAddress() + " send : " + msg);
         if (promise != null)
 		{
 			promise.setSuccess();
@@ -41,11 +53,5 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
         System.out.println("Client close ");
         super.channelInactive(ctx);
     }
-    public void setPromise(ChannelPromise promise){
-    	this.promise=promise;
-	}
 
-	public Object getResponse() {
-		return response;
-	}
 }

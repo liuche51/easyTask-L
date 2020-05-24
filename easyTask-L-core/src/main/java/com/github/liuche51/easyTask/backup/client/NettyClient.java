@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.backup.client;
 
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -13,6 +14,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import org.apache.log4j.Logger;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Netty网络连接客户端
@@ -24,14 +26,14 @@ public class NettyClient {
     private Bootstrap bootstrap;
     private ChannelFuture channelFuture;
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
-	ClientHandler handler;
+    ClientHandler handler;
     /**
      * 客户端通道
      */
     private Channel clientChannel;
 
-    public NettyClient(InetSocketAddress address, ClientHandler handler) {
-    	this.handler=handler;
+    public NettyClient(InetSocketAddress address) {
+        this.handler = new ClientHandler();
         try {
             log.info("nettyClinet start...");
             bootstrap = new Bootstrap();
@@ -83,30 +85,30 @@ public class NettyClient {
         return clientChannel;
     }
 
-	/**
-	 * 发送同步消息
-	 * @param msg
-	 * @return
-	 */
-	public Object sendSyncMsg(Object msg) {
+    /**
+     * 发送同步消息
+     *
+     * @param msg
+     * @return
+     */
+    public Object sendSyncMsg(Object msg) throws InterruptedException {
         ChannelPromise promise = clientChannel.newPromise();
         handler.setPromise(promise);
-		clientChannel.writeAndFlush(msg);
-        try {
-            promise.await(15000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        clientChannel.writeAndFlush(msg);
+        promise.await(EasyTaskConfig.getInstance().getTimeOut(), TimeUnit.SECONDS);
         return handler.getResponse();
     }
-	/**
-	 * 发送异步消息
-	 * @param msg
-	 * @return
-	 */
-	public ChannelFuture sendASyncMsg(Object msg) {
-		return clientChannel.writeAndFlush(msg);
-	}
+
+    /**
+     * 发送异步消息
+     *
+     * @param msg
+     * @return
+     */
+    public ChannelFuture sendASyncMsg(Object msg) {
+        return clientChannel.writeAndFlush(msg);
+    }
+
     /**
      * 客户端关闭
      */
