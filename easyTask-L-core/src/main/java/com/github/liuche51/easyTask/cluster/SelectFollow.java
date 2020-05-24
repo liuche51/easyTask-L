@@ -1,13 +1,10 @@
 package com.github.liuche51.easyTask.cluster;
 
-import com.github.liuche51.easyTask.backup.client.ClientHandler;
-import com.github.liuche51.easyTask.backup.client.NettyClient;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.BackupServerDao;
 import com.github.liuche51.easyTask.dto.BackupServer;
-import com.github.liuche51.easyTask.register.RegisterCenter;
+import com.github.liuche51.easyTask.register.ZKService;
 
-import java.net.InetSocketAddress;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -16,19 +13,10 @@ import java.util.Random;
 public class SelectFollow {
 
     public static void init(){
-        List<BackupServer> list=BackupServerDao.selectAll();
-        int count=EasyTaskConfig.getInstance().getBackupCount();
-        if(list.size()==0&&count>0){
-            List<String> availableServers=findFollow();
-            list=saveBackupServers(availableServers);
-        }
-        for (BackupServer server:list){
-            NettyClient client=new NettyClient(new InetSocketAddress(server.getServer(),EasyTaskConfig.getInstance().getServerPort()),new ClientHandler());
-            ClusterService.FOLLOWS.add(client);
-        }
+
     }
     public static List<String> findFollow() {
-        List<String> list = RegisterCenter.getList();
+        List<String> list = ZKService.getChildrenByNameSpase();
         //排除自己
         Optional<String> temp=list.stream().filter(x->x.equals(EasyTaskConfig.getInstance().getzKServerName())).findFirst();
         if(temp.isPresent())

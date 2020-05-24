@@ -79,7 +79,7 @@ public class Task {
         Schedule schedule=Schedule.valueOf(this);
         ScheduleDao.save(schedule);
         //数据高可靠分布式存储
-        LeaderService.syncDataToFollow(schedule);
+        //LeaderService.syncDataToFollow(schedule);
     }
     /**
      * 获取周期性任务下次执行时间。已当前时间为基准计算下次而不是上次截止执行时间

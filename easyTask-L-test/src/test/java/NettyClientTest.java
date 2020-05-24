@@ -12,8 +12,7 @@ import java.net.InetSocketAddress;
 public class NettyClientTest {
     @Test
     public void nettyClient(){
-        ClientHandler handler=new ClientHandler();
-        NettyClient client=new NettyClient(new InetSocketAddress(2020),handler);
+        NettyClient client=new NettyClient(new InetSocketAddress(2020));
         try {
             while (true){
                 Thread.sleep(5000);

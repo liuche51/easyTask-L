@@ -1,10 +1,15 @@
 package com.github.liuche51.easyTask.cluster.leader;
 
 import com.github.liuche51.easyTask.backup.client.NettyClient;
+import com.github.liuche51.easyTask.cluster.Node;
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.Dto;
+import com.github.liuche51.easyTask.register.ZKService;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 /**
  * leader类
@@ -37,5 +42,28 @@ public class LeaderUtil {
         }
         return sendSyncMsgWithCount(client, msg, tryCount);
 
+    }
+    public static List<Node> selectNewFollows() {
+        List<String> list = ZKService.getChildrenByNameSpase();
+        //排除自己
+        Optional<String> temp=list.stream().filter(x->x.equals(EasyTaskConfig.getInstance().getzKServerName())).findFirst();
+        if(temp.isPresent())
+            list.remove(temp.get());
+
+        List<Node> follows = new LinkedList<>();
+        int count= EasyTaskConfig.getInstance().getBackupCount();
+        if (list.size() == 0) return follows;
+        else if (list.size() == 1&&count>0) {
+            //follows.add(list.get(0));
+            return follows;
+        } else {
+            Random random = new Random();
+            for (int i = 0; i <count; i++) {
+                int index = random.nextInt(list.size() + 1);
+                //follows.add(list.get(index));
+                list.remove(index);
+            }
+        }
+        return follows;
     }
 }
