@@ -14,7 +14,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Main {
     private static Logger log = LoggerFactory.getLogger(Main.class);
     private static AnnularQueue annularQueue=AnnularQueue.getInstance();
-    private static Object obj=new Object();
     public static void main(String[] args){
         allcustomSimpleSetTest();
     }
@@ -56,7 +55,6 @@ public class Main {
             task2.setParam(param2);
             //annularQueue.submit(task1);
             //annularQueue.submit(task2);
-            obj.wait();
         } catch (Exception e) {
             e.printStackTrace();
         }
