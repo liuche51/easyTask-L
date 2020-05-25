@@ -49,6 +49,11 @@ public class EasyTaskConfig {
      * 设置集群通信调用超时时间。默认3秒
      */
     private int timeOut=3;
+    /**
+     * 是否开启为集群模式。方便单机测试使用。
+     * 单机环境，需要服务端口设置为不同。指定的db文件夹也不要相同。IP相同没问题
+     */
+    private boolean enablePseudoCluster=false;
 
     public int getBackupCount() {
         return backupCount;
@@ -142,5 +147,13 @@ public class EasyTaskConfig {
 
     public void setTimeOut(int timeOut) {
         this.timeOut = timeOut;
+    }
+
+    public boolean isEnablePseudoCluster() {
+        return enablePseudoCluster;
+    }
+
+    public void setEnablePseudoCluster(boolean enablePseudoCluster) {
+        this.enablePseudoCluster = enablePseudoCluster;
     }
 }

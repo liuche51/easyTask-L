@@ -1,7 +1,5 @@
 package com.github.liuche51.easyTask.dto;
 
-import com.github.liuche51.easyTask.cluster.LeaderToFollow;
-import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.TaskType;
 import com.github.liuche51.easyTask.core.TimeUnit;
 import com.github.liuche51.easyTask.dao.ScheduleDao;

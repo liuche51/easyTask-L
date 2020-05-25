@@ -16,6 +16,7 @@ public class Node {
     private List<Node> follows=new LinkedList<>();
     private List<Node> leaders=new LinkedList<>();
     private NettyClient client;
+    public Node(String host,int port){}
     public String getHost() {
         return host;
     }

@@ -1,10 +1,8 @@
 package com.github.liuche51.easyTask.backup.server;
 
-import com.github.liuche51.easyTask.cluster.LeaderToFollow;
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.dto.proto.Dto;
-import com.google.protobuf.InvalidProtocolBufferException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
