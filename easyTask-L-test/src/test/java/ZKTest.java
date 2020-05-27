@@ -14,7 +14,7 @@ import java.util.List;
 public class ZKTest {
     public ZKTest() {
         try {
-            EasyTaskConfig.getInstance().setZKServerName("server1");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

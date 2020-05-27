@@ -38,6 +38,12 @@ public class LeaderService {
                 if(temp.isPresent())
                     availableFollows.remove(temp.get());
                 int count= EasyTaskConfig.getInstance().getBackupCount();
+                if(availableFollows.size()<count)//如果可选备库节点数量不足，则等待1s，然后重新选。注意：等待会阻塞整个服务可用性
+                {
+                    log.info("availableFollows is not enough! only has "+availableFollows.size());
+                    Thread.sleep(1000);
+                    initSelectFollows();
+                }
                 if (availableFollows.size() == 0) {
                 }
                 else if (availableFollows.size() == 1&&count>0) {

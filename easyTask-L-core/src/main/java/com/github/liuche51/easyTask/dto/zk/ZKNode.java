@@ -9,7 +9,11 @@ import java.util.List;
 public class ZKNode {
     private String host;
     private int port= EasyTaskConfig.getInstance().getServerPort();
+    /**
+     * follows
+     */
     private List<ZKFollow> follows=new LinkedList<>();
+    public ZKNode(String host,int port){}
     /**
      * 最近一次心跳时间
      */

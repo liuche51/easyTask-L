@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.register;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.core.Util;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -40,18 +41,5 @@ public class ZKUtil {
         System.out.println(client.getState());
         return client;
     }
-    public static void initZK(){
-        //测试检查某个节点是否存在
-        try {
-            CuratorFramework client=getClient();
-            Stat stat1 = client.checkExists().forPath("/"+ EasyTaskConfig.getInstance().getzKServerName());
-            if(stat1!=null) return;
-            else {
-                //创建当前微服务的名称的永久节点
-                client.create().forPath("/"+ EasyTaskConfig.getInstance().getzKServerName(),null);
-            }
-        } catch (Exception e) {
-           log.error("initZK error.",e);
-        }
-    }
+
 }

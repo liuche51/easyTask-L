@@ -23,6 +23,7 @@ public class ClusterTest {
             config.setTaskStorePath("C:\\db\\node1");
             config.setSQLlitePoolSize(5);
             config.setBackupCount(2);
+            config.setServerPort(2020);
             initData( annularQueue);
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,6 +37,7 @@ public class ClusterTest {
             config.setTaskStorePath("C:\\db\\node2");
             config.setSQLlitePoolSize(5);
             config.setBackupCount(2);
+            config.setServerPort(2021);
             initData( annularQueue);
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,6 +51,7 @@ public class ClusterTest {
             config.setTaskStorePath("C:\\db\\node3");
             config.setSQLlitePoolSize(5);
             config.setBackupCount(2);
+            config.setServerPort(2022);
             initData( annularQueue);
         } catch (Exception e) {
             e.printStackTrace();

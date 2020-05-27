@@ -1,7 +1,9 @@
 package com.github.liuche51.easyTask.core;
 
 import com.github.liuche51.easyTask.backup.server.NettyServer;
+import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.register.ZKUtil;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
@@ -9,6 +11,7 @@ import java.io.File;
  * 系统配置项
  */
 public class EasyTaskConfig {
+    private static final Logger log = Logger.getLogger(EasyTaskConfig.class);
     private static EasyTaskConfig singleton = null;
 
     public static EasyTaskConfig getInstance() {
@@ -38,7 +41,7 @@ public class EasyTaskConfig {
      */
     private int sQLlitePoolSize = Runtime.getRuntime().availableProcessors() * 2;
     /**
-     * 设置当前服务的名称。请保持唯一性。
+     * 前服务的名称。IP+端口号
      */
     private String zKServerName = "";
     /**
@@ -106,21 +109,14 @@ public class EasyTaskConfig {
     }
 
     public String getzKServerName() {
-        return zKServerName;
-    }
-
-    /**
-     * set ZKServerName，default qty 15
-     *
-     * @param name
-     * @throws Exception
-     */
-    public void setZKServerName(String name) throws Exception {
-        if (AnnularQueue.isRunning)
-            throw new Exception("please before AnnularQueue started set");
-        if (name == null || "".equals(name))
-            throw new Exception("ZK_SERVER_NAME must not empty");
-        this.zKServerName = name;
+        try {
+            StringBuffer buffer=new StringBuffer(Util.getLocalIP());
+            buffer.append(":").append(getServerPort());
+            return buffer.toString();
+        }catch (Exception e){
+            log.error("",e);
+        }
+        return null;
     }
 
     public int getServerPort() {

@@ -3,6 +3,7 @@ package com.github.liuche51.easyTask.register;
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import java.util.List;
 
 public class ZKService {
     private static Logger log = LoggerFactory.getLogger(ZKService.class);
-
     /**
      * 当前节点注册为永久节点
      *
@@ -20,7 +20,7 @@ public class ZKService {
      */
     public static void register(ZKNode data) {
         try {
-            String path = "/" + EasyTaskConfig.getInstance().getzKServerName();// Util.getLocalIP();
+            String path = "/" + EasyTaskConfig.getInstance().getzKServerName();
            //检查是否存在节点
             Stat stat1 = ZKUtil.getClient().checkExists().forPath(path);
             if (stat1 != null) {
@@ -91,5 +91,29 @@ public class ZKService {
             log.error("getDataByPath exception!", e);
         }
         return null;
+    }
+
+    /**
+     * 设置当前节点的值信息
+     * @param data
+     * @return
+     */
+    public static boolean setDataByCurrentNode(ZKNode data){
+        String path = "/" + EasyTaskConfig.getInstance().getzKServerName();
+        return setDataByPath(path,data);
+    }
+    /**
+     * 根据节点路径，设置新值
+     * @param path
+     * @return
+     */
+    public static boolean setDataByPath(String path,ZKNode data) {
+        try {
+            ZKUtil.getClient().setData().forPath(path,JSONObject.toJSONString(data).getBytes());
+            return true;
+        } catch (Exception e) {
+            log.error("", e);
+        }
+        return false;
     }
 }

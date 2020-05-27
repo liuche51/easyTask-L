@@ -2,10 +2,12 @@ package com.github.liuche51.easyTask.core;
 
 
 import com.github.liuche51.easyTask.backup.server.NettyServer;
+import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.dao.DbInit;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.Task;
+import com.github.liuche51.easyTask.register.ZKService;
 import com.github.liuche51.easyTask.register.ZKUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +116,7 @@ public class AnnularQueue {
         try {
             DbInit.init();
             recover();
-            ZKUtil.initZK();//启动与ZK的链接
+            ClusterService.initCurrentNode();
             NettyServer.getInstance().run();//启动组件的Netty服务端口
             isRunning = true;
             setDefaultThreadPool();
