@@ -13,7 +13,11 @@ public class ZKNode {
      * follows
      */
     private List<ZKFollow> follows=new LinkedList<>();
-    public ZKNode(String host,int port){}
+    public ZKNode(){}
+    public ZKNode(String host,int port){
+        this.host=host;
+        this.port=port;
+    }
     /**
      * 最近一次心跳时间
      */

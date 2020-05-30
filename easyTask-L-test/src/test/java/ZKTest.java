@@ -19,17 +19,6 @@ public class ZKTest {
             e.printStackTrace();
         }
     }
-
-    @Test
-    public void zkinit() {
-        try {
-
-            ZKUtil.initZK();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Test
     public void register() {
         try {

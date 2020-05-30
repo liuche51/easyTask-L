@@ -13,6 +13,7 @@ import java.util.List;
 
 public class ZKService {
     private static Logger log = LoggerFactory.getLogger(ZKService.class);
+
     /**
      * 当前节点注册为永久节点
      *
@@ -21,10 +22,10 @@ public class ZKService {
     public static void register(ZKNode data) {
         try {
             String path = "/" + EasyTaskConfig.getInstance().getzKServerName();
-           //检查是否存在节点
+            //检查是否存在节点
             Stat stat1 = ZKUtil.getClient().checkExists().forPath(path);
             if (stat1 != null) {
-                ZKUtil.getClient().setData().forPath(path,JSONObject.toJSONString(data).getBytes());//重新覆盖注册信息
+                ZKUtil.getClient().setData().forPath(path, JSONObject.toJSONString(data).getBytes());//重新覆盖注册信息
                 return;
             } else {
                 //创建永久节点
@@ -54,8 +55,10 @@ public class ZKService {
         String path = "/" + EasyTaskConfig.getInstance().getzKServerName();
         return getChildrenByPath(path);
     }
+
     /**
      * 根据节点路径，获取节点下的子节点名称
+     *
      * @param path
      * @return
      */
@@ -68,6 +71,7 @@ public class ZKService {
         }
         return null;
     }
+
     /**
      * 获取当前节点的值信息
      *
@@ -80,13 +84,14 @@ public class ZKService {
 
     /**
      * 根据节点路径，获取节点值信息
+     *
      * @param path
      * @return
      */
     public static ZKNode getDataByPath(String path) {
         try {
             byte[] bytes = ZKUtil.getClient().getData().forPath(path);
-            return JSONObject.parseObject(bytes,ZKNode.class);
+            return JSONObject.parseObject(bytes, ZKNode.class);
         } catch (Exception e) {
             log.error("getDataByPath exception!", e);
         }
@@ -95,25 +100,63 @@ public class ZKService {
 
     /**
      * 设置当前节点的值信息
+     *
      * @param data
      * @return
      */
-    public static boolean setDataByCurrentNode(ZKNode data){
+    public static boolean setDataByCurrentNode(ZKNode data) {
         String path = "/" + EasyTaskConfig.getInstance().getzKServerName();
-        return setDataByPath(path,data);
+        return setDataByPath(path, data);
     }
+
     /**
      * 根据节点路径，设置新值
+     *
      * @param path
      * @return
      */
-    public static boolean setDataByPath(String path,ZKNode data) {
+    public static boolean setDataByPath(String path, ZKNode data) {
         try {
-            ZKUtil.getClient().setData().forPath(path,JSONObject.toJSONString(data).getBytes());
+            ZKUtil.getClient().setData().forPath(path, JSONObject.toJSONString(data).getBytes());
             return true;
         } catch (Exception e) {
             log.error("", e);
         }
         return false;
+    }
+
+    /**
+     * 根据节点路径，删除节点
+     *
+     * @param path
+     * @return
+     */
+    public static boolean deleteNodeByPath(String path) {
+        try {
+            //检查是否存在节点
+            Stat stat1 = ZKUtil.getClient().checkExists().forPath(path);
+            if (stat1 != null) {
+                ZKUtil.getClient().delete().forPath(path);
+            }
+            return true;
+        } catch (Exception e) {
+            // 删除失败也无关紧要
+            //log.error("deleteNodeByPath", e);
+        }
+        return false;
+    }
+
+    /**
+     * 根据节点路径，删除节点。用于不需要知道删除结果的逻辑
+     *
+     * @param path
+     * @return
+     */
+    public static void deleteNodeByPathIgnoreResult(String path) {
+        try {
+            ZKUtil.getClient().delete().forPath(path);
+        } catch (Exception e) {
+            // 删除失败也无关紧要，
+        }
     }
 }

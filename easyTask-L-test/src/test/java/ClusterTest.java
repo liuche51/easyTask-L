@@ -1,9 +1,13 @@
+import com.github.liuche51.easyTask.cluster.ClusterMonitor;
+import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.TaskType;
 import com.github.liuche51.easyTask.core.TimeUnit;
 import com.github.liuche51.easyTask.test.task.CusTask1;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -15,6 +19,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 集群测试。模拟三个节点的伪集群
  */
 public class ClusterTest {
+    private static Logger log = LoggerFactory.getLogger(ClusterTest.class);
     @Test
     public void startNode1(){
         AnnularQueue annularQueue=AnnularQueue.getInstance();
@@ -23,7 +28,7 @@ public class ClusterTest {
             config.setTaskStorePath("C:\\db\\node1");
             config.setSQLlitePoolSize(5);
             config.setBackupCount(2);
-            config.setServerPort(2020);
+            config.setServerPort(2021);
             initData( annularQueue);
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,7 +42,7 @@ public class ClusterTest {
             config.setTaskStorePath("C:\\db\\node2");
             config.setSQLlitePoolSize(5);
             config.setBackupCount(2);
-            config.setServerPort(2021);
+            config.setServerPort(2022);
             initData( annularQueue);
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,7 +56,7 @@ public class ClusterTest {
             config.setTaskStorePath("C:\\db\\node3");
             config.setSQLlitePoolSize(5);
             config.setBackupCount(2);
-            config.setServerPort(2022);
+            config.setServerPort(2023);
             initData( annularQueue);
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,11 +93,15 @@ public class ClusterTest {
             }
         };
         task2.setParam(param2);
-        annularQueue.submit(task1);
-        annularQueue.submit(task2);
+        //annularQueue.submit(task1);
+        //annularQueue.submit(task2);
         //JUnit默认是非守护线程启动和Main方法不同。这里防止当前主线程退出导致子线程也退出了
         while (true){
             Thread.sleep(5000);
+            printinfo();
         }
+    }
+    private void printinfo(){
+       log.info("集群节点信息："+ClusterMonitor.getCurrentNodeInfo());
     }
 }

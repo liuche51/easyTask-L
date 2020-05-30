@@ -57,6 +57,14 @@ public class EasyTaskConfig {
      * 单机环境，需要服务端口设置为不同。指定的db文件夹也不要相同。IP相同没问题
      */
     private boolean enablePseudoCluster=false;
+    /**
+     * ZK节点信息更新超过60s就判断为失效节点，任何其他节点可删除掉
+     */
+    private int deleteZKTimeOunt=60;
+    /**
+     * ZK节点信息更新超过30s就判断为Leader失效节点，其Follow节点可进入选举新Leader
+     */
+    private int selectLeaderZKNodeTimeOunt=60;
 
     public int getBackupCount() {
         return backupCount;
@@ -151,5 +159,21 @@ public class EasyTaskConfig {
 
     public void setEnablePseudoCluster(boolean enablePseudoCluster) {
         this.enablePseudoCluster = enablePseudoCluster;
+    }
+
+    public int getDeleteZKTimeOunt() {
+        return deleteZKTimeOunt;
+    }
+
+    public void setDeleteZKTimeOunt(int deleteZKTimeOunt) {
+        this.deleteZKTimeOunt = deleteZKTimeOunt;
+    }
+
+    public int getSelectLeaderZKNodeTimeOunt() {
+        return selectLeaderZKNodeTimeOunt;
+    }
+
+    public void setSelectLeaderZKNodeTimeOunt(int selectLeaderZKNodeTimeOunt) {
+        this.selectLeaderZKNodeTimeOunt = selectLeaderZKNodeTimeOunt;
     }
 }

@@ -1,10 +1,12 @@
 package com.github.liuche51.easyTask.core;
 
+import com.github.liuche51.easyTask.cluster.Node;
+import com.github.liuche51.easyTask.dto.zk.ZKFollow;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
-import java.util.Enumeration;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Util {
@@ -47,5 +49,14 @@ public class Util {
             }
         }
         return null;
+    }
+    public static List<ZKFollow> nodeToZKFollow(List<Node> list){
+        if(list==null) return null;
+        List<ZKFollow> ret=new ArrayList<>(list.size());
+        list.forEach(x->{
+            ZKFollow temp=new ZKFollow(x.getHost(),x.getPort());
+            ret.add(temp);
+        });
+        return ret;
     }
 }
