@@ -27,80 +27,74 @@ import java.util.Random;
  */
 public class LeaderService {
     private static final Logger log = Logger.getLogger(LeaderService.class);
+
     /**
-     * 节点启动初始化。
-     * 先查看自己是否在zk注册，没有注册则直接选择follow。注册了就继续使用当前的follow
+     * 节点启动初始化选举follows。
      * @return
      */
     public static boolean initSelectFollows() {
         try {
             List<Node> follows = new LinkedList<>();//备选follows
-            int count= EasyTaskConfig.getInstance().getBackupCount();
-            ZKNode node = ZKService.getDataByCurrentNode();
-            if(node==null||node.getFollows()==null||node.getFollows().size()<count){//不存在注册信息或者follow节点不足就重新选择follow
-                List<String> availableFollows=ZKService.getChildrenByNameSpase();
-                //排除自己
-                Optional<String> temp=availableFollows.stream().filter(x->x.equals(EasyTaskConfig.getInstance().getzKServerName())).findFirst();
-                if(temp.isPresent())
-                    availableFollows.remove(temp.get());
-                if(availableFollows.size()<count)//如果可选备库节点数量不足，则等待1s，然后重新选。注意：等待会阻塞整个服务可用性
-                {
-                    log.info("availableFollows is not enough! only has "+availableFollows.size());
-                    Thread.sleep(1000);
-                    initSelectFollows();
-                } else {
-                    Random random = new Random();
-                    for (int i = 0; i <count; i++) {
-                        int index = random.nextInt(availableFollows.size());//随机生成的随机数范围就变成[0,size)。
-                        ZKNode node2=ZKService.getDataByPath(StringConstant.CHAR_SPRIT+availableFollows.get(index));
-                        log.debug(JSONObject.toJSONString(node));
-                        //如果最后心跳时间超过60s，则直接删除该节点信息。
-                        if(ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOunt())
-                        .compareTo(DateUtils.parse(node2.getLastHeartbeat()))>0){
-                            ZKService.deleteNodeByPathIgnoreResult(StringConstant.CHAR_SPRIT+availableFollows.get(index));
-                        }else if(ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOunt())
-                                .compareTo(DateUtils.parse(node2.getLastHeartbeat()))>0){
-                            //如果最后心跳时间超过30s，也不能将该节点作为follow
-                        }else if(follows.size()<count){
-                            follows.add(new Node(node2.getHost(),node2.getPort()));
-                            if(follows.size()==count)//已选数量够了就跳出
-                                break;
-                        }
-                        availableFollows.remove(index);
+            int count = EasyTaskConfig.getInstance().getBackupCount();
+            List<String> availableFollows = ZKService.getChildrenByNameSpase();
+            //排除自己
+            Optional<String> temp = availableFollows.stream().filter(x -> x.equals(EasyTaskConfig.getInstance().getzKServerName())).findFirst();
+            if (temp.isPresent())
+                availableFollows.remove(temp.get());
+            if (availableFollows.size() < count)//如果可选备库节点数量不足，则等待1s，然后重新选。注意：等待会阻塞整个服务可用性
+            {
+                log.info("availableFollows is not enough! only has " + availableFollows.size());
+                Thread.sleep(1000);
+                initSelectFollows();
+            } else {
+                Random random = new Random();
+                for (int i = 0; i < count; i++) {
+                    int index = random.nextInt(availableFollows.size());//随机生成的随机数范围就变成[0,size)。
+                    ZKNode node2 = ZKService.getDataByPath(StringConstant.CHAR_SPRIT + availableFollows.get(index));
+                    //如果最后心跳时间超过60s，则直接删除该节点信息。
+                    if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOunt())
+                            .compareTo(DateUtils.parse(node2.getLastHeartbeat())) > 0) {
+                        ZKService.deleteNodeByPathIgnoreResult(StringConstant.CHAR_SPRIT + availableFollows.get(index));
+                    } else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOunt())
+                            .compareTo(DateUtils.parse(node2.getLastHeartbeat())) > 0) {
+                        //如果最后心跳时间超过30s，也不能将该节点作为follow
+                    } else if (follows.size() < count) {
+                        follows.add(new Node(node2.getHost(), node2.getPort()));
+                        if (follows.size() == count)//已选数量够了就跳出
+                            break;
                     }
+                    availableFollows.remove(index);
                 }
-            }else if(node.getFollows()!=null){
-                node.getFollows().forEach(x->{
-                    follows.add(new Node(x.getHost(),x.getPort()));
-                });
             }
             ClusterService.CURRENTNODE.setFollows(follows);
-            ClusterService.CLUSTERPOOL.submit(new Runnable() {
+            //通知follows当前Leader位置
+            EasyTaskConfig.getInstance().getClusterPool().submit(new Runnable() {
                 @Override
                 public void run() {
                     notifyFollowsLeaderPosition();
                 }
             });
-        }catch (Exception e){
-            log.error("node select follows error.",e);
+        } catch (Exception e) {
+            log.error("node select follows error.", e);
         }
         return true;
     }
 
     /**
      * 通知follows当前Leader位置
+     *
      * @return
      */
-    public static boolean notifyFollowsLeaderPosition(){
-        List<Node> follows=ClusterService.CURRENTNODE.getFollows();
-        if(follows!=null){
-            follows.forEach(x->{
+    public static boolean notifyFollowsLeaderPosition() {
+        List<Node> follows = ClusterService.CURRENTNODE.getFollows();
+        if (follows != null) {
+            follows.forEach(x -> {
                 try {
-                    Dto.Frame.Builder builder=Dto.Frame.newBuilder();
+                    Dto.Frame.Builder builder = Dto.Frame.newBuilder();
                     builder.setInterfaceName("Cluster").setClassName("LeaderPosition").setBody(EasyTaskConfig.getInstance().getzKServerName());
                     x.getClient().sendASyncMsg(builder.build());
-                }catch (Exception e){
-                    log.error("notifyFollowsLeaderPosition.",e);
+                } catch (Exception e) {
+                    log.error("notifyFollowsLeaderPosition.", e);
                 }
             });
         }

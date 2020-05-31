@@ -116,8 +116,8 @@ public class AnnularQueue {
         try {
             DbInit.init();
             recover();
-            ClusterService.initCurrentNode();
             NettyServer.getInstance().run();//启动组件的Netty服务端口
+            ClusterService.initCurrentNode();
             isRunning = true;
             setDefaultThreadPool();
             int lastSecond = 0;

@@ -7,6 +7,8 @@ import com.github.liuche51.easyTask.register.ZKUtil;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -71,6 +73,10 @@ public class EasyTaskConfig {
      * 节点对zk的心跳频率。默认2s一次
      */
     private int heartBeat=2;
+    /**
+     * 集群总线程池
+     */
+    private ExecutorService clusterPool = null;
 
     public int getBackupCount() {
         return backupCount;
@@ -184,11 +190,17 @@ public class EasyTaskConfig {
     }
 
     public int getHeartBeat() {
-        return heartBeat;
+        return heartBeat*1000;
     }
 
     public void setHeartBeat(int heartBeat) {
         this.heartBeat = heartBeat;
+    }
+
+    public ExecutorService getClusterPool() {
+        if(this.clusterPool==null)
+            this.clusterPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+        return clusterPool;
     }
 
     /**
@@ -199,6 +211,6 @@ public class EasyTaskConfig {
     public void setClusterPool(ThreadPoolExecutor clusterPool) throws Exception {
         if (AnnularQueue.isRunning)
             throw new Exception("please before AnnularQueue started set");
-        ClusterService.CLUSTERPOOL = clusterPool;
+        this.clusterPool = clusterPool;
     }
 }

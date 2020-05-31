@@ -38,6 +38,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 							break;
 
 					}
+					break;
 				case "Cluster":
 					switch (frame.getClassName()){
 						case "LeaderPosition":
@@ -45,6 +46,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 							FollowService.updateLeaderPosition(ret);
 							break;
 					}
+					break;
 				default:throw new Exception("unknown interface method");
 			}
 		} catch (Exception e) {

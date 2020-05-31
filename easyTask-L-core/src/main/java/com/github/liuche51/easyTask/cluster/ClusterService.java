@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.cluster;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.backup.client.NettyClient;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.AnnularQueue;
@@ -21,10 +22,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ClusterService {
     private static Logger log = LoggerFactory.getLogger(ClusterService.class);
     /**
-     * 集群总线程池
-     */
-    public static ExecutorService CLUSTERPOOL = null;
-    /**
      * 当前集群节点的Node对象
      */
     public static Node CURRENTNODE;
@@ -43,6 +40,7 @@ public class ClusterService {
             node.setLastHeartbeat(DateUtils.getCurrentDateTime());
             ZKService.register(node);
             LeaderService.initSelectFollows();
+            log.info("DDDDDDDD"+JSONObject.toJSONString(CURRENTNODE.getFollows()));
             node.setFollows(Util.nodeToZKHost(CURRENTNODE.getFollows()));
             ZKService.setDataByCurrentNode(node);
             heartBeatToZK();
