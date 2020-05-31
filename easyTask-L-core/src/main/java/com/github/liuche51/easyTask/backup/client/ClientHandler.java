@@ -16,7 +16,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
     protected static final Logger log = Logger.getLogger(ClientHandler.class);
     private ChannelHandlerContext ctx;
     /**
-     * 线程同步信号量。用于客户端同步调用服务端
+     * 线程同步信号量。用于客户端同步调用或异步调用需返回结果处理时
      */
     private ChannelPromise promise;
     /**

@@ -1,12 +1,9 @@
 package com.github.liuche51.easyTask.cluster;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.liuche51.easyTask.backup.client.NettyClient;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
-import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
-import com.github.liuche51.easyTask.dto.zk.ZKHost;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.register.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
@@ -14,10 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class ClusterService {
     private static Logger log = LoggerFactory.getLogger(ClusterService.class);
@@ -40,7 +33,6 @@ public class ClusterService {
             node.setLastHeartbeat(DateUtils.getCurrentDateTime());
             ZKService.register(node);
             LeaderService.initSelectFollows();
-            log.info("DDDDDDDD"+JSONObject.toJSONString(CURRENTNODE.getFollows()));
             node.setFollows(Util.nodeToZKHost(CURRENTNODE.getFollows()));
             ZKService.setDataByCurrentNode(node);
             heartBeatToZK();

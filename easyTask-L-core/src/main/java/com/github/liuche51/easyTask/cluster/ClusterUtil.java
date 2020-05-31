@@ -15,12 +15,12 @@ public class ClusterUtil {
     public static boolean sendSyncMsgWithCount(NettyClient client, Object msg, int tryCount) {
         if (tryCount == 0) return false;
         try {
-            tryCount--;
             Object ret = client.sendSyncMsg(msg);
             Dto.Frame frame = (Dto.Frame) ret;
             String body = frame.getBody();
             if ("true".equals(body))
                 return true;
+            tryCount--;
         } catch (Exception e) {
             tryCount--;
         }

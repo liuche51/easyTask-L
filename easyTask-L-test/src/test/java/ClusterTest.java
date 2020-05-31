@@ -26,8 +26,6 @@ public class ClusterTest {
         EasyTaskConfig config=EasyTaskConfig.getInstance();
         try {
             config.setTaskStorePath("C:\\db\\node1");
-            config.setSQLlitePoolSize(5);
-            config.setBackupCount(2);
             config.setServerPort(2021);
             initData( annularQueue);
         } catch (Exception e) {
@@ -40,8 +38,6 @@ public class ClusterTest {
         EasyTaskConfig config=EasyTaskConfig.getInstance();
         try {
             config.setTaskStorePath("C:\\db\\node2");
-            config.setSQLlitePoolSize(5);
-            config.setBackupCount(2);
             config.setServerPort(2022);
             initData( annularQueue);
         } catch (Exception e) {
@@ -54,8 +50,6 @@ public class ClusterTest {
         EasyTaskConfig config=EasyTaskConfig.getInstance();
         try {
             config.setTaskStorePath("C:\\db\\node3");
-            config.setSQLlitePoolSize(5);
-            config.setBackupCount(2);
             config.setServerPort(2023);
             initData( annularQueue);
         } catch (Exception e) {
@@ -63,6 +57,11 @@ public class ClusterTest {
         }
     }
     private void initData(AnnularQueue annularQueue) throws Exception {
+        EasyTaskConfig config=EasyTaskConfig.getInstance();
+        config.setSQLlitePoolSize(5);
+        config.setBackupCount(2);
+        //config.setDeleteZKTimeOunt(500);
+        //config.setSelectLeaderZKNodeTimeOunt(500);
         annularQueue.setDispatchThreadPool( new ThreadPoolExecutor(4, 4, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>()));
         annularQueue.setWorkerThreadPool( new ThreadPoolExecutor(4, 8, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,

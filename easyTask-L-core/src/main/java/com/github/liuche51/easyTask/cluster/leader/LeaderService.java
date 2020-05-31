@@ -14,6 +14,9 @@ import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.register.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
+import io.netty.channel.ChannelFuture;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.apache.log4j.Logger;
 
 import java.time.ZonedDateTime;
@@ -45,7 +48,7 @@ public class LeaderService {
             {
                 log.info("availableFollows is not enough! only has " + availableFollows.size());
                 Thread.sleep(1000);
-                initSelectFollows();
+                return initSelectFollows();
             } else {
                 Random random = new Random();
                 for (int i = 0; i < count; i++) {
@@ -68,40 +71,12 @@ public class LeaderService {
             }
             ClusterService.CURRENTNODE.setFollows(follows);
             //通知follows当前Leader位置
-            EasyTaskConfig.getInstance().getClusterPool().submit(new Runnable() {
-                @Override
-                public void run() {
-                    notifyFollowsLeaderPosition();
-                }
-            });
+            LeaderUtil.notifyFollowsLeaderPosition(follows,3);
         } catch (Exception e) {
             log.error("node select follows error.", e);
         }
         return true;
     }
-
-    /**
-     * 通知follows当前Leader位置
-     *
-     * @return
-     */
-    public static boolean notifyFollowsLeaderPosition() {
-        List<Node> follows = ClusterService.CURRENTNODE.getFollows();
-        if (follows != null) {
-            follows.forEach(x -> {
-                try {
-                    Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-                    builder.setInterfaceName("Cluster").setClassName("LeaderPosition").setBody(EasyTaskConfig.getInstance().getzKServerName());
-                    x.getClient().sendASyncMsg(builder.build());
-                } catch (Exception e) {
-                    log.error("notifyFollowsLeaderPosition.", e);
-                }
-            });
-        }
-        return true;
-
-    }
-
     /**
      * 同步任务至follow。
      *
