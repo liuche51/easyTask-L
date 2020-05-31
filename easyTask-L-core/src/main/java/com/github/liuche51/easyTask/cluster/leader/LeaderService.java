@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.backup.client.NettyClient;
 import com.github.liuche51.easyTask.backup.server.NettyServer;
 import com.github.liuche51.easyTask.cluster.ClusterService;
+import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.Schedule;
@@ -74,10 +75,37 @@ public class LeaderService {
                 });
             }
             ClusterService.CURRENTNODE.setFollows(follows);
+            ClusterService.CLUSTERPOOL.submit(new Runnable() {
+                @Override
+                public void run() {
+                    notifyFollowsLeaderPosition();
+                }
+            });
         }catch (Exception e){
             log.error("node select follows error.",e);
         }
         return true;
+    }
+
+    /**
+     * 通知follows当前Leader位置
+     * @return
+     */
+    public static boolean notifyFollowsLeaderPosition(){
+        List<Node> follows=ClusterService.CURRENTNODE.getFollows();
+        if(follows!=null){
+            follows.forEach(x->{
+                try {
+                    Dto.Frame.Builder builder=Dto.Frame.newBuilder();
+                    builder.setInterfaceName("Cluster").setClassName("LeaderPosition").setBody(EasyTaskConfig.getInstance().getzKServerName());
+                    x.getClient().sendASyncMsg(builder.build());
+                }catch (Exception e){
+                    log.error("notifyFollowsLeaderPosition.",e);
+                }
+            });
+        }
+        return true;
+
     }
 
     /**
@@ -92,7 +120,7 @@ public class LeaderService {
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
             builder.setInterfaceName("ScheduleBackup").setClassName("Schedule").setBodyBytes(s.toByteString());
             NettyClient client = follow.getClient();
-            boolean ret = LeaderUtil.sendSyncMsgWithCount(client, builder.build(), 3);
+            boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 3);
             if (ret) continue;
             else return false;
         }

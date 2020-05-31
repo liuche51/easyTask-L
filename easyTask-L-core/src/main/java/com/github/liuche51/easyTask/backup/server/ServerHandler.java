@@ -24,6 +24,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 		// 收到消息直接打印输出
 		log.debug("Received Client:"+ctx.channel().remoteAddress() + " send : " + msg);
 		Dto.Frame.Builder builder=Dto.Frame.newBuilder();
+		builder.setBody("true");
 		builder.setInterfaceName("Result").setClassName("Common");
 		try {
 			Dto.Frame frame= (Dto.Frame) msg;
@@ -37,20 +38,22 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 							break;
 
 					}
-				case "Result":
+				case "Cluster":
 					switch (frame.getClassName()){
-						case "Common":
+						case "LeaderPosition":
 							String ret=frame.getBody();
-
+							FollowService.updateLeaderPosition(ret);
+							break;
 					}
+				default:throw new Exception("unknown interface method");
 			}
 		} catch (Exception e) {
 			log.error("Deal client msg occured error！",e);
 			builder.setBody("false");
 		}
-		builder.setBody("true");
+
 		// 返回客户端消息 - 我已经接收到了你的消息
-		ctx.writeAndFlush(builder);
+		ctx.writeAndFlush(builder.build());
 	}
 
 	@Override

@@ -1,11 +1,13 @@
 package com.github.liuche51.easyTask.core;
 
 import com.github.liuche51.easyTask.backup.server.NettyServer;
+import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.register.ZKUtil;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 系统配置项
@@ -65,6 +67,10 @@ public class EasyTaskConfig {
      * ZK节点信息更新超过30s就判断为Leader失效节点，其Follow节点可进入选举新Leader
      */
     private int selectLeaderZKNodeTimeOunt=60;
+    /**
+     * 节点对zk的心跳频率。默认2s一次
+     */
+    private int heartBeat=2;
 
     public int getBackupCount() {
         return backupCount;
@@ -175,5 +181,24 @@ public class EasyTaskConfig {
 
     public void setSelectLeaderZKNodeTimeOunt(int selectLeaderZKNodeTimeOunt) {
         this.selectLeaderZKNodeTimeOunt = selectLeaderZKNodeTimeOunt;
+    }
+
+    public int getHeartBeat() {
+        return heartBeat;
+    }
+
+    public void setHeartBeat(int heartBeat) {
+        this.heartBeat = heartBeat;
+    }
+
+    /**
+     * 设置集群总线程池
+     * @param clusterPool
+     * @throws Exception
+     */
+    public void setClusterPool(ThreadPoolExecutor clusterPool) throws Exception {
+        if (AnnularQueue.isRunning)
+            throw new Exception("please before AnnularQueue started set");
+        ClusterService.CLUSTERPOOL = clusterPool;
     }
 }

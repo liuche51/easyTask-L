@@ -1,9 +1,7 @@
 import com.alibaba.fastjson.JSONObject;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import com.github.liuche51.easyTask.dto.zk.ZKFollow;
+import com.github.liuche51.easyTask.dto.zk.ZKHost;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.register.ZKService;
-import com.github.liuche51.easyTask.register.ZKUtil;
 import org.junit.Test;
 
 import java.time.ZonedDateTime;
@@ -26,9 +24,9 @@ public class ZKTest {
             data.setHost("127.0.0.1");
             data.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             data.setLastHeartbeat(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            List<ZKFollow> follows = new LinkedList<>();
-            ZKFollow follow1 = new ZKFollow("127.0.0.2");
-            ZKFollow follow2 = new ZKFollow("127.0.0.3");
+            List<ZKHost> follows = new LinkedList<>();
+            ZKHost follow1 = new ZKHost("127.0.0.2");
+            ZKHost follow2 = new ZKHost("127.0.0.3");
             follows.add(follow1);
             follows.add(follow2);
             data.setFollows(follows);

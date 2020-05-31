@@ -38,7 +38,9 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
 		{
 			promise.setSuccess();
 			this.response=msg;
-		}
+		}else {
+
+        }
     }
 
     @Override

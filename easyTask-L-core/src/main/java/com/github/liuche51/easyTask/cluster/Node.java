@@ -6,17 +6,28 @@ import com.github.liuche51.easyTask.core.EasyTaskConfig;
 
 import java.io.Serializable;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 节点对象
  */
 public class Node implements Serializable {
-    private String host;
+    private String host="";
     private int port= EasyTaskConfig.getInstance().getServerPort();
+    /**
+     * 当前节点的所有follows
+     */
     private List<Node> follows=new LinkedList<>();
-    private List<Node> leaders=new LinkedList<>();
+    /**
+     * 当前节点的所有leader
+     */
+    private Map<String,Node> leaders=new HashMap<>();
+    /**
+     * 当前节点的客户端连接。
+     */
     @JSONField(serialize = false)
     private NettyClient client;
     public Node(String host,int port){
@@ -47,11 +58,11 @@ public class Node implements Serializable {
         this.follows = follows;
     }
 
-    public List<Node> getLeaders() {
+    public  Map<String,Node> getLeaders() {
         return leaders;
     }
 
-    public void setLeaders(List<Node> leaders) {
+    public void setLeaders(Map<String,Node> leaders) {
         this.leaders = leaders;
     }
 
@@ -64,6 +75,10 @@ public class Node implements Serializable {
     public void setClient(NettyClient client) {
         this.client = client;
     }
+
+    /**
+     * 构建到当前节点的客户端连接
+     */
     private void buildConnect(){
         this.client=new NettyClient(new InetSocketAddress(host,port));
     }

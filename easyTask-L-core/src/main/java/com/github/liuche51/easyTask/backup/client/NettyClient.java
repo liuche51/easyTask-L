@@ -26,7 +26,12 @@ public class NettyClient {
     private Bootstrap bootstrap;
     private ChannelFuture channelFuture;
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
-    ClientHandler handler;
+    private ClientHandler handler;
+
+    public ClientHandler getHandler() {
+        return handler;
+    }
+
     /**
      * 客户端通道
      */
@@ -57,6 +62,7 @@ public class NettyClient {
             clientChannel = channelFuture.channel();
             //注册连接事件
             channelFuture.addListener((ChannelFutureListener) future -> {
+                future.get();
                 //如果连接成功
                 if (future.isSuccess()) {
                     log.info("客户端[" + channelFuture.channel().localAddress().toString() + "]已连接...");
@@ -95,7 +101,7 @@ public class NettyClient {
         ChannelPromise promise = clientChannel.newPromise();
         handler.setPromise(promise);
         clientChannel.writeAndFlush(msg);
-        promise.await(EasyTaskConfig.getInstance().getTimeOut(), TimeUnit.SECONDS);
+        promise.await(EasyTaskConfig.getInstance().getTimeOut(), TimeUnit.SECONDS);//等待固定的时间，超时就认为失败，需要重发
         return handler.getResponse();
     }
 
@@ -106,6 +112,19 @@ public class NettyClient {
      * @return
      */
     public ChannelFuture sendASyncMsg(Object msg) {
+        ChannelPromise promise = clientChannel.newPromise();
+        handler.setPromise(promise);
+        return clientChannel.writeAndFlush(msg);
+    }
+    /**
+     * 发送异步消息。不通过信号量控制。
+     * 可以实现一个Nettyclient并发处理N个请求。但不能使用future.addListener方式处理返回结果了。
+     *需要在com.github.liuche51.easyTask.backup.client.ClientHandler#channelRead0中统一处理。
+     * 这样需要每个请求中附带一个唯一标识。服务端返回结果时也戴上这个标识才行。否则就不知道处理的是哪个请求返回的结果。
+     * @param msg
+     * @return
+     */
+    public ChannelFuture sendASyncMsgWithoutPromise(Object msg) {
         return clientChannel.writeAndFlush(msg);
     }
 

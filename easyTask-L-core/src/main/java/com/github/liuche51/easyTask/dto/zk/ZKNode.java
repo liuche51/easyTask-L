@@ -2,7 +2,6 @@ package com.github.liuche51.easyTask.dto.zk;
 
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,7 +11,11 @@ public class ZKNode {
     /**
      * follows
      */
-    private List<ZKFollow> follows=new LinkedList<>();
+    private List<ZKHost> follows=new LinkedList<>();
+    /**
+     * leaders
+     */
+    private List<ZKHost> leaders=new LinkedList<>();
     public ZKNode(){}
     public ZKNode(String host,int port){
         this.host=host;
@@ -40,12 +43,20 @@ public class ZKNode {
         this.port = port;
     }
 
-    public List<ZKFollow> getFollows() {
+    public List<ZKHost> getFollows() {
         return follows;
     }
 
-    public void setFollows(List<ZKFollow> follows) {
+    public void setFollows(List<ZKHost> follows) {
         this.follows = follows;
+    }
+
+    public List<ZKHost> getLeaders() {
+        return leaders;
+    }
+
+    public void setLeaders(List<ZKHost> leaders) {
+        this.leaders = leaders;
     }
 
     public String getLastHeartbeat() {
