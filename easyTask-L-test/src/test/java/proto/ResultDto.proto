@@ -1,0 +1,5 @@
+option java_outer_classname = "ResultDto";//可扩展的通信协议
+message Result {
+  required string result = 1;
+  required string msg = 2;
+}
