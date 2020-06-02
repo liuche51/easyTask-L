@@ -54,16 +54,6 @@ public class DbInit {
                         ");";
                 SqliteHelper.executeUpdateForSync(sql2);
             }
-            boolean exist3 = BackupServerDao.existTable();
-            if (!exist3) {
-                //备份任务的follow节点
-                String sql3 = "CREATE TABLE \"backup_server\" (\n" +
-                        "\"id\"  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n" +
-                        "\"server\"  TEXT,\n" +
-                        "\"create_time\"  TEXT\n" +
-                        ");";
-                SqliteHelper.executeUpdateForSync(sql3);
-            }
             hasInit = true;
             log.debug("Sqlite 初始化完成。线程:{}", Thread.currentThread().getId());
             return true;

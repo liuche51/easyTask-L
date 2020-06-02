@@ -3,6 +3,7 @@ package com.github.liuche51.easyTask.cluster;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.github.liuche51.easyTask.backup.client.NettyClient;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.net.InetSocketAddress;
@@ -15,25 +16,28 @@ import java.util.Map;
  * 节点对象
  */
 public class Node implements Serializable {
-    private String host="";
-    private int port= EasyTaskConfig.getInstance().getServerPort();
+    private static final Logger log = Logger.getLogger(Node.class);
+    private String host = "";
+    private int port = EasyTaskConfig.getInstance().getServerPort();
     /**
      * 当前节点的所有follows
      */
-    private List<Node> follows=new LinkedList<>();
+    private List<Node> follows = new LinkedList<>();
     /**
      * 当前节点的所有leader
      */
-    private Map<String,Node> leaders=new HashMap<>();
+    private Map<String, Node> leaders = new HashMap<>();
     /**
      * 当前节点的客户端连接。
      */
     @JSONField(serialize = false)
     private NettyClient client;
-    public Node(String host,int port){
-        this.host=host;
-        this.port=port;
+
+    public Node(String host, int port) {
+        this.host = host;
+        this.port = port;
     }
+
     public String getHost() {
         return host;
     }
@@ -58,18 +62,30 @@ public class Node implements Serializable {
         this.follows = follows;
     }
 
-    public  Map<String,Node> getLeaders() {
+    public Map<String, Node> getLeaders() {
         return leaders;
     }
 
-    public void setLeaders(Map<String,Node> leaders) {
+    public void setLeaders(Map<String, Node> leaders) {
         this.leaders = leaders;
     }
 
     public NettyClient getClient() {
-        if(client==null)
+        if (client == null)
             buildConnect();
         return client;
+    }
+
+    public NettyClient getClientWithCount(int tryCount) {
+        if (tryCount == 0) return client;
+        buildConnect();
+        tryCount--;
+        if (client != null) return client;
+        else
+        {
+            log.debug("getClientWithCount tryCount="+tryCount);
+            return getClientWithCount(tryCount);
+        }
     }
 
     public void setClient(NettyClient client) {
@@ -79,7 +95,7 @@ public class Node implements Serializable {
     /**
      * 构建到当前节点的客户端连接
      */
-    private void buildConnect(){
-        this.client=new NettyClient(new InetSocketAddress(host,port));
+    private void buildConnect() {
+        this.client = new NettyClient(new InetSocketAddress(host, port));
     }
 }

@@ -92,8 +92,8 @@ public class ClusterTest {
             }
         };
         task2.setParam(param2);
-        //annularQueue.submit(task1);
-        //annularQueue.submit(task2);
+        annularQueue.submitAllowWait(task1);
+        annularQueue.submitAllowWait(task2);
         //JUnit默认是非守护线程启动和Main方法不同。这里防止当前主线程退出导致子线程也退出了
         while (true){
             Thread.sleep(5000);

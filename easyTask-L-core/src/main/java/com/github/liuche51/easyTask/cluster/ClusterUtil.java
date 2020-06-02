@@ -1,9 +1,12 @@
 package com.github.liuche51.easyTask.cluster;
 
 import com.github.liuche51.easyTask.backup.client.NettyClient;
+import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.dto.proto.Dto;
+import org.apache.log4j.Logger;
 
 public class ClusterUtil {
+    private static final Logger log = Logger.getLogger(ClusterUtil.class);
     /**
      * 带重试次数的同步消息发送
      *
@@ -24,6 +27,7 @@ public class ClusterUtil {
         } catch (Exception e) {
             tryCount--;
         }
+        log.debug("sendSyncMsgWithCount tryCount="+tryCount);
         return sendSyncMsgWithCount(client, msg, tryCount);
 
     }

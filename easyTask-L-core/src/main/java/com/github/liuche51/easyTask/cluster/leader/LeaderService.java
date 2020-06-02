@@ -83,15 +83,18 @@ public class LeaderService {
      * @param schedule
      * @return
      */
-    public static boolean syncDataToFollow(Schedule schedule, Node node) {
-        for (Node follow : node.getFollows()) {
-            ScheduleDto.Schedule s = schedule.toScheduleDto();
-            Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setInterfaceName("ScheduleBackup").setBodyBytes(s.toByteString());
-            NettyClient client = follow.getClient();
-            boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 3);
-            if (ret) continue;
-            else return false;
+    public static boolean syncDataToFollows(Schedule schedule) {
+        List<Node> follows=ClusterService.CURRENTNODE.getFollows();
+        if(follows!=null){
+            for (Node follow : follows) {
+                ScheduleDto.Schedule s = schedule.toScheduleDto();
+                Dto.Frame.Builder builder = Dto.Frame.newBuilder();
+                builder.setInterfaceName(StringConstant.SYNC_SCHEDULE_BACKUP).setBodyBytes(s.toByteString()).setIdentity(StringConstant.EMPTY);
+                NettyClient client = follow.getClientWithCount(3);
+                if(client==null) return false;
+                boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 3);
+                if (!ret) return false;
+            }
         }
         return true;
     }

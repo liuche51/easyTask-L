@@ -164,7 +164,30 @@ public class AnnularQueue {
 
     }
 
+    /**
+     * 客户端提交任务。允许线程等待，直到easyTask组件启动完成
+     *
+     * @param schedule
+     * @return
+     * @throws Exception
+     */
+    public String submitAllowWait(Task schedule) throws Exception {
+        while (true){
+            if (!isRunning) Thread.sleep(1000);//如果未启动则休眠1s
+            else return submit(schedule);
+        }
+
+    }
+
+    /**
+     * 客户端提交任务。如果easyTask组件未启动，则抛出异常
+     *
+     * @param schedule
+     * @return
+     * @throws Exception
+     */
     public String submit(Task schedule) throws Exception {
+        if (!isRunning) throw new Exception("the easyTask has not started,please wait a moment!");
         schedule.getScheduleExt().setId(Util.generateUniqueId());
         if (schedule.getTaskType().equals(TaskType.PERIOD)) {
             if (schedule.isImmediateExecute())

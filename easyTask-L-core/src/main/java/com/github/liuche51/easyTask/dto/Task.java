@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.dto;
 
+import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.TaskType;
 import com.github.liuche51.easyTask.core.TimeUnit;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
@@ -73,11 +74,18 @@ public class Task {
     public void setParam(Map<String,String> param) {
         this.param = param;
     }
-    public void save() {
+
+    /**
+     * 任务数据持久化。含同步至备份库
+     * @throws Exception
+     */
+    public void save() throws Exception {
         Schedule schedule=Schedule.valueOf(this);
-        ScheduleDao.save(schedule);
+        boolean ret1=ScheduleDao.save(schedule);
+        if(!ret1) throw new Exception("scheduleDao save exception!");
         //数据高可靠分布式存储
-        //LeaderService.syncDataToFollow(schedule);
+        boolean ret2=LeaderService.syncDataToFollows(schedule);
+        if(!ret2) throw new Exception("syncDataToFollows exception!");
     }
     /**
      * 获取周期性任务下次执行时间。已当前时间为基准计算下次而不是上次截止执行时间
