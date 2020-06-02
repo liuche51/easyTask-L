@@ -1,8 +1,10 @@
 package com.github.liuche51.easyTask.backup.server;
 
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
+import com.github.liuche51.easyTask.dto.proto.ResultDto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.dto.proto.Dto;
+import com.github.liuche51.easyTask.util.StringConstant;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
@@ -24,29 +26,25 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 		// 收到消息直接打印输出
 		log.debug("Received Client:"+ctx.channel().remoteAddress() + " send : " + msg);
 		Dto.Frame.Builder builder=Dto.Frame.newBuilder();
-		builder.setBody("true");
-		builder.setInterfaceName("Result").setClassName("Common");
+		ResultDto.Result.Builder result=ResultDto.Result.newBuilder();
+		result.setMsg("success");
+		result.setResult("true");
+		builder.setBodyBytes(result.build().toByteString());
+		builder.setInterfaceName("Result");
 		try {
 			Dto.Frame frame= (Dto.Frame) msg;
+			builder.setIdentity(frame.getIdentity());
 			switch (frame.getInterfaceName()){
-				case "ScheduleBackup":
-					switch (frame.getClassName()){
-						case "Schedule":
+				case StringConstant
+						.SYNC_SCHEDULE_BACKUP:
 							ScheduleDto.Schedule schedule=ScheduleDto.Schedule.parseFrom(frame.getBodyBytes());
 							FollowService.saveScheduleBak(schedule);
 							int y=0;
 							break;
-
-					}
-					break;
-				case "Cluster":
-					switch (frame.getClassName()){
-						case "LeaderPosition":
+				case StringConstant.SYNC_LEADER_POSITION:
 							String ret=frame.getBody();
 							FollowService.updateLeaderPosition(ret);
 							break;
-					}
-					break;
 				default:throw new Exception("unknown interface method");
 			}
 		} catch (Exception e) {

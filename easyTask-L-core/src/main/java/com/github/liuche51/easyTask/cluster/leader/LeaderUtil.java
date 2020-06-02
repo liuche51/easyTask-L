@@ -6,6 +6,7 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.register.ZKService;
+import com.github.liuche51.easyTask.util.StringConstant;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -50,7 +51,8 @@ public class LeaderUtil {
         final boolean[] ret = {false};
         try {
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setInterfaceName("Cluster").setClassName("LeaderPosition").setBody(EasyTaskConfig.getInstance().getzKServerName());
+            builder.setIdentity(StringConstant.EMPTY);
+            builder.setInterfaceName(StringConstant.SYNC_LEADER_POSITION).setBody(EasyTaskConfig.getInstance().getzKServerName());
             ChannelFuture future=follow.getClient().sendASyncMsgWithoutPromise(builder.build());
             tryCount--;
             future.addListener(new GenericFutureListener<Future<? super Void>>() {

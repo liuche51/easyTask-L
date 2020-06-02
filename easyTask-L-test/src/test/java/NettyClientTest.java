@@ -2,6 +2,8 @@ import com.github.liuche51.easyTask.backup.client.ClientHandler;
 import com.github.liuche51.easyTask.backup.client.NettyClient;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
+import com.github.liuche51.easyTask.util.StringConstant;
+import com.github.liuche51.easyTask.util.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelPromise;
@@ -24,7 +26,8 @@ public class NettyClientTest {
                         .setTaskType("PERIOD").setPeriod(30).setUnit("SECONDS")
                         .setParam("birthday#;1986-1-1&;threadid#;1&;name#;Jack&;age#;32&");
                 Dto.Frame.Builder builder1=Dto.Frame.newBuilder();
-                builder1.setInterfaceName("ScheduleBackup").setClassName("Schedule").setBodyBytes(builder.build().toByteString());
+                builder1.setIdentity(StringConstant.EMPTY);
+                builder1.setInterfaceName("SyncScheduleBackup").setBodyBytes(builder.build().toByteString());
                 System.out.println("发送任务:"+id);
                 Object msg= client.sendSyncMsg(builder1.build());
                 Dto.Frame frame= (Dto.Frame) msg;
@@ -48,7 +51,8 @@ public class NettyClientTest {
                         .setTaskType("PERIOD").setPeriod(30).setUnit("SECONDS")
                         .setParam("birthday#;1986-1-1&;threadid#;1&;name#;Jack&;age#;32&");
                 Dto.Frame.Builder builder1=Dto.Frame.newBuilder();
-                builder1.setInterfaceName("ScheduleBackup").setClassName("Schedule").setBodyBytes(builder.build().toByteString());
+                builder1.setIdentity(StringConstant.EMPTY);
+                builder1.setInterfaceName("SyncScheduleBackup").setBodyBytes(builder.build().toByteString());
                 System.out.println("发送任务:"+id);
                 ChannelFuture future= client.sendASyncMsg(builder1.build());
                 future.addListener(new GenericFutureListener<Future<? super Void>>() {
