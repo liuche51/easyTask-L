@@ -10,8 +10,6 @@ public class ScheduleBak {
     private long period;
     private String unit;
     private String param;
-    private String backup;
-    private String source;
     private String createTime;
 
     public String getId() {
@@ -70,26 +68,9 @@ public class ScheduleBak {
         this.param = param;
     }
 
-    public String getBackup() {
-        return backup;
-    }
-
-    public void setBackup(String backup) {
-        this.backup = backup;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
     public String getCreateTime() {
         return createTime;
     }
-
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
@@ -102,8 +83,6 @@ public class ScheduleBak {
         schedule.period=dto.getPeriod();
         schedule.unit=dto.getUnit();
         schedule.param=dto.getParam();
-        schedule.backup=dto.getBackup();
-        schedule.source=dto.getSource();
         return schedule;
     }
 }

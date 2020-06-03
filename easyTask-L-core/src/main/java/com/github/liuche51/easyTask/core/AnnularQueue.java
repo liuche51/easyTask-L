@@ -114,12 +114,12 @@ public class AnnularQueue {
         if (isRunning)
             return;
         try {
-            DbInit.init();
-            recover();
             NettyServer.getInstance().run();//启动组件的Netty服务端口
             ClusterService.initCurrentNode();
-            isRunning = true;
+            DbInit.init();
+            recover();
             setDefaultThreadPool();
+            isRunning = true;
             int lastSecond = 0;
             while (true) {
                 int second = ZonedDateTime.now().getSecond();

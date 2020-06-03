@@ -30,21 +30,22 @@ public class ScheduleBakDao {
     }
 
     public static boolean save(ScheduleBak scheduleBak) {
+        String sql="";
         try {
             if (!DbInit.hasInit)
                 DbInit.init();
             scheduleBak.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            String sql = "insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,backup,source,create_time) values('"
+            sql = "insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,create_time) values('"
                     + scheduleBak.getId() + "','" + scheduleBak.getClassPath() + "'," + scheduleBak.getExecuteTime()
                     + ",'" + scheduleBak.getTaskType() + "'," + scheduleBak.getPeriod() + ",'" + scheduleBak.getUnit()
-                    + "','" + scheduleBak.getParam() + "','"+ scheduleBak.getBackup() + "','" + scheduleBak.getSource()
-                    + "','" + scheduleBak.getCreateTime() + "');";
+                    + "','" + scheduleBak.getParam() + "','"+ scheduleBak.getCreateTime() + "');";
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0) {
                 log.debug("任务:{} 已经持久化", scheduleBak.getId());
                 return true;
             }
         } catch (Exception e) {
+            log.info("SQL:"+ sql);
             log.error("ScheduleBakDao.save Exception taskId:"+ scheduleBak.getId(), e);
         }
         return false;

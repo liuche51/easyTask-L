@@ -39,11 +39,10 @@ public class ScheduleDao {
             if (!DbInit.hasInit)
                 DbInit.init();
             schedule.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,backup,source,create_time) values('"
+            String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,create_time) values('"
                     + schedule.getId() + "','" + schedule.getClassPath() + "'," + schedule.getExecuteTime()
                     + ",'" + schedule.getTaskType() + "'," + schedule.getPeriod() + ",'" + schedule.getUnit()
-                    + "','" + schedule.getParam() + "','"+ schedule.getBackup() + "','" + schedule.getSource() + "','"
-                    + schedule.getCreateTime() + "');";
+                    + "','" + schedule.getParam() + "','" + schedule.getCreateTime() + "');";
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0) {
                 log.debug("任务:{} 已经持久化", schedule.getId());
@@ -69,8 +68,6 @@ public class ScheduleDao {
                     Long period = resultSet.getLong("period");
                     String unit = resultSet.getString("unit");
                     String param = resultSet.getString("param");
-                    String backup = resultSet.getString("backup");
-                    String source = resultSet.getString("source");
                     String createTime=resultSet.getString("create_time");
                     Schedule schedule=new Schedule();
                     schedule.setId(id);
@@ -80,8 +77,6 @@ public class ScheduleDao {
                     schedule.setPeriod(period);
                     schedule.setUnit(unit);
                     schedule.setParam(param);
-                    schedule.setBackup(backup);
-                    schedule.setSource(source);
                     schedule.setCreateTime(createTime);
                     list.add(schedule);
                 } catch (Exception e) {

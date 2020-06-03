@@ -103,36 +103,6 @@ public final class ScheduleDto {
      */
     com.google.protobuf.ByteString
         getParamBytes();
-
-    // optional string backup = 8;
-    /**
-     * <code>optional string backup = 8;</code>
-     */
-    boolean hasBackup();
-    /**
-     * <code>optional string backup = 8;</code>
-     */
-    String getBackup();
-    /**
-     * <code>optional string backup = 8;</code>
-     */
-    com.google.protobuf.ByteString
-        getBackupBytes();
-
-    // optional string source = 9;
-    /**
-     * <code>optional string source = 9;</code>
-     */
-    boolean hasSource();
-    /**
-     * <code>optional string source = 9;</code>
-     */
-    String getSource();
-    /**
-     * <code>optional string source = 9;</code>
-     */
-    com.google.protobuf.ByteString
-        getSourceBytes();
   }
   /**
    * Protobuf type {@code Schedule}
@@ -218,16 +188,6 @@ public final class ScheduleDto {
             case 58: {
               bitField0_ |= 0x00000040;
               param_ = input.readBytes();
-              break;
-            }
-            case 66: {
-              bitField0_ |= 0x00000080;
-              backup_ = input.readBytes();
-              break;
-            }
-            case 74: {
-              bitField0_ |= 0x00000100;
-              source_ = input.readBytes();
               break;
             }
           }
@@ -517,92 +477,6 @@ public final class ScheduleDto {
       }
     }
 
-    // optional string backup = 8;
-    public static final int BACKUP_FIELD_NUMBER = 8;
-    private Object backup_;
-    /**
-     * <code>optional string backup = 8;</code>
-     */
-    public boolean hasBackup() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
-    }
-    /**
-     * <code>optional string backup = 8;</code>
-     */
-    public String getBackup() {
-      Object ref = backup_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          backup_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string backup = 8;</code>
-     */
-    public com.google.protobuf.ByteString
-        getBackupBytes() {
-      Object ref = backup_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
-        backup_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    // optional string source = 9;
-    public static final int SOURCE_FIELD_NUMBER = 9;
-    private Object source_;
-    /**
-     * <code>optional string source = 9;</code>
-     */
-    public boolean hasSource() {
-      return ((bitField0_ & 0x00000100) == 0x00000100);
-    }
-    /**
-     * <code>optional string source = 9;</code>
-     */
-    public String getSource() {
-      Object ref = source_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          source_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>optional string source = 9;</code>
-     */
-    public com.google.protobuf.ByteString
-        getSourceBytes() {
-      Object ref = source_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
-        source_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
     private void initFields() {
       id_ = "";
       classPath_ = "";
@@ -611,8 +485,6 @@ public final class ScheduleDto {
       period_ = 0L;
       unit_ = "";
       param_ = "";
-      backup_ = "";
-      source_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -667,12 +539,6 @@ public final class ScheduleDto {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeBytes(7, getParamBytes());
       }
-      if (((bitField0_ & 0x00000080) == 0x00000080)) {
-        output.writeBytes(8, getBackupBytes());
-      }
-      if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        output.writeBytes(9, getSourceBytes());
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -709,14 +575,6 @@ public final class ScheduleDto {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(7, getParamBytes());
-      }
-      if (((bitField0_ & 0x00000080) == 0x00000080)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(8, getBackupBytes());
-      }
-      if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(9, getSourceBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -848,10 +706,6 @@ public final class ScheduleDto {
         bitField0_ = (bitField0_ & ~0x00000020);
         param_ = "";
         bitField0_ = (bitField0_ & ~0x00000040);
-        backup_ = "";
-        bitField0_ = (bitField0_ & ~0x00000080);
-        source_ = "";
-        bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
 
@@ -908,14 +762,6 @@ public final class ScheduleDto {
           to_bitField0_ |= 0x00000040;
         }
         result.param_ = param_;
-        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-          to_bitField0_ |= 0x00000080;
-        }
-        result.backup_ = backup_;
-        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
-          to_bitField0_ |= 0x00000100;
-        }
-        result.source_ = source_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -961,16 +807,6 @@ public final class ScheduleDto {
         if (other.hasParam()) {
           bitField0_ |= 0x00000040;
           param_ = other.param_;
-          onChanged();
-        }
-        if (other.hasBackup()) {
-          bitField0_ |= 0x00000080;
-          backup_ = other.backup_;
-          onChanged();
-        }
-        if (other.hasSource()) {
-          bitField0_ |= 0x00000100;
-          source_ = other.source_;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -1456,154 +1292,6 @@ public final class ScheduleDto {
         return this;
       }
 
-      // optional string backup = 8;
-      private Object backup_ = "";
-      /**
-       * <code>optional string backup = 8;</code>
-       */
-      public boolean hasBackup() {
-        return ((bitField0_ & 0x00000080) == 0x00000080);
-      }
-      /**
-       * <code>optional string backup = 8;</code>
-       */
-      public String getBackup() {
-        Object ref = backup_;
-        if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref)
-              .toStringUtf8();
-          backup_ = s;
-          return s;
-        } else {
-          return (String) ref;
-        }
-      }
-      /**
-       * <code>optional string backup = 8;</code>
-       */
-      public com.google.protobuf.ByteString
-          getBackupBytes() {
-        Object ref = backup_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
-          backup_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string backup = 8;</code>
-       */
-      public Builder setBackup(
-          String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000080;
-        backup_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string backup = 8;</code>
-       */
-      public Builder clearBackup() {
-        bitField0_ = (bitField0_ & ~0x00000080);
-        backup_ = getDefaultInstance().getBackup();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string backup = 8;</code>
-       */
-      public Builder setBackupBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000080;
-        backup_ = value;
-        onChanged();
-        return this;
-      }
-
-      // optional string source = 9;
-      private Object source_ = "";
-      /**
-       * <code>optional string source = 9;</code>
-       */
-      public boolean hasSource() {
-        return ((bitField0_ & 0x00000100) == 0x00000100);
-      }
-      /**
-       * <code>optional string source = 9;</code>
-       */
-      public String getSource() {
-        Object ref = source_;
-        if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref)
-              .toStringUtf8();
-          source_ = s;
-          return s;
-        } else {
-          return (String) ref;
-        }
-      }
-      /**
-       * <code>optional string source = 9;</code>
-       */
-      public com.google.protobuf.ByteString
-          getSourceBytes() {
-        Object ref = source_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
-          source_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>optional string source = 9;</code>
-       */
-      public Builder setSource(
-          String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000100;
-        source_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string source = 9;</code>
-       */
-      public Builder clearSource() {
-        bitField0_ = (bitField0_ & ~0x00000100);
-        source_ = getDefaultInstance().getSource();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional string source = 9;</code>
-       */
-      public Builder setSourceBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000100;
-        source_ = value;
-        onChanged();
-        return this;
-      }
-
       // @@protoc_insertion_point(builder_scope:Schedule)
     }
 
@@ -1629,11 +1317,11 @@ public final class ScheduleDto {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\021ScheduleDto.proto\"\235\001\n\010Schedule\022\n\n\002id\030\001" +
-      " \002(\t\022\021\n\tclassPath\030\002 \002(\t\022\023\n\013executeTime\030\003" +
-      " \002(\003\022\020\n\010taskType\030\004 \002(\t\022\016\n\006period\030\005 \001(\003\022\014" +
-      "\n\004unit\030\006 \002(\t\022\r\n\005param\030\007 \001(\t\022\016\n\006backup\030\010 " +
-      "\001(\t\022\016\n\006source\030\t \001(\tB\rB\013ScheduleDto"
+      "\n\021ScheduleDto.proto\"}\n\010Schedule\022\n\n\002id\030\001 " +
+      "\002(\t\022\021\n\tclassPath\030\002 \002(\t\022\023\n\013executeTime\030\003 " +
+      "\002(\003\022\020\n\010taskType\030\004 \002(\t\022\016\n\006period\030\005 \001(\003\022\014\n" +
+      "\004unit\030\006 \002(\t\022\r\n\005param\030\007 \001(\tB\rB\013ScheduleDt" +
+      "o"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1645,7 +1333,7 @@ public final class ScheduleDto {
           internal_static_Schedule_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Schedule_descriptor,
-              new String[] { "Id", "ClassPath", "ExecuteTime", "TaskType", "Period", "Unit", "Param", "Backup", "Source", });
+              new String[] { "Id", "ClassPath", "ExecuteTime", "TaskType", "Period", "Unit", "Param", });
           return null;
         }
       };

@@ -10,8 +10,6 @@ public class Schedule {
     private long period;
     private String unit;
     private String param;
-    private String backup;
-    private String source;
     private String createTime;
 
     public String getId() {
@@ -70,22 +68,6 @@ public class Schedule {
         this.param = param;
     }
 
-    public String getBackup() {
-        return backup;
-    }
-
-    public void setBackup(String backup) {
-        this.backup = backup;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
     public String getCreateTime() {
         return createTime;
     }
@@ -102,8 +84,6 @@ public class Schedule {
         schedule.period=task.getPeriod();
         schedule.unit=task.getUnit() == null ? "" : task.getUnit().name();
         schedule.param=Task.serializeMap(task.getParam());
-        schedule.backup=task.getScheduleExt().getBackup();
-        schedule.source=task.getScheduleExt().getSource();
         return schedule;
     }
 
@@ -115,7 +95,7 @@ public class Schedule {
         ScheduleDto.Schedule.Builder builder=ScheduleDto.Schedule.newBuilder();
         builder.setId(this.id).setClassPath(this.classPath).setExecuteTime(this.executeTime)
                 .setTaskType(this.taskType).setPeriod(this.period).setUnit(this.unit)
-                .setParam(this.param).setBackup(this.backup).setSource(this.source);
+                .setParam(this.param);
         return builder.build();
     }
 }

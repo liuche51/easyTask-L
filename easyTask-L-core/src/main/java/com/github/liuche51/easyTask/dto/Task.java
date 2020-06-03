@@ -146,8 +146,6 @@ public class Task {
         Task task = new Task();
         task.getScheduleExt().setId(schedule.getId());
         task.getScheduleExt().setTaskClassPath(schedule.getClassPath());
-        task.getScheduleExt().setBackup(schedule.getBackup());
-        task.getScheduleExt().setSource(schedule.getSource());
         task.setEndTimestamp(schedule.getExecuteTime());
         task.setParam(Task.deserializeMap(schedule.getParam()));
         if ("PERIOD".equals(schedule.getTaskType()))
