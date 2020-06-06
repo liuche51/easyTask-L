@@ -1,5 +1,7 @@
 package com.github.liuche51.easyTask.dto;
 
+import com.alibaba.fastjson.JSONObject;
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 
 public class Schedule {
@@ -83,7 +85,7 @@ public class Schedule {
         schedule.taskType=task.getTaskType().name();
         schedule.period=task.getPeriod();
         schedule.unit=task.getUnit() == null ? "" : task.getUnit().name();
-        schedule.param=Task.serializeMap(task.getParam());
+        schedule.param= JSONObject.toJSONString(task.getParam());
         return schedule;
     }
 
@@ -95,7 +97,7 @@ public class Schedule {
         ScheduleDto.Schedule.Builder builder=ScheduleDto.Schedule.newBuilder();
         builder.setId(this.id).setClassPath(this.classPath).setExecuteTime(this.executeTime)
                 .setTaskType(this.taskType).setPeriod(this.period).setUnit(this.unit)
-                .setParam(this.param);
+                .setParam(this.param).setSource(EasyTaskConfig.getInstance().getzKServerName());
         return builder.build();
     }
 }

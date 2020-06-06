@@ -1,6 +1,6 @@
 option java_outer_classname = "Dto";//可扩展的通信协议
 message Frame {
   required string interfaceName = 1;
-  required string identity = 2;
+  optional string identity = 2;
   required string body = 3;
 }

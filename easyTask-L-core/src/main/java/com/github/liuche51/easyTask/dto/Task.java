@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.dto;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.TaskType;
 import com.github.liuche51.easyTask.core.TimeUnit;
@@ -110,44 +111,12 @@ public class Task {
                 default:throw new Exception("unSupport TimeUnit type");
         }
     }
-
-    /**
-     * 序列化Map
-     * @param param
-     * @return
-     */
-    public static String serializeMap(Map<String,String> param){
-        if(param!=null&&param.size()>0){
-            StringBuilder builder=new StringBuilder();
-            for(Map.Entry<String,String> entry:param.entrySet()){
-                builder.append(entry.getKey()).append("#;").append(entry.getValue()).append("&;");
-            }
-            return builder.toString();
-        }else return "";
-    }
-
-    /**
-     * 反序列化Map
-     * @param param
-     * @return
-     */
-    public static Map<String,String> deserializeMap(String param){
-        if(param!=null&&!"".equals(param)){
-            Map<String,String> map=new HashMap<>();
-            String[] temp=param.split("&;");
-            for(int i=0;i<temp.length;i++){
-                String[] temp2=temp[i].split("#;");
-                map.put(temp2[0],temp2[1]);
-            }
-            return map;
-        }else return null;
-    }
     public static Task valueOf(Schedule schedule){
         Task task = new Task();
         task.getScheduleExt().setId(schedule.getId());
         task.getScheduleExt().setTaskClassPath(schedule.getClassPath());
         task.setEndTimestamp(schedule.getExecuteTime());
-        task.setParam(Task.deserializeMap(schedule.getParam()));
+        task.setParam(JSONObject.parseObject(schedule.getParam(),Map.class));
         if ("PERIOD".equals(schedule.getTaskType()))
             task.setTaskType(TaskType.PERIOD);
         else if ("ONECE".equals(schedule.getTaskType()))

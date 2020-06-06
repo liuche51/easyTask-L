@@ -90,7 +90,7 @@ public class LeaderService {
             for (Node follow : follows) {
                 ScheduleDto.Schedule s = schedule.toScheduleDto();
                 Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-                builder.setIdentity(s.getId()).setInterfaceName(StringConstant.SYNC_SCHEDULE_BACKUP).setBodyBytes(s.toByteString()).setIdentity(StringConstant.EMPTY);
+                builder.setIdentity(s.getId()).setInterfaceName(StringConstant.SYNC_SCHEDULE_BACKUP).setBodyBytes(s.toByteString());
                 NettyClient client = follow.getClientWithCount(3);
                 if(client==null) return false;
                 boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 3);

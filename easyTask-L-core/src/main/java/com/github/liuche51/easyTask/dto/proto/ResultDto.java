@@ -24,17 +24,17 @@ public final class ResultDto {
     com.google.protobuf.ByteString
         getResultBytes();
 
-    // required string msg = 2;
+    // optional string msg = 2;
     /**
-     * <code>required string msg = 2;</code>
+     * <code>optional string msg = 2;</code>
      */
     boolean hasMsg();
     /**
-     * <code>required string msg = 2;</code>
+     * <code>optional string msg = 2;</code>
      */
     String getMsg();
     /**
-     * <code>required string msg = 2;</code>
+     * <code>optional string msg = 2;</code>
      */
     com.google.protobuf.ByteString
         getMsgBytes();
@@ -183,17 +183,17 @@ public final class ResultDto {
       }
     }
 
-    // required string msg = 2;
+    // optional string msg = 2;
     public static final int MSG_FIELD_NUMBER = 2;
     private Object msg_;
     /**
-     * <code>required string msg = 2;</code>
+     * <code>optional string msg = 2;</code>
      */
     public boolean hasMsg() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string msg = 2;</code>
+     * <code>optional string msg = 2;</code>
      */
     public String getMsg() {
       Object ref = msg_;
@@ -210,7 +210,7 @@ public final class ResultDto {
       }
     }
     /**
-     * <code>required string msg = 2;</code>
+     * <code>optional string msg = 2;</code>
      */
     public com.google.protobuf.ByteString
         getMsgBytes() {
@@ -236,10 +236,6 @@ public final class ResultDto {
       if (isInitialized != -1) return isInitialized == 1;
 
       if (!hasResult()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasMsg()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -464,10 +460,6 @@ public final class ResultDto {
           
           return false;
         }
-        if (!hasMsg()) {
-          
-          return false;
-        }
         return true;
       }
 
@@ -564,16 +556,16 @@ public final class ResultDto {
         return this;
       }
 
-      // required string msg = 2;
+      // optional string msg = 2;
       private Object msg_ = "";
       /**
-       * <code>required string msg = 2;</code>
+       * <code>optional string msg = 2;</code>
        */
       public boolean hasMsg() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string msg = 2;</code>
+       * <code>optional string msg = 2;</code>
        */
       public String getMsg() {
         Object ref = msg_;
@@ -587,7 +579,7 @@ public final class ResultDto {
         }
       }
       /**
-       * <code>required string msg = 2;</code>
+       * <code>optional string msg = 2;</code>
        */
       public com.google.protobuf.ByteString
           getMsgBytes() {
@@ -603,7 +595,7 @@ public final class ResultDto {
         }
       }
       /**
-       * <code>required string msg = 2;</code>
+       * <code>optional string msg = 2;</code>
        */
       public Builder setMsg(
           String value) {
@@ -616,7 +608,7 @@ public final class ResultDto {
         return this;
       }
       /**
-       * <code>required string msg = 2;</code>
+       * <code>optional string msg = 2;</code>
        */
       public Builder clearMsg() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -625,7 +617,7 @@ public final class ResultDto {
         return this;
       }
       /**
-       * <code>required string msg = 2;</code>
+       * <code>optional string msg = 2;</code>
        */
       public Builder setMsgBytes(
           com.google.protobuf.ByteString value) {
@@ -664,7 +656,7 @@ public final class ResultDto {
   static {
     String[] descriptorData = {
       "\n\017ResultDto.proto\"%\n\006Result\022\016\n\006result\030\001 " +
-      "\002(\t\022\013\n\003msg\030\002 \002(\tB\013B\tResultDto"
+      "\002(\t\022\013\n\003msg\030\002 \001(\tB\013B\tResultDto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

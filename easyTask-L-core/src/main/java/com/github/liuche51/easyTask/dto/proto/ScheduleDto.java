@@ -103,6 +103,21 @@ public final class ScheduleDto {
      */
     com.google.protobuf.ByteString
         getParamBytes();
+
+    // required string source = 8;
+    /**
+     * <code>required string source = 8;</code>
+     */
+    boolean hasSource();
+    /**
+     * <code>required string source = 8;</code>
+     */
+    String getSource();
+    /**
+     * <code>required string source = 8;</code>
+     */
+    com.google.protobuf.ByteString
+        getSourceBytes();
   }
   /**
    * Protobuf type {@code Schedule}
@@ -188,6 +203,11 @@ public final class ScheduleDto {
             case 58: {
               bitField0_ |= 0x00000040;
               param_ = input.readBytes();
+              break;
+            }
+            case 66: {
+              bitField0_ |= 0x00000080;
+              source_ = input.readBytes();
               break;
             }
           }
@@ -477,6 +497,49 @@ public final class ScheduleDto {
       }
     }
 
+    // required string source = 8;
+    public static final int SOURCE_FIELD_NUMBER = 8;
+    private Object source_;
+    /**
+     * <code>required string source = 8;</code>
+     */
+    public boolean hasSource() {
+      return ((bitField0_ & 0x00000080) == 0x00000080);
+    }
+    /**
+     * <code>required string source = 8;</code>
+     */
+    public String getSource() {
+      Object ref = source_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          source_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string source = 8;</code>
+     */
+    public com.google.protobuf.ByteString
+        getSourceBytes() {
+      Object ref = source_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        source_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private void initFields() {
       id_ = "";
       classPath_ = "";
@@ -485,6 +548,7 @@ public final class ScheduleDto {
       period_ = 0L;
       unit_ = "";
       param_ = "";
+      source_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -508,6 +572,10 @@ public final class ScheduleDto {
         return false;
       }
       if (!hasUnit()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasSource()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -538,6 +606,9 @@ public final class ScheduleDto {
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeBytes(7, getParamBytes());
+      }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        output.writeBytes(8, getSourceBytes());
       }
       getUnknownFields().writeTo(output);
     }
@@ -575,6 +646,10 @@ public final class ScheduleDto {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(7, getParamBytes());
+      }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(8, getSourceBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -706,6 +781,8 @@ public final class ScheduleDto {
         bitField0_ = (bitField0_ & ~0x00000020);
         param_ = "";
         bitField0_ = (bitField0_ & ~0x00000040);
+        source_ = "";
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 
@@ -762,6 +839,10 @@ public final class ScheduleDto {
           to_bitField0_ |= 0x00000040;
         }
         result.param_ = param_;
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+          to_bitField0_ |= 0x00000080;
+        }
+        result.source_ = source_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -809,6 +890,11 @@ public final class ScheduleDto {
           param_ = other.param_;
           onChanged();
         }
+        if (other.hasSource()) {
+          bitField0_ |= 0x00000080;
+          source_ = other.source_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -831,6 +917,10 @@ public final class ScheduleDto {
           return false;
         }
         if (!hasUnit()) {
+          
+          return false;
+        }
+        if (!hasSource()) {
           
           return false;
         }
@@ -1292,6 +1382,80 @@ public final class ScheduleDto {
         return this;
       }
 
+      // required string source = 8;
+      private Object source_ = "";
+      /**
+       * <code>required string source = 8;</code>
+       */
+      public boolean hasSource() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>required string source = 8;</code>
+       */
+      public String getSource() {
+        Object ref = source_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          source_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>required string source = 8;</code>
+       */
+      public com.google.protobuf.ByteString
+          getSourceBytes() {
+        Object ref = source_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          source_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string source = 8;</code>
+       */
+      public Builder setSource(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000080;
+        source_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string source = 8;</code>
+       */
+      public Builder clearSource() {
+        bitField0_ = (bitField0_ & ~0x00000080);
+        source_ = getDefaultInstance().getSource();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string source = 8;</code>
+       */
+      public Builder setSourceBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000080;
+        source_ = value;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:Schedule)
     }
 
@@ -1317,11 +1481,11 @@ public final class ScheduleDto {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\021ScheduleDto.proto\"}\n\010Schedule\022\n\n\002id\030\001 " +
-      "\002(\t\022\021\n\tclassPath\030\002 \002(\t\022\023\n\013executeTime\030\003 " +
-      "\002(\003\022\020\n\010taskType\030\004 \002(\t\022\016\n\006period\030\005 \001(\003\022\014\n" +
-      "\004unit\030\006 \002(\t\022\r\n\005param\030\007 \001(\tB\rB\013ScheduleDt" +
-      "o"
+      "\n\021ScheduleDto.proto\"\215\001\n\010Schedule\022\n\n\002id\030\001" +
+      " \002(\t\022\021\n\tclassPath\030\002 \002(\t\022\023\n\013executeTime\030\003" +
+      " \002(\003\022\020\n\010taskType\030\004 \002(\t\022\016\n\006period\030\005 \001(\003\022\014" +
+      "\n\004unit\030\006 \002(\t\022\r\n\005param\030\007 \001(\t\022\016\n\006source\030\010 " +
+      "\002(\tB\rB\013ScheduleDto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1333,7 +1497,7 @@ public final class ScheduleDto {
           internal_static_Schedule_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Schedule_descriptor,
-              new String[] { "Id", "ClassPath", "ExecuteTime", "TaskType", "Period", "Unit", "Param", });
+              new String[] { "Id", "ClassPath", "ExecuteTime", "TaskType", "Period", "Unit", "Param", "Source", });
           return null;
         }
       };

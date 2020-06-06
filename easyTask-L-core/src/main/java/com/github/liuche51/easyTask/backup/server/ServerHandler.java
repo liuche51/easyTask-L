@@ -39,7 +39,6 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
 						.SYNC_SCHEDULE_BACKUP:
 							ScheduleDto.Schedule schedule=ScheduleDto.Schedule.parseFrom(frame.getBodyBytes());
 							FollowService.saveScheduleBak(schedule);
-							int y=0;
 							break;
 				case StringConstant.SYNC_LEADER_POSITION:
 							String ret=frame.getBody();

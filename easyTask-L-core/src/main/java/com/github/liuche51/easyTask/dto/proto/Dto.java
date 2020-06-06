@@ -24,17 +24,17 @@ public final class Dto {
     com.google.protobuf.ByteString
         getInterfaceNameBytes();
 
-    // required string identity = 2;
+    // optional string identity = 2;
     /**
-     * <code>required string identity = 2;</code>
+     * <code>optional string identity = 2;</code>
      */
     boolean hasIdentity();
     /**
-     * <code>required string identity = 2;</code>
+     * <code>optional string identity = 2;</code>
      */
     String getIdentity();
     /**
-     * <code>required string identity = 2;</code>
+     * <code>optional string identity = 2;</code>
      */
     com.google.protobuf.ByteString
         getIdentityBytes();
@@ -203,17 +203,17 @@ public final class Dto {
       }
     }
 
-    // required string identity = 2;
+    // optional string identity = 2;
     public static final int IDENTITY_FIELD_NUMBER = 2;
     private Object identity_;
     /**
-     * <code>required string identity = 2;</code>
+     * <code>optional string identity = 2;</code>
      */
     public boolean hasIdentity() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required string identity = 2;</code>
+     * <code>optional string identity = 2;</code>
      */
     public String getIdentity() {
       Object ref = identity_;
@@ -230,7 +230,7 @@ public final class Dto {
       }
     }
     /**
-     * <code>required string identity = 2;</code>
+     * <code>optional string identity = 2;</code>
      */
     public com.google.protobuf.ByteString
         getIdentityBytes() {
@@ -300,10 +300,6 @@ public final class Dto {
       if (isInitialized != -1) return isInitialized == 1;
 
       if (!hasInterfaceName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasIdentity()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -550,10 +546,6 @@ public final class Dto {
           
           return false;
         }
-        if (!hasIdentity()) {
-          
-          return false;
-        }
         if (!hasBody()) {
           
           return false;
@@ -654,16 +646,16 @@ public final class Dto {
         return this;
       }
 
-      // required string identity = 2;
+      // optional string identity = 2;
       private Object identity_ = "";
       /**
-       * <code>required string identity = 2;</code>
+       * <code>optional string identity = 2;</code>
        */
       public boolean hasIdentity() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required string identity = 2;</code>
+       * <code>optional string identity = 2;</code>
        */
       public String getIdentity() {
         Object ref = identity_;
@@ -677,7 +669,7 @@ public final class Dto {
         }
       }
       /**
-       * <code>required string identity = 2;</code>
+       * <code>optional string identity = 2;</code>
        */
       public com.google.protobuf.ByteString
           getIdentityBytes() {
@@ -693,7 +685,7 @@ public final class Dto {
         }
       }
       /**
-       * <code>required string identity = 2;</code>
+       * <code>optional string identity = 2;</code>
        */
       public Builder setIdentity(
           String value) {
@@ -706,7 +698,7 @@ public final class Dto {
         return this;
       }
       /**
-       * <code>required string identity = 2;</code>
+       * <code>optional string identity = 2;</code>
        */
       public Builder clearIdentity() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -715,7 +707,7 @@ public final class Dto {
         return this;
       }
       /**
-       * <code>required string identity = 2;</code>
+       * <code>optional string identity = 2;</code>
        */
       public Builder setIdentityBytes(
           com.google.protobuf.ByteString value) {
@@ -828,7 +820,7 @@ public final class Dto {
   static {
     String[] descriptorData = {
       "\n\tDto.proto\">\n\005Frame\022\025\n\rinterfaceName\030\001 " +
-      "\002(\t\022\020\n\010identity\030\002 \002(\t\022\014\n\004body\030\003 \002(\tB\005B\003D" +
+      "\002(\t\022\020\n\010identity\030\002 \001(\t\022\014\n\004body\030\003 \002(\tB\005B\003D" +
       "to"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =

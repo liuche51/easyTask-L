@@ -35,10 +35,10 @@ public class ScheduleBakDao {
             if (!DbInit.hasInit)
                 DbInit.init();
             scheduleBak.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            sql = "insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,create_time) values('"
+            sql = "insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,source,create_time) values('"
                     + scheduleBak.getId() + "','" + scheduleBak.getClassPath() + "'," + scheduleBak.getExecuteTime()
                     + ",'" + scheduleBak.getTaskType() + "'," + scheduleBak.getPeriod() + ",'" + scheduleBak.getUnit()
-                    + "','" + scheduleBak.getParam() + "','"+ scheduleBak.getCreateTime() + "');";
+                    + "','" + scheduleBak.getParam()  + "','" + scheduleBak.getSource()+ "','"+ scheduleBak.getCreateTime() + "');";
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0) {
                 log.debug("任务:{} 已经持久化", scheduleBak.getId());

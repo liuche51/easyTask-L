@@ -7,4 +7,5 @@ message Schedule {
   optional  int64 period = 5;
   required string unit = 6;
   optional  string param = 7;
+  required string source = 8;
 }

@@ -29,8 +29,6 @@ public class DbInit {
                         "\"period\"  INTEGER,\n" +
                         "\"unit\"  TEXT,\n" +
                         "\"param\"  TEXT,\n" +
-                        "\"backup\"  TEXT,\n" +
-                        "\"source\"  TEXT,\n" +
                         "\"create_time\"  TEXT,\n" +
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
