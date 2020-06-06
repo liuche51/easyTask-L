@@ -1,5 +1,7 @@
 package com.github.liuche51.easyTask.core;
 
+import com.github.liuche51.easyTask.cluster.ClusterService;
+import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dto.Task;
 import org.slf4j.Logger;
@@ -33,9 +35,11 @@ class ProxyFactory {
                         }finally {
                             log.debug("任务:{} 代理执行结束", id);
                             if (target.getTaskType().equals(TaskType.ONECE)){
-                                boolean ret = ScheduleDao.delete(id);
+                                boolean ret = ClusterService.deleteTask(id);
                                 if (ret)
+                                {
                                     log.debug("任务:{} 执行完成，已从持久化记录中删除", id);
+                                }
                             }
                         }
                     }

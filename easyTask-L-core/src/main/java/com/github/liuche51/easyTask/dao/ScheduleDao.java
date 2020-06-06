@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class ScheduleDao {
     private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
+    private int count;
 
     public static boolean existTable() {
         SqliteHelper helper = new SqliteHelper();
@@ -49,7 +51,7 @@ public class ScheduleDao {
                 return true;
             }
         } catch (Exception e) {
-            log.error("ScheduleDao.save Exception taskId:"+schedule.getId(), e);
+            log.error("ScheduleDao.save Exception taskId:" + schedule.getId(), e);
         }
         return false;
     }
@@ -68,8 +70,8 @@ public class ScheduleDao {
                     Long period = resultSet.getLong("period");
                     String unit = resultSet.getString("unit");
                     String param = resultSet.getString("param");
-                    String createTime=resultSet.getString("create_time");
-                    Schedule schedule=new Schedule();
+                    String createTime = resultSet.getString("create_time");
+                    Schedule schedule = new Schedule();
                     schedule.setId(id);
                     schedule.setClassPath(classPath);
                     schedule.setExecuteTime(executeTime);
@@ -91,17 +93,11 @@ public class ScheduleDao {
         return list;
     }
 
-    public static boolean delete(String id) {
-        try {
-            String sql = "delete FROM schedule where id='" + id + "';";
-            int count = SqliteHelper.executeUpdateForSync(sql);
-            if (count > 0)
-                log.debug("任务:{} 已经删除", id);
-        } catch (Exception e) {
-            log.error("ScheduleDao.delete Exception:{}", e);
-            return false;
-        }
-        return true;
+    public static void delete(String id) throws SQLException, ClassNotFoundException {
+        String sql = "delete FROM schedule where id='" + id + "';";
+        int count = SqliteHelper.executeUpdateForSync(sql);
+        if (count > 0)
+            log.debug("任务:{} 已经删除", id);
     }
 
     public static int getAllCount() {

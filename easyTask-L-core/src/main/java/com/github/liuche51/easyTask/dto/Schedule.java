@@ -9,7 +9,13 @@ public class Schedule {
     private String classPath;
     private long executeTime;
     private String taskType;
+    /**
+     *任务类型。0一次性任务，1周期性任务
+     */
     private long period;
+    /**
+     * 周期任务时间单位。TimeUnit枚举
+     */
     private String unit;
     private String param;
     private String createTime;

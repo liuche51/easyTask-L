@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
+import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.register.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 
 public class ClusterService {
     private static Logger log = LoggerFactory.getLogger(ClusterService.class);
@@ -42,7 +44,16 @@ public class ClusterService {
         }
         return false;
     }
-
+   public static boolean deleteTask(String taskId){
+       try {
+           ScheduleDao.delete(taskId);
+           boolean ret=LeaderService.deleteTaskToFollows(taskId);
+           if(ret) return true;
+       } catch (Exception e) {
+          log.error("deleteTask exception!",e);
+       }
+       return false;
+   }
     /**
      * 节点对zk的心跳。2s一次
      */
