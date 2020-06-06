@@ -25,6 +25,13 @@ public class FollowService {
         ScheduleBak bak=ScheduleBak.valueOf(schedule);
         ScheduleBakDao.save(bak);
     }
+    /**
+     * 删除备库任务
+     * @param taskId
+     */
+    public static void deleteScheduleBak(String taskId){
+        ScheduleBakDao.delete(taskId);
+    }
 
     /**
      * 更新leader位置信息

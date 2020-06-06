@@ -12,14 +12,26 @@ public final class Dto {
     // required string interfaceName = 1;
     /**
      * <code>required string interfaceName = 1;</code>
+     *
+     * <pre>
+     *接口
+     * </pre>
      */
     boolean hasInterfaceName();
     /**
      * <code>required string interfaceName = 1;</code>
+     *
+     * <pre>
+     *接口
+     * </pre>
      */
     String getInterfaceName();
     /**
      * <code>required string interfaceName = 1;</code>
+     *
+     * <pre>
+     *接口
+     * </pre>
      */
     com.google.protobuf.ByteString
         getInterfaceNameBytes();
@@ -27,29 +39,80 @@ public final class Dto {
     // optional string identity = 2;
     /**
      * <code>optional string identity = 2;</code>
+     *
+     * <pre>
+     *标识
+     * </pre>
      */
     boolean hasIdentity();
     /**
      * <code>optional string identity = 2;</code>
+     *
+     * <pre>
+     *标识
+     * </pre>
      */
     String getIdentity();
     /**
      * <code>optional string identity = 2;</code>
+     *
+     * <pre>
+     *标识
+     * </pre>
      */
     com.google.protobuf.ByteString
         getIdentityBytes();
 
-    // required string body = 3;
+    // optional string source = 3;
     /**
-     * <code>required string body = 3;</code>
+     * <code>optional string source = 3;</code>
+     *
+     * <pre>
+     *消息发送源
+     * </pre>
+     */
+    boolean hasSource();
+    /**
+     * <code>optional string source = 3;</code>
+     *
+     * <pre>
+     *消息发送源
+     * </pre>
+     */
+    String getSource();
+    /**
+     * <code>optional string source = 3;</code>
+     *
+     * <pre>
+     *消息发送源
+     * </pre>
+     */
+    com.google.protobuf.ByteString
+        getSourceBytes();
+
+    // required string body = 4;
+    /**
+     * <code>required string body = 4;</code>
+     *
+     * <pre>
+     *消息体
+     * </pre>
      */
     boolean hasBody();
     /**
-     * <code>required string body = 3;</code>
+     * <code>required string body = 4;</code>
+     *
+     * <pre>
+     *消息体
+     * </pre>
      */
     String getBody();
     /**
-     * <code>required string body = 3;</code>
+     * <code>required string body = 4;</code>
+     *
+     * <pre>
+     *消息体
+     * </pre>
      */
     com.google.protobuf.ByteString
         getBodyBytes();
@@ -117,6 +180,11 @@ public final class Dto {
             }
             case 26: {
               bitField0_ |= 0x00000004;
+              source_ = input.readBytes();
+              break;
+            }
+            case 34: {
+              bitField0_ |= 0x00000008;
               body_ = input.readBytes();
               break;
             }
@@ -165,12 +233,20 @@ public final class Dto {
     private Object interfaceName_;
     /**
      * <code>required string interfaceName = 1;</code>
+     *
+     * <pre>
+     *接口
+     * </pre>
      */
     public boolean hasInterfaceName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
      * <code>required string interfaceName = 1;</code>
+     *
+     * <pre>
+     *接口
+     * </pre>
      */
     public String getInterfaceName() {
       Object ref = interfaceName_;
@@ -188,6 +264,10 @@ public final class Dto {
     }
     /**
      * <code>required string interfaceName = 1;</code>
+     *
+     * <pre>
+     *接口
+     * </pre>
      */
     public com.google.protobuf.ByteString
         getInterfaceNameBytes() {
@@ -208,12 +288,20 @@ public final class Dto {
     private Object identity_;
     /**
      * <code>optional string identity = 2;</code>
+     *
+     * <pre>
+     *标识
+     * </pre>
      */
     public boolean hasIdentity() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
      * <code>optional string identity = 2;</code>
+     *
+     * <pre>
+     *标识
+     * </pre>
      */
     public String getIdentity() {
       Object ref = identity_;
@@ -231,6 +319,10 @@ public final class Dto {
     }
     /**
      * <code>optional string identity = 2;</code>
+     *
+     * <pre>
+     *标识
+     * </pre>
      */
     public com.google.protobuf.ByteString
         getIdentityBytes() {
@@ -246,17 +338,80 @@ public final class Dto {
       }
     }
 
-    // required string body = 3;
-    public static final int BODY_FIELD_NUMBER = 3;
-    private Object body_;
+    // optional string source = 3;
+    public static final int SOURCE_FIELD_NUMBER = 3;
+    private Object source_;
     /**
-     * <code>required string body = 3;</code>
+     * <code>optional string source = 3;</code>
+     *
+     * <pre>
+     *消息发送源
+     * </pre>
      */
-    public boolean hasBody() {
+    public boolean hasSource() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required string body = 3;</code>
+     * <code>optional string source = 3;</code>
+     *
+     * <pre>
+     *消息发送源
+     * </pre>
+     */
+    public String getSource() {
+      Object ref = source_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          source_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string source = 3;</code>
+     *
+     * <pre>
+     *消息发送源
+     * </pre>
+     */
+    public com.google.protobuf.ByteString
+        getSourceBytes() {
+      Object ref = source_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        source_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    // required string body = 4;
+    public static final int BODY_FIELD_NUMBER = 4;
+    private Object body_;
+    /**
+     * <code>required string body = 4;</code>
+     *
+     * <pre>
+     *消息体
+     * </pre>
+     */
+    public boolean hasBody() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>required string body = 4;</code>
+     *
+     * <pre>
+     *消息体
+     * </pre>
      */
     public String getBody() {
       Object ref = body_;
@@ -273,7 +428,11 @@ public final class Dto {
       }
     }
     /**
-     * <code>required string body = 3;</code>
+     * <code>required string body = 4;</code>
+     *
+     * <pre>
+     *消息体
+     * </pre>
      */
     public com.google.protobuf.ByteString
         getBodyBytes() {
@@ -292,6 +451,7 @@ public final class Dto {
     private void initFields() {
       interfaceName_ = "";
       identity_ = "";
+      source_ = "";
       body_ = "";
     }
     private byte memoizedIsInitialized = -1;
@@ -321,7 +481,10 @@ public final class Dto {
         output.writeBytes(2, getIdentityBytes());
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, getBodyBytes());
+        output.writeBytes(3, getSourceBytes());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeBytes(4, getBodyBytes());
       }
       getUnknownFields().writeTo(output);
     }
@@ -342,7 +505,11 @@ public final class Dto {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, getBodyBytes());
+          .computeBytesSize(3, getSourceBytes());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(4, getBodyBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -464,8 +631,10 @@ public final class Dto {
         bitField0_ = (bitField0_ & ~0x00000001);
         identity_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
-        body_ = "";
+        source_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
+        body_ = "";
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -505,6 +674,10 @@ public final class Dto {
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
+        result.source_ = source_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
         result.body_ = body_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -532,8 +705,13 @@ public final class Dto {
           identity_ = other.identity_;
           onChanged();
         }
-        if (other.hasBody()) {
+        if (other.hasSource()) {
           bitField0_ |= 0x00000004;
+          source_ = other.source_;
+          onChanged();
+        }
+        if (other.hasBody()) {
+          bitField0_ |= 0x00000008;
           body_ = other.body_;
           onChanged();
         }
@@ -576,12 +754,20 @@ public final class Dto {
       private Object interfaceName_ = "";
       /**
        * <code>required string interfaceName = 1;</code>
+       *
+       * <pre>
+       *接口
+       * </pre>
        */
       public boolean hasInterfaceName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
        * <code>required string interfaceName = 1;</code>
+       *
+       * <pre>
+       *接口
+       * </pre>
        */
       public String getInterfaceName() {
         Object ref = interfaceName_;
@@ -596,6 +782,10 @@ public final class Dto {
       }
       /**
        * <code>required string interfaceName = 1;</code>
+       *
+       * <pre>
+       *接口
+       * </pre>
        */
       public com.google.protobuf.ByteString
           getInterfaceNameBytes() {
@@ -612,6 +802,10 @@ public final class Dto {
       }
       /**
        * <code>required string interfaceName = 1;</code>
+       *
+       * <pre>
+       *接口
+       * </pre>
        */
       public Builder setInterfaceName(
           String value) {
@@ -625,6 +819,10 @@ public final class Dto {
       }
       /**
        * <code>required string interfaceName = 1;</code>
+       *
+       * <pre>
+       *接口
+       * </pre>
        */
       public Builder clearInterfaceName() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -634,6 +832,10 @@ public final class Dto {
       }
       /**
        * <code>required string interfaceName = 1;</code>
+       *
+       * <pre>
+       *接口
+       * </pre>
        */
       public Builder setInterfaceNameBytes(
           com.google.protobuf.ByteString value) {
@@ -650,12 +852,20 @@ public final class Dto {
       private Object identity_ = "";
       /**
        * <code>optional string identity = 2;</code>
+       *
+       * <pre>
+       *标识
+       * </pre>
        */
       public boolean hasIdentity() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
        * <code>optional string identity = 2;</code>
+       *
+       * <pre>
+       *标识
+       * </pre>
        */
       public String getIdentity() {
         Object ref = identity_;
@@ -670,6 +880,10 @@ public final class Dto {
       }
       /**
        * <code>optional string identity = 2;</code>
+       *
+       * <pre>
+       *标识
+       * </pre>
        */
       public com.google.protobuf.ByteString
           getIdentityBytes() {
@@ -686,6 +900,10 @@ public final class Dto {
       }
       /**
        * <code>optional string identity = 2;</code>
+       *
+       * <pre>
+       *标识
+       * </pre>
        */
       public Builder setIdentity(
           String value) {
@@ -699,6 +917,10 @@ public final class Dto {
       }
       /**
        * <code>optional string identity = 2;</code>
+       *
+       * <pre>
+       *标识
+       * </pre>
        */
       public Builder clearIdentity() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -708,6 +930,10 @@ public final class Dto {
       }
       /**
        * <code>optional string identity = 2;</code>
+       *
+       * <pre>
+       *标识
+       * </pre>
        */
       public Builder setIdentityBytes(
           com.google.protobuf.ByteString value) {
@@ -720,16 +946,122 @@ public final class Dto {
         return this;
       }
 
-      // required string body = 3;
-      private Object body_ = "";
+      // optional string source = 3;
+      private Object source_ = "";
       /**
-       * <code>required string body = 3;</code>
+       * <code>optional string source = 3;</code>
+       *
+       * <pre>
+       *消息发送源
+       * </pre>
        */
-      public boolean hasBody() {
+      public boolean hasSource() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required string body = 3;</code>
+       * <code>optional string source = 3;</code>
+       *
+       * <pre>
+       *消息发送源
+       * </pre>
+       */
+      public String getSource() {
+        Object ref = source_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          source_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>optional string source = 3;</code>
+       *
+       * <pre>
+       *消息发送源
+       * </pre>
+       */
+      public com.google.protobuf.ByteString
+          getSourceBytes() {
+        Object ref = source_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          source_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string source = 3;</code>
+       *
+       * <pre>
+       *消息发送源
+       * </pre>
+       */
+      public Builder setSource(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        source_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string source = 3;</code>
+       *
+       * <pre>
+       *消息发送源
+       * </pre>
+       */
+      public Builder clearSource() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        source_ = getDefaultInstance().getSource();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string source = 3;</code>
+       *
+       * <pre>
+       *消息发送源
+       * </pre>
+       */
+      public Builder setSourceBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        source_ = value;
+        onChanged();
+        return this;
+      }
+
+      // required string body = 4;
+      private Object body_ = "";
+      /**
+       * <code>required string body = 4;</code>
+       *
+       * <pre>
+       *消息体
+       * </pre>
+       */
+      public boolean hasBody() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>required string body = 4;</code>
+       *
+       * <pre>
+       *消息体
+       * </pre>
        */
       public String getBody() {
         Object ref = body_;
@@ -743,7 +1075,11 @@ public final class Dto {
         }
       }
       /**
-       * <code>required string body = 3;</code>
+       * <code>required string body = 4;</code>
+       *
+       * <pre>
+       *消息体
+       * </pre>
        */
       public com.google.protobuf.ByteString
           getBodyBytes() {
@@ -759,36 +1095,48 @@ public final class Dto {
         }
       }
       /**
-       * <code>required string body = 3;</code>
+       * <code>required string body = 4;</code>
+       *
+       * <pre>
+       *消息体
+       * </pre>
        */
       public Builder setBody(
           String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  bitField0_ |= 0x00000008;
         body_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string body = 3;</code>
+       * <code>required string body = 4;</code>
+       *
+       * <pre>
+       *消息体
+       * </pre>
        */
       public Builder clearBody() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000008);
         body_ = getDefaultInstance().getBody();
         onChanged();
         return this;
       }
       /**
-       * <code>required string body = 3;</code>
+       * <code>required string body = 4;</code>
+       *
+       * <pre>
+       *消息体
+       * </pre>
        */
       public Builder setBodyBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  bitField0_ |= 0x00000008;
         body_ = value;
         onChanged();
         return this;
@@ -819,9 +1167,9 @@ public final class Dto {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\tDto.proto\">\n\005Frame\022\025\n\rinterfaceName\030\001 " +
-      "\002(\t\022\020\n\010identity\030\002 \001(\t\022\014\n\004body\030\003 \002(\tB\005B\003D" +
-      "to"
+      "\n\tDto.proto\"N\n\005Frame\022\025\n\rinterfaceName\030\001 " +
+      "\002(\t\022\020\n\010identity\030\002 \001(\t\022\016\n\006source\030\003 \001(\t\022\014\n" +
+      "\004body\030\004 \002(\tB\005B\003Dto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -833,7 +1181,7 @@ public final class Dto {
           internal_static_Frame_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Frame_descriptor,
-              new String[] { "InterfaceName", "Identity", "Body", });
+              new String[] { "InterfaceName", "Identity", "Source", "Body", });
           return null;
         }
       };

@@ -74,6 +74,10 @@ public class EasyTaskConfig {
      */
     private int heartBeat=2;
     /**
+     * 集群通信失败重试次数。默认3次
+     */
+    private int tryCount=3;
+    /**
      * 集群总线程池
      */
     private ExecutorService clusterPool = null;
@@ -195,6 +199,14 @@ public class EasyTaskConfig {
 
     public void setHeartBeat(int heartBeat) {
         this.heartBeat = heartBeat;
+    }
+
+    public int getTryCount() {
+        return tryCount;
+    }
+
+    public void setTryCount(int tryCount) {
+        this.tryCount = tryCount;
     }
 
     public ExecutorService getClusterPool() {

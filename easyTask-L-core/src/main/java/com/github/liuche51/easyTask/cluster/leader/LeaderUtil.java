@@ -51,8 +51,8 @@ public class LeaderUtil {
         final boolean[] ret = {false};
         try {
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(StringConstant.EMPTY);
-            builder.setInterfaceName(StringConstant.SYNC_LEADER_POSITION).setBody(EasyTaskConfig.getInstance().getzKServerName());
+            builder.setInterfaceName(StringConstant.SYNC_LEADER_POSITION).setSource(EasyTaskConfig.getInstance().getzKServerName())
+                    .setBody(EasyTaskConfig.getInstance().getzKServerName());
             ChannelFuture future=follow.getClient().sendASyncMsgWithoutPromise(builder.build());
             tryCount--;
             future.addListener(new GenericFutureListener<Future<? super Void>>() {

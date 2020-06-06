@@ -72,7 +72,7 @@ public class LeaderService {
             if(follows.size()<count) return initSelectFollows();
             ClusterService.CURRENTNODE.setFollows(follows);
             //通知follows当前Leader位置
-            LeaderUtil.notifyFollowsLeaderPosition(follows,3);
+            LeaderUtil.notifyFollowsLeaderPosition(follows,EasyTaskConfig.getInstance().getTryCount());
         } catch (Exception e) {
             log.error("node select follows error.", e);
         }
@@ -90,10 +90,32 @@ public class LeaderService {
             for (Node follow : follows) {
                 ScheduleDto.Schedule s = schedule.toScheduleDto();
                 Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-                builder.setIdentity(s.getId()).setInterfaceName(StringConstant.SYNC_SCHEDULE_BACKUP).setBodyBytes(s.toByteString());
-                NettyClient client = follow.getClientWithCount(3);
+                builder.setIdentity(s.getId()).setInterfaceName(StringConstant.SYNC_SCHEDULE_BACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
+                        .setBodyBytes(s.toByteString());
+                NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
                 if(client==null) return false;
-                boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 3);
+                boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
+                if (!ret) return false;
+            }
+        }
+        return true;
+    }
+    /**
+     * 同步任务至follow。
+     *
+     * @param taskId
+     * @return
+     */
+    public static boolean deleteTaskToFollows(String taskId) {
+        List<Node> follows=ClusterService.CURRENTNODE.getFollows();
+        if(follows!=null){
+            for (Node follow : follows) {
+                Dto.Frame.Builder builder = Dto.Frame.newBuilder();
+                builder.setIdentity(taskId).setInterfaceName(StringConstant.DELETE_SCHEDULEBACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
+                        .setBody(taskId);
+                NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
+                if(client==null) return false;
+                boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
                 if (!ret) return false;
             }
         }
