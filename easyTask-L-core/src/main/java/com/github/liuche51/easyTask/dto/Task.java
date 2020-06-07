@@ -75,19 +75,6 @@ public class Task {
     public void setParam(Map<String,String> param) {
         this.param = param;
     }
-
-    /**
-     * 任务数据持久化。含同步至备份库
-     * @throws Exception
-     */
-    public void save() throws Exception {
-        Schedule schedule=Schedule.valueOf(this);
-        boolean ret1=ScheduleDao.save(schedule);
-        if(!ret1) throw new Exception("scheduleDao save exception!");
-        //数据高可靠分布式存储
-        boolean ret2=LeaderService.syncDataToFollows(schedule);
-        if(!ret2) throw new Exception("syncDataToFollows exception!");
-    }
     /**
      * 获取周期性任务下次执行时间。已当前时间为基准计算下次而不是上次截止执行时间
      * @param period

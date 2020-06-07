@@ -33,92 +33,50 @@ public class LeaderService {
 
     /**
      * 节点启动初始化选举follows。
+     *
      * @return
      */
-    public static boolean initSelectFollows() {
-        try {
-            List<Node> follows = new LinkedList<>();//备选follows
-            int count = EasyTaskConfig.getInstance().getBackupCount();
-            List<String> availableFollows = ZKService.getChildrenByNameSpase();
-            //排除自己
-            Optional<String> temp = availableFollows.stream().filter(x -> x.equals(EasyTaskConfig.getInstance().getzKServerName())).findFirst();
-            if (temp.isPresent())
-                availableFollows.remove(temp.get());
-            if (availableFollows.size() < count)//如果可选备库节点数量不足，则等待1s，然后重新选。注意：等待会阻塞整个服务可用性
-            {
-                log.info("availableFollows is not enough! only has " + availableFollows.size());
-                Thread.sleep(1000);
-                return initSelectFollows();
-            } else {
-                Random random = new Random();
-                for (int i = 0; i < count; i++) {
-                    int index = random.nextInt(availableFollows.size());//随机生成的随机数范围就变成[0,size)。
-                    ZKNode node2 = ZKService.getDataByPath(StringConstant.CHAR_SPRIT + availableFollows.get(index));
-                    //如果最后心跳时间超过60s，则直接删除该节点信息。
-                    if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOunt())
-                            .compareTo(DateUtils.parse(node2.getLastHeartbeat())) > 0) {
-                        ZKService.deleteNodeByPathIgnoreResult(StringConstant.CHAR_SPRIT + availableFollows.get(index));
-                    } else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOunt())
-                            .compareTo(DateUtils.parse(node2.getLastHeartbeat())) > 0) {
-                        //如果最后心跳时间超过30s，也不能将该节点作为follow
-                    } else if (follows.size() < count) {
-                        follows.add(new Node(node2.getHost(), node2.getPort()));
-                        if (follows.size() == count)//已选数量够了就跳出
-                            break;
-                    }
-                    availableFollows.remove(index);
-                }
-            }
-            if(follows.size()<count) return initSelectFollows();
-            ClusterService.CURRENTNODE.setFollows(follows);
-            //通知follows当前Leader位置
-            LeaderUtil.notifyFollowsLeaderPosition(follows,EasyTaskConfig.getInstance().getTryCount());
-        } catch (Exception e) {
-            log.error("node select follows error.", e);
+    public static void initSelectFollows() throws InterruptedException {
+        int count = EasyTaskConfig.getInstance().getBackupCount();
+        List<String> availableFollows = LeaderUtil.getAvailableFollows();
+        List<Node> follows = LeaderUtil.selectFollows(count, availableFollows);
+        if (follows.size() < count) {
+            log.info("follows.size() < count,so start to initSelectFollows");
+            initSelectFollows();//数量不够递归重新选
         }
-        return true;
+        ClusterService.CURRENTNODE.setFollows(follows);
+        //通知follows当前Leader位置
+        LeaderUtil.notifyFollowsLeaderPosition(follows, EasyTaskConfig.getInstance().getTryCount());
     }
+
     /**
      * 同步任务至follow。
      *
      * @param schedule
      * @return
      */
-    public static boolean syncDataToFollows(Schedule schedule) {
-        List<Node> follows=ClusterService.CURRENTNODE.getFollows();
-        if(follows!=null){
+    public static void syncDataToFollows(Schedule schedule) throws InterruptedException {
+        List<Node> follows = ClusterService.CURRENTNODE.getFollows();
+        if (follows != null) {
             for (Node follow : follows) {
-                ScheduleDto.Schedule s = schedule.toScheduleDto();
-                Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-                builder.setIdentity(s.getId()).setInterfaceName(StringConstant.SYNC_SCHEDULE_BACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
-                        .setBodyBytes(s.toByteString());
-                NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
-                if(client==null) return false;
-                boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
-                if (!ret) return false;
+                LeaderUtil.syncDataToFollow(schedule, follow);
             }
         }
-        return true;
     }
+
+
     /**
-     * 同步任务至follow。
+     * 同步删除任务至follow。
      *
      * @param taskId
      * @return
      */
-    public static boolean deleteTaskToFollows(String taskId) {
-        List<Node> follows=ClusterService.CURRENTNODE.getFollows();
-        if(follows!=null){
+    public static void deleteTaskToFollows(String taskId) throws InterruptedException {
+        List<Node> follows = ClusterService.CURRENTNODE.getFollows();
+        if (follows != null) {
             for (Node follow : follows) {
-                Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-                builder.setIdentity(taskId).setInterfaceName(StringConstant.DELETE_SCHEDULEBACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
-                        .setBody(taskId);
-                NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
-                if(client==null) return false;
-                boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
-                if (!ret) return false;
+                LeaderUtil.deleteTaskToFollow(taskId, follow);
             }
         }
-        return true;
     }
 }

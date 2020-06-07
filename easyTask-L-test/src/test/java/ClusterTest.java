@@ -56,6 +56,18 @@ public class ClusterTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void startNode4(){
+        AnnularQueue annularQueue=AnnularQueue.getInstance();
+        EasyTaskConfig config=EasyTaskConfig.getInstance();
+        try {
+            config.setTaskStorePath("C:\\db\\node4");
+            config.setServerPort(2024);
+            initData( annularQueue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void initData(AnnularQueue annularQueue) throws Exception {
         EasyTaskConfig config=EasyTaskConfig.getInstance();
         config.setSQLlitePoolSize(5);
@@ -101,7 +113,8 @@ public class ClusterTest {
         //annularQueue.submitAllowWait(task2);
         //JUnit默认是非守护线程启动和Main方法不同。这里防止当前主线程退出导致子线程也退出了
         while (true){
-            Thread.sleep(5000);
+            Thread.sleep(10000);
+            //annularQueue.submitAllowWait(task1);
             printinfo();
         }
     }

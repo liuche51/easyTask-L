@@ -12,6 +12,7 @@ import com.github.liuche51.easyTask.register.ZKUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -96,11 +97,16 @@ public class AnnularQueue {
             this.workers = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     }
 
-    public void start() {
+    public void start(){
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                runQueue();
+                try {
+                    runQueue();
+                } catch (Exception e) {
+                    isRunning = false;
+                    log.error("AnnularQueue start fail.", e);
+                }
             }
         });
         th1.start();
@@ -109,59 +115,46 @@ public class AnnularQueue {
     /**
      * start the AnnularQueue
      */
-    private synchronized void runQueue() {
+    private synchronized void runQueue() throws Exception {
         //避免重复执行
         if (isRunning)
             return;
-        try {
-            NettyServer.getInstance().run();//启动组件的Netty服务端口
-            ClusterService.initCurrentNode();
-            DbInit.init();
-            recover();
-            setDefaultThreadPool();
-            isRunning = true;
-            int lastSecond = 0;
-            while (true) {
-                int second = ZonedDateTime.now().getSecond();
-                if (second == lastSecond) {
-                    try {
-                        Thread.sleep(500l);
-                        continue;
-                    } catch (Exception e) {
-
-                    }
-                }
-                Slice slice = slices[second];
-                log.debug("已执行时间分片:{}，任务数量:{}", second, slice.getList() == null ? 0 : slice.getList().size());
-                lastSecond = second;
-                dispatchs.submit(new Runnable() {
-                    public void run() {
-                        ConcurrentSkipListMap<String, Task> schedules = slice.getList();
-                        List<Task> willremove = new LinkedList<>();
-                        for (Map.Entry<String, Task> entry : schedules.entrySet()) {
-                            Task s = entry.getValue();
-                            if (System.currentTimeMillis() >= s.getEndTimestamp()) {
-                                Runnable proxy = (Runnable) new ProxyFactory(s).getProxyInstance();
-                                workers.submit(proxy);
-                                willremove.add(s);
-                                schedules.remove(entry.getKey());
-                                log.debug("工作任务:{} 已提交分片:{}", s.getScheduleExt().getId(), second);
-                            }
-                            //因为列表是已经按截止执行时间排好序的，可以节省后面元素的过期判断
-                            else break;
-                        }
-                        submitNewPeriodSchedule(willremove);
-                    }
-                });
+        NettyServer.getInstance().run();//启动组件的Netty服务端口
+        ClusterService.initCurrentNode();
+        DbInit.init();
+        recover();
+        setDefaultThreadPool();
+        isRunning = true;
+        int lastSecond = 0;
+        while (true) {
+            int second = ZonedDateTime.now().getSecond();
+            if (second == lastSecond) {
+                Thread.sleep(500l);
+                continue;
             }
-
-        } catch (
-                Exception e) {
-            isRunning = false;
-            log.error("AnnularQueue start fail.", e);
-            throw e;
+            Slice slice = slices[second];
+            log.debug("已执行时间分片:{}，任务数量:{}", second, slice.getList() == null ? 0 : slice.getList().size());
+            lastSecond = second;
+            dispatchs.submit(new Runnable() {
+                public void run() {
+                    ConcurrentSkipListMap<String, Task> schedules = slice.getList();
+                    List<Task> willremove = new LinkedList<>();
+                    for (Map.Entry<String, Task> entry : schedules.entrySet()) {
+                        Task s = entry.getValue();
+                        if (System.currentTimeMillis() >= s.getEndTimestamp()) {
+                            Runnable proxy = (Runnable) new ProxyFactory(s).getProxyInstance();
+                            workers.submit(proxy);
+                            willremove.add(s);
+                            schedules.remove(entry.getKey());
+                            log.debug("工作任务:{} 已提交分片:{}", s.getScheduleExt().getId(), second);
+                        }
+                        //因为列表是已经按截止执行时间排好序的，可以节省后面元素的过期判断
+                        else break;
+                    }
+                    submitNewPeriodSchedule(willremove);
+                }
+            });
         }
-
     }
 
     /**
@@ -172,7 +165,7 @@ public class AnnularQueue {
      * @throws Exception
      */
     public String submitAllowWait(Task schedule) throws Exception {
-        while (true){
+        while (true) {
             if (!isRunning) Thread.sleep(1000);//如果未启动则休眠1s
             else return submit(schedule);
         }
@@ -182,27 +175,27 @@ public class AnnularQueue {
     /**
      * 客户端提交任务。如果easyTask组件未启动，则抛出异常
      *
-     * @param schedule
+     * @param task
      * @return
      * @throws Exception
      */
-    public String submit(Task schedule) throws Exception {
+    public String submit(Task task) throws Exception {
         if (!isRunning) throw new Exception("the easyTask has not started,please wait a moment!");
-        schedule.getScheduleExt().setId(Util.generateUniqueId());
-        if (schedule.getTaskType().equals(TaskType.PERIOD)) {
-            if (schedule.isImmediateExecute())
-                schedule.setEndTimestamp(ZonedDateTime.now().toInstant().toEpochMilli());
+        task.getScheduleExt().setId(Util.generateUniqueId());
+        if (task.getTaskType().equals(TaskType.PERIOD)) {
+            if (task.isImmediateExecute())
+                task.setEndTimestamp(ZonedDateTime.now().toInstant().toEpochMilli());
             else
-                schedule.setEndTimestamp(Task.getTimeStampByTimeUnit(schedule.getPeriod(), schedule.getUnit()));
+                task.setEndTimestamp(Task.getTimeStampByTimeUnit(task.getPeriod(), task.getUnit()));
         }
-        String path = schedule.getClass().getName();
-        schedule.getScheduleExt().setTaskClassPath(path);
+        String path = task.getClass().getName();
+        task.getScheduleExt().setTaskClassPath(path);
         //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
-        schedule.save();
-        AddSchedule(schedule);
-        ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(schedule.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
-        log.debug("已添加类型:{}任务:{}，所属分片:{} 预计执行时间:{} 线程ID:{}", schedule.getTaskType().name(), schedule.getScheduleExt().getId(), time.getSecond(), time.toLocalTime(), Thread.currentThread().getId());
-        return schedule.getScheduleExt().getId();
+        ClusterService.save(task);
+        AddSchedule(task);
+        ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(task.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
+        log.debug("已添加类型:{}任务:{}，所属分片:{} 预计执行时间:{} 线程ID:{}", task.getTaskType().name(), task.getScheduleExt().getId(), time.getSecond(), time.toLocalTime(), Thread.currentThread().getId());
+        return task.getScheduleExt().getId();
     }
 
     /**
