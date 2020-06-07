@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.cluster;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.backup.client.NettyClient;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.dto.proto.Dto;
@@ -9,6 +10,7 @@ import org.apache.log4j.Logger;
 
 public class ClusterUtil {
     private static final Logger log = Logger.getLogger(ClusterUtil.class);
+
     /**
      * 带重试次数的同步消息发送
      *
@@ -19,21 +21,23 @@ public class ClusterUtil {
      */
     public static boolean sendSyncMsgWithCount(NettyClient client, Object msg, int tryCount) {
         if (tryCount == 0) return false;
-        String error= StringConstant.EMPTY;
+        String error = StringConstant.EMPTY;
+        Object ret=null;
+        Dto.Frame frame=null;
         try {
-            Object ret = client.sendSyncMsg(msg);
-            Dto.Frame frame = (Dto.Frame) ret;
-            ResultDto.Result result= ResultDto.Result.parseFrom(frame.getBodyBytes());
-            if ("true".equals(result.getResult()))
+            ret = client.sendSyncMsg(msg);
+            frame = (Dto.Frame) ret;
+            ResultDto.Result result = ResultDto.Result.parseFrom(frame.getBodyBytes());
+            if (StringConstant.TRUE.equals(result.getResult()))
                 return true;
             else
-                error=result.getMsg();
+                error = result.getMsg();
             tryCount--;
         } catch (Exception e) {
             tryCount--;
-            log.error("sendSyncMsgWithCount exception!error="+error,e);
+            log.error("sendSyncMsgWithCount exception!error=" + error, e);
         }
-        log.info("sendSyncMsgWithCount error"+error+",tryCount="+tryCount);
+        log.info("sendSyncMsgWithCount error" + error + ",tryCount=" + tryCount + ",objectHost=" + client.getObjectAddress());
         return sendSyncMsgWithCount(client, msg, tryCount);
 
     }

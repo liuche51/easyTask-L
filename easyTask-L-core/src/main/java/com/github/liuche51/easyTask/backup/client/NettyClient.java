@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class NettyClient {
 
     private static final Logger log = Logger.getLogger(NettyClient.class);
-
+    private InetSocketAddress address;
     private Bootstrap bootstrap;
     private ChannelFuture channelFuture;
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -39,6 +39,7 @@ public class NettyClient {
 
     public NettyClient(InetSocketAddress address) {
         this.handler = new ClientHandler();
+        this.address=address;
         try {
             log.info("nettyClinet start...");
             bootstrap = new Bootstrap();
@@ -98,11 +99,26 @@ public class NettyClient {
      * @return
      */
     public Object sendSyncMsg(Object msg) throws InterruptedException {
+        sendMsgPrintLog(msg);
         ChannelPromise promise = clientChannel.newPromise();
         handler.setPromise(promise);
         clientChannel.writeAndFlush(msg);
         promise.await(EasyTaskConfig.getInstance().getTimeOut(), TimeUnit.SECONDS);//等待固定的时间，超时就认为失败，需要重发
         return handler.getResponse();
+    }
+
+    private void sendMsgPrintLog(Object msg) {
+        StringBuilder str=new StringBuilder("Client send to:");
+        str.append(getObjectAddress()).append( " msg : ").append(msg);
+        log.debug(str.toString());
+    }
+
+    /**
+     * 获取目标连接主机地址
+     * @return
+     */
+    public String getObjectAddress() {
+        return address.getHostName()+":"+address.getPort();
     }
 
     /**
@@ -112,6 +128,7 @@ public class NettyClient {
      * @return
      */
     public ChannelFuture sendASyncMsg(Object msg) {
+        sendMsgPrintLog(msg);
         ChannelPromise promise = clientChannel.newPromise();
         handler.setPromise(promise);
         return clientChannel.writeAndFlush(msg);
@@ -125,6 +142,7 @@ public class NettyClient {
      * @return
      */
     public ChannelFuture sendASyncMsgWithoutPromise(Object msg) {
+        sendMsgPrintLog(msg);
         return clientChannel.writeAndFlush(msg);
     }
 

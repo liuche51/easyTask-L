@@ -20,10 +20,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.apache.log4j.Logger;
 
 import java.time.ZonedDateTime;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Leader服务入口
@@ -43,10 +40,11 @@ public class LeaderService {
         if (follows.size() < count) {
             log.info("follows.size() < count,so start to initSelectFollows");
             initSelectFollows();//数量不够递归重新选
+        }else {
+            ClusterService.CURRENTNODE.setFollows(follows);
+            //通知follows当前Leader位置
+            LeaderUtil.notifyFollowsLeaderPosition(follows, EasyTaskConfig.getInstance().getTryCount());
         }
-        ClusterService.CURRENTNODE.setFollows(follows);
-        //通知follows当前Leader位置
-        LeaderUtil.notifyFollowsLeaderPosition(follows, EasyTaskConfig.getInstance().getTryCount());
     }
 
     /**
@@ -58,8 +56,9 @@ public class LeaderService {
     public static void syncDataToFollows(Schedule schedule) throws InterruptedException {
         List<Node> follows = ClusterService.CURRENTNODE.getFollows();
         if (follows != null) {
-            for (Node follow : follows) {
-                LeaderUtil.syncDataToFollow(schedule, follow);
+            Iterator<Node> items=follows.iterator();//防止remove操作导致线程不安全异常
+            while (items.hasNext()) {
+                LeaderUtil.syncDataToFollow(schedule, items.next());
             }
         }
     }
@@ -74,8 +73,9 @@ public class LeaderService {
     public static void deleteTaskToFollows(String taskId) throws InterruptedException {
         List<Node> follows = ClusterService.CURRENTNODE.getFollows();
         if (follows != null) {
-            for (Node follow : follows) {
-                LeaderUtil.deleteTaskToFollow(taskId, follow);
+            Iterator<Node> items=follows.iterator();//防止remove操作导致线程不安全异常
+            while (items.hasNext()){
+                LeaderUtil.deleteTaskToFollow(taskId, items.next());
             }
         }
     }

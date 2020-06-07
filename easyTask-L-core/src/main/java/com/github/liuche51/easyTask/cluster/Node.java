@@ -83,7 +83,7 @@ public class Node implements Serializable {
         if (client != null) return client;
         else
         {
-            log.info("getClientWithCount tryCount="+tryCount);
+            log.info("getClientWithCount tryCount="+tryCount+",objectHost="+client.getObjectAddress());
             return getClientWithCount(tryCount);
         }
     }

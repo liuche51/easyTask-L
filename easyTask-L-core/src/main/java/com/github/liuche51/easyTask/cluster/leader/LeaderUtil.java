@@ -91,6 +91,11 @@ public class LeaderUtil {
         Optional<String> temp = availableFollows.stream().filter(x -> x.equals(EasyTaskConfig.getInstance().getzKServerName())).findFirst();
         if (temp.isPresent())
             availableFollows.remove(temp.get());
+        ClusterService.CURRENTNODE.getFollows().forEach(x->{//排除现有的
+            Optional<String> temp1 = availableFollows.stream().filter(y -> y.equals(x.getHost()+":"+x.getHost())).findFirst();
+            if (temp1.isPresent())
+                availableFollows.remove(temp1.get());
+        });
         if (availableFollows.size() < count)//如果可选备库节点数量不足，则等待1s，然后重新选。注意：等待会阻塞整个服务可用性
         {
             log.info("availableFollows is not enough! only has " + availableFollows.size());
