@@ -27,33 +27,20 @@ import java.util.*;
  */
 public class LeaderService {
     private static final Logger log = Logger.getLogger(LeaderService.class);
-
     /**
      * 节点启动初始化选举follows。
-     *
      * @return
      */
-    public static void initSelectFollows() throws InterruptedException {
-        int count = EasyTaskConfig.getInstance().getBackupCount();
-        List<String> availableFollows = LeaderUtil.getAvailableFollows();
-        List<Node> follows = LeaderUtil.selectFollows(count, availableFollows);
-        if (follows.size() < count) {
-            log.info("follows.size() < count,so start to initSelectFollows");
-            initSelectFollows();//数量不够递归重新选
-        }else {
-            ClusterService.CURRENTNODE.setFollows(follows);
-            //通知follows当前Leader位置
-            LeaderUtil.notifyFollowsLeaderPosition(follows, EasyTaskConfig.getInstance().getTryCount());
-        }
+    public static void initSelectFollows() throws Exception {
+        VoteFollows.initSelectFollows();
     }
-
     /**
      * 同步任务至follow。
      *
      * @param schedule
      * @return
      */
-    public static void syncDataToFollows(Schedule schedule) throws InterruptedException {
+    public static void syncDataToFollows(Schedule schedule) throws Exception {
         List<Node> follows = ClusterService.CURRENTNODE.getFollows();
         if (follows != null) {
             Iterator<Node> items=follows.iterator();//防止remove操作导致线程不安全异常
@@ -63,14 +50,13 @@ public class LeaderService {
         }
     }
 
-
     /**
      * 同步删除任务至follow。
      *
      * @param taskId
      * @return
      */
-    public static void deleteTaskToFollows(String taskId) throws InterruptedException {
+    public static void deleteTaskToFollows(String taskId) throws Exception {
         List<Node> follows = ClusterService.CURRENTNODE.getFollows();
         if (follows != null) {
             Iterator<Node> items=follows.iterator();//防止remove操作导致线程不安全异常

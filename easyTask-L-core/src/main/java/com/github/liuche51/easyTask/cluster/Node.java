@@ -69,6 +69,11 @@ public class Node implements Serializable {
     public void setLeaders(Map<String, Node> leaders) {
         this.leaders = leaders;
     }
+    public String getAddress(){
+        StringBuffer str=new StringBuffer(this.host);
+        str.append(":").append(this.port);
+        return str.toString();
+    }
 
     public NettyClient getClient() {
         if (client == null)

@@ -27,7 +27,7 @@ public class ClusterService {
      *
      * @return
      */
-    public static boolean initCurrentNode() throws UnknownHostException, InterruptedException {
+    public static boolean initCurrentNode() throws UnknownHostException, InterruptedException ,Exception{
         CURRENTNODE = new Node(Util.getLocalIP(), EasyTaskConfig.getInstance().getServerPort());
         ZKNode node = new ZKNode(CURRENTNODE.getHost(), CURRENTNODE.getPort());
         node.setCreateTime(DateUtils.getCurrentDateTime());
