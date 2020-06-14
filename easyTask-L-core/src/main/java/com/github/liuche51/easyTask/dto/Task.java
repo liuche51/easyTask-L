@@ -127,4 +127,33 @@ public class Task {
         }
         return task;
     }
+    public static Task valueOf(ScheduleBak scheduleBak){
+        Task task = new Task();
+        task.getScheduleExt().setId(scheduleBak.getId());
+        task.getScheduleExt().setTaskClassPath(scheduleBak.getClassPath());
+        task.setEndTimestamp(scheduleBak.getExecuteTime());
+        task.setParam(JSONObject.parseObject(scheduleBak.getParam(),Map.class));
+        if ("PERIOD".equals(scheduleBak.getTaskType()))
+            task.setTaskType(TaskType.PERIOD);
+        else if ("ONECE".equals(scheduleBak.getTaskType()))
+            task.setTaskType(TaskType.ONECE);
+        task.setPeriod(scheduleBak.getPeriod());
+        switch (scheduleBak.getUnit()) {
+            case "DAYS":
+                task.setUnit(TimeUnit.DAYS);
+                break;
+            case "HOURS":
+                task.setUnit(TimeUnit.HOURS);
+                break;
+            case "MINUTES":
+                task.setUnit(TimeUnit.MINUTES);
+                break;
+            case "SECONDS":
+                task.setUnit(TimeUnit.SECONDS);
+                break;
+            default:
+                break;
+        }
+        return task;
+    }
 }

@@ -1,6 +1,7 @@
 package com.github.liuche51.easyTask.dao;
 
 import com.github.liuche51.easyTask.core.*;
+import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.ResultSet;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ScheduleBakDao {
     private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
@@ -62,19 +65,43 @@ public class ScheduleBakDao {
         }
         return true;
     }
-
-    public static int getAllCount() {
+    public static List<ScheduleBak> getBySource(String source) {
+        List<ScheduleBak> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();
         try {
-            ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM schedule_bak;");
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where source='" + source + "';");
             while (resultSet.next()) {
-                return resultSet.getInt(1);
+                try {
+                    String id = resultSet.getString("id");
+                    String classPath = resultSet.getString("class_path");
+                    Long executeTime = resultSet.getLong("execute_time");
+                    String taskType = resultSet.getString("task_type");
+                    Long period = resultSet.getLong("period");
+                    String unit = resultSet.getString("unit");
+                    String param = resultSet.getString("param");
+                    String source1 = resultSet.getString("source");
+                    String createTime = resultSet.getString("create_time");
+                    ScheduleBak schedulebak = new ScheduleBak();
+                    schedulebak.setId(id);
+                    schedulebak.setClassPath(classPath);
+                    schedulebak.setExecuteTime(executeTime);
+                    schedulebak.setTaskType(taskType);
+                    schedulebak.setPeriod(period);
+                    schedulebak.setUnit(unit);
+                    schedulebak.setParam(param);
+                    schedulebak.setSource(source1);
+                    schedulebak.setCreateTime(createTime);
+                    list.add(schedulebak);
+                } catch (Exception e) {
+                    log.error("ScheduleDao.selectAll a item exception:{}", e);
+                }
             }
         } catch (Exception e) {
             log.error("ScheduleBakDao.getAllCount Exception:{}", e);
         } finally {
             helper.destroyed();
         }
-        return 0;
+        return list;
     }
+
 }

@@ -28,4 +28,9 @@ public class ZKHost {
     public void setPort(int port) {
         this.port = port;
     }
+    public String getAddress(){
+        StringBuffer str=new StringBuffer(this.host);
+        str.append(":").append(this.port);
+        return str.toString();
+    }
 }
