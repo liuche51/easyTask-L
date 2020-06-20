@@ -1,4 +1,5 @@
 package com.github.liuche51.easyTask.cluster;
+
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
@@ -32,10 +33,11 @@ public class ClusterService {
         node.setCreateTime(DateUtils.getCurrentDateTime());
         node.setLastHeartbeat(DateUtils.getCurrentDateTime());
         ZKService.register(node);
-        heartBeatToZK();
+        LeaderService.heartBeatToZK();
         LeaderService.initSelectFollows();
         node.setFollows(Util.nodeToZKHost(CURRENTNODE.getFollows()));
         ZKService.setDataByCurrentNode(node);
+        LeaderService.heartBeatToFollow();
         FollowService.heartBeatToLeader();
         return true;
     }
@@ -65,38 +67,6 @@ public class ClusterService {
             log.error("deleteTask exception!", e);
         }
         return false;
-    }
-
-    /**
-     * 节点对zk的心跳。2s一次
-     */
-    public static void heartBeatToZK() {
-        Thread th1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        ZKNode node = ZKService.getDataByCurrentNode();
-                        node.setLastHeartbeat(DateUtils.getCurrentDateTime());
-                        node.setLeaders(Util.nodeToZKHost(ClusterService.CURRENTNODE.getLeaders()));//直接将本地数据覆盖到zk
-                        node.setFollows(Util.nodeToZKHost(ClusterService.CURRENTNODE.getFollows()));//直接将本地数据覆盖到zk
-                        boolean ret = ZKService.setDataByCurrentNode(node);
-                        if (!ret) {//设置新值失败，说明zk注册信息已经被follow删除，follows已经重新选举出一个新leader。本节点只能重新选follows了
-                            ZKService.register(new ZKNode(CURRENTNODE.getHost(), CURRENTNODE.getPort()));
-                            LeaderService.initSelectFollows();
-                        }
-                    } catch (Exception e) {
-                        log.error("",e);
-                    }
-                    try {
-                        Thread.sleep(EasyTaskConfig.getInstance().getHeartBeat());
-                    } catch (InterruptedException e) {
-                        log.error("",e);
-                    }
-                }
-            }
-        });
-        th1.start();
     }
 
 }

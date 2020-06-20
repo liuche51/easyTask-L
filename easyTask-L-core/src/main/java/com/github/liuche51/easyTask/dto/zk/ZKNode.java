@@ -9,6 +9,11 @@ public class ZKNode {
     private String host;
     private int port= EasyTaskConfig.getInstance().getServerPort();
     /**
+     * 最近一次心跳时间
+     */
+    private String lastHeartbeat;
+    private String createTime;
+    /**
      * follows
      */
     private List<ZKHost> follows=new LinkedList<>();
@@ -21,11 +26,6 @@ public class ZKNode {
         this.host=host;
         this.port=port;
     }
-    /**
-     * 最近一次心跳时间
-     */
-    private String lastHeartbeat;
-    private String createTime;
 
     public String getHost() {
         return host;

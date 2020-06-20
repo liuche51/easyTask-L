@@ -52,11 +52,11 @@ public class VoteFollows {
         List<Node> follows = null;
         try {
             lock.lock();
+            if (ClusterService.CURRENTNODE.getFollows().contains(oldFollow))
+                ClusterService.CURRENTNODE.getFollows().remove(oldFollow);//移除失效的follow
             //多线程下，如果follows已经选好，则让客户端重新提交任务。以后可以优化为获取选举后的follow
             if(ClusterService.CURRENTNODE.getFollows()!=null&&ClusterService.CURRENTNODE.getFollows().size()>=EasyTaskConfig.getInstance().getBackupCount())
                 throw new Exception("cluster is voted,please retry again.");
-            if (ClusterService.CURRENTNODE.getFollows().contains(oldFollow))
-                ClusterService.CURRENTNODE.getFollows().remove(oldFollow);//移除失效的follow
             List<String> availableFollows = getAvailableFollows(Arrays.asList(oldFollow.getAddress()));
             follows = selectFollows(1, availableFollows);
             if (follows.size() < 1)
@@ -86,18 +86,19 @@ public class VoteFollows {
         if (temp.isPresent())
             availableFollows.remove(temp.get());
         ClusterService.CURRENTNODE.getFollows().forEach(x -> {//排除现有的
-            Optional<String> temp1 = availableFollows.stream().filter(y -> y.equals(x.getHost() + ":" + x.getPort())).findFirst();
+            Optional<String> temp1 = availableFollows.stream().filter(y -> y.equals(x.getAddress())).findFirst();
             if (temp1.isPresent())
                 availableFollows.remove(temp1.get());
         });
+        //排除旧的失效节点
         if(exclude!=null){
-            exclude.forEach(x -> {//排除现有的
+            exclude.forEach(x -> {
                 Optional<String> temp1 = availableFollows.stream().filter(y -> y.equals(x)).findFirst();
                 if (temp1.isPresent())
                     availableFollows.remove(temp1.get());
             });
         }
-        if (availableFollows.size() < count)//如果可选备库节点数量不足，则等待1s，然后重新选。注意：等待会阻塞整个服务可用性
+        if (availableFollows.size() < count-ClusterService.CURRENTNODE.getFollows().size())//如果可选备库节点数量不足，则等待1s，然后重新选。注意：等待会阻塞整个服务可用性
         {
             log.info("availableFollows is not enough! only has " + availableFollows.size());
             Thread.sleep(1000);

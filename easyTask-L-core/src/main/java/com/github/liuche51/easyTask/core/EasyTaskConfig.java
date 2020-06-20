@@ -1,9 +1,5 @@
 package com.github.liuche51.easyTask.core;
 
-import com.github.liuche51.easyTask.backup.server.NettyServer;
-import com.github.liuche51.easyTask.cluster.ClusterService;
-import com.github.liuche51.easyTask.cluster.leader.LeaderService;
-import com.github.liuche51.easyTask.register.ZKUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +65,7 @@ public class EasyTaskConfig {
     /**
      * ZK节点信息更新超过30s就判断为Leader失效节点，其Follow节点可进入选举新Leader
      */
-    private int selectLeaderZKNodeTimeOunt=60;
+    private int selectLeaderZKNodeTimeOunt=30;
     /**
      * 节点对zk的心跳频率。默认2s一次
      */

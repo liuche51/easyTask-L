@@ -1,5 +1,4 @@
 import com.github.liuche51.easyTask.cluster.ClusterMonitor;
-import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.TaskType;
@@ -120,7 +119,7 @@ public class ClusterTest {
         while (true) {
             Thread.sleep(5000);
             try {
-                annularQueue.submitAllowWait(task1);//多次提交测试
+                //annularQueue.submitAllowWait(task1);//多次提交测试
             } catch (Exception e) {
                 e.printStackTrace();
             }

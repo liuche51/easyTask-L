@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.dto.zk;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 
 public class ZKHost {
@@ -28,9 +29,10 @@ public class ZKHost {
     public void setPort(int port) {
         this.port = port;
     }
+    @JSONField(serialize = false)
     public String getAddress(){
         StringBuffer str=new StringBuffer(this.host);
-        str.append(":").append(this.port);
+        str.append(':').append(this.port);
         return str.toString();
     }
 }
