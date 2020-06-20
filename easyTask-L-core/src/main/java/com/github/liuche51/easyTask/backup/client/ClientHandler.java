@@ -1,19 +1,16 @@
 package com.github.liuche51.easyTask.backup.client;
 
-import com.github.liuche51.easyTask.backup.server.ServerHandler;
-import com.github.liuche51.easyTask.cluster.follow.FollowService;
-import com.github.liuche51.easyTask.dto.proto.Dto;
-import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 客户端入站(收到服务端消息)事件监听。
  */
 public class ClientHandler extends SimpleChannelInboundHandler<Object> {
-    protected static final Logger log = Logger.getLogger(ClientHandler.class);
+    protected static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
     private ChannelHandlerContext ctx;
     /**
      * 线程同步信号量。用于客户端同步调用或异步调用需返回结果处理时

@@ -8,7 +8,8 @@ import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.util.StringConstant;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 
@@ -16,7 +17,7 @@ import java.net.InetAddress;
  *
  */
 public class ServerHandler extends SimpleChannelInboundHandler<Object> {
-    private static final Logger log = Logger.getLogger(ServerHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ServerHandler.class);
 
     /**
      * 接受客户端发过来的消息。

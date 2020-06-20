@@ -1,32 +1,19 @@
 package com.github.liuche51.easyTask.cluster.leader;
 
-import com.alibaba.fastjson.JSONObject;
-import com.github.liuche51.easyTask.backup.client.NettyClient;
-import com.github.liuche51.easyTask.backup.server.NettyServer;
 import com.github.liuche51.easyTask.cluster.ClusterService;
-import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.Schedule;
-import com.github.liuche51.easyTask.dto.proto.Dto;
-import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
-import com.github.liuche51.easyTask.dto.zk.ZKNode;
-import com.github.liuche51.easyTask.register.ZKService;
-import com.github.liuche51.easyTask.util.DateUtils;
-import com.github.liuche51.easyTask.util.StringConstant;
-import io.netty.channel.ChannelFuture;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Leader服务入口
  */
 public class LeaderService {
-    private static final Logger log = Logger.getLogger(LeaderService.class);
+    private static final Logger log = LoggerFactory.getLogger(LeaderService.class);
     /**
      * 节点启动初始化选举follows。
      * @return

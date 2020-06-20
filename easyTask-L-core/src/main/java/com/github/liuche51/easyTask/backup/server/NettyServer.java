@@ -8,7 +8,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
@@ -17,7 +18,7 @@ import java.net.InetSocketAddress;
  */
 public class NettyServer {
 
-	private static final Logger log = Logger.getLogger(NettyServer.class);
+	private static final Logger log = LoggerFactory.getLogger(NettyServer.class);
 	private static NettyServer singleton = null;
 	private final EventLoopGroup bossGroup = new NioEventLoopGroup(); // 用来接收进来的连接
 	private final EventLoopGroup workerGroup = new NioEventLoopGroup();// 用来处理已经被接收的连接

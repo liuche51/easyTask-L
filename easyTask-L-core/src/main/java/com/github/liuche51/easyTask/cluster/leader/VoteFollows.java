@@ -7,7 +7,8 @@ import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.register.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -18,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * 使用多线程互斥机制
  */
 public class VoteFollows {
-    private static final Logger log = Logger.getLogger(VoteFollows.class);
+    private static final Logger log = LoggerFactory.getLogger(VoteFollows.class);
     private static volatile boolean selecting = false;//选举状态。多线程控制
     private static ReentrantLock lock = new ReentrantLock();//选举互斥锁
     /**

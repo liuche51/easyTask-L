@@ -11,7 +11,8 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyClient {
 
-    private static final Logger log = Logger.getLogger(NettyClient.class);
+    private static final Logger log = LoggerFactory.getLogger(NettyClient.class);
     private InetSocketAddress address;
     private Bootstrap bootstrap;
     private ChannelFuture channelFuture;

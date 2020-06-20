@@ -4,7 +4,8 @@ import com.github.liuche51.easyTask.backup.server.NettyServer;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.register.ZKUtil;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -15,7 +16,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 系统配置项
  */
 public class EasyTaskConfig {
-    private static final Logger log = Logger.getLogger(EasyTaskConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(EasyTaskConfig.class);
     private static EasyTaskConfig singleton = null;
 
     public static EasyTaskConfig getInstance() {

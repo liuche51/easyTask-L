@@ -15,7 +15,8 @@ import com.github.liuche51.easyTask.util.StringConstant;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
@@ -27,7 +28,7 @@ import java.util.Random;
  * leader类
  */
 public class LeaderUtil {
-    private static final Logger log = Logger.getLogger(LeaderUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(LeaderUtil.class);
 
     /**
      * 通知follows当前Leader位置。异步调用即可

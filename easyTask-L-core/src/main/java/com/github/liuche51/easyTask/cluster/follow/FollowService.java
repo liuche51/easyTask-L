@@ -5,7 +5,6 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.Task;
@@ -16,7 +15,8 @@ import com.github.liuche51.easyTask.register.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
 import com.github.liuche51.easyTask.util.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.Map;
  * Follow服务入口
  */
 public class FollowService {
-    private static final Logger log = Logger.getLogger(LeaderService.class);
+    private static final Logger log = LoggerFactory.getLogger(LeaderService.class);
 
     /**
      * 接受leader同步任务入备库
@@ -68,7 +68,8 @@ public class FollowService {
     }
 
     /**
-     * 节点对zk的心跳。2s一次
+     * 节点对zk的心跳。检查leader是否失效。
+     * 失效则进入选举
      */
     public static void heartBeatToLeader() {
         Thread th1 = new Thread(new Runnable() {
@@ -80,9 +81,10 @@ public class FollowService {
                         for (Map.Entry<String, Node> item : leaders.entrySet()) {
                             String path = StringConstant.CHAR_SPRIT + item.getValue().getAddress();
                             ZKNode node = ZKService.getDataByPath(path);
-                            //如果最后心跳时间超过60s，则直接删除该节点信息。
+                            //如果最后心跳时间超过60s，则直接删除该节点信息。并从自己的leader集合中移除掉
                             if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOunt())
                                     .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
+                                leaders.remove(item.getKey());
                                 ZKService.deleteNodeByPathIgnoreResult(path);
                             }
                             //如果最后心跳时间超过30s，进入选举新leader流程
@@ -114,7 +116,12 @@ public class FollowService {
                             }
                         }
                     } catch (Exception e) {
-                        log.error("", e);
+                        log.error( "",e);
+                    }
+                    try {
+                        Thread.sleep(EasyTaskConfig.getInstance().getHeartBeat());
+                    } catch (InterruptedException e) {
+                        log.error("",e);
                     }
                 }
             }

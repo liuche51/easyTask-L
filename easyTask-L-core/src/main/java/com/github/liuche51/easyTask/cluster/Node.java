@@ -3,7 +3,8 @@ package com.github.liuche51.easyTask.cluster;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.github.liuche51.easyTask.backup.client.NettyClient;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.net.InetSocketAddress;
@@ -16,7 +17,7 @@ import java.util.Map;
  * 节点对象
  */
 public class Node implements Serializable {
-    private static final Logger log = Logger.getLogger(Node.class);
+    private static final Logger log = LoggerFactory.getLogger(Node.class);
     private String host = "";
     private int port = EasyTaskConfig.getInstance().getServerPort();
     /**

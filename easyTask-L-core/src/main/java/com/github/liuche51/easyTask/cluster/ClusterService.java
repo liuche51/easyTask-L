@@ -1,4 +1,5 @@
 package com.github.liuche51.easyTask.cluster;
+import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
@@ -10,8 +11,6 @@ import com.github.liuche51.easyTask.register.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.UnknownHostException;
 
 public class ClusterService {
     private static Logger log = LoggerFactory.getLogger(ClusterService.class);
@@ -27,7 +26,7 @@ public class ClusterService {
      *
      * @return
      */
-    public static boolean initCurrentNode() throws UnknownHostException, InterruptedException ,Exception{
+    public static boolean initCurrentNode() throws Exception{
         CURRENTNODE = new Node(Util.getLocalIP(), EasyTaskConfig.getInstance().getServerPort());
         ZKNode node = new ZKNode(CURRENTNODE.getHost(), CURRENTNODE.getPort());
         node.setCreateTime(DateUtils.getCurrentDateTime());
@@ -37,6 +36,7 @@ public class ClusterService {
         LeaderService.initSelectFollows();
         node.setFollows(Util.nodeToZKHost(CURRENTNODE.getFollows()));
         ZKService.setDataByCurrentNode(node);
+        FollowService.heartBeatToLeader();
         return true;
     }
     /**
@@ -85,9 +85,13 @@ public class ClusterService {
                             ZKService.register(new ZKNode(CURRENTNODE.getHost(), CURRENTNODE.getPort()));
                             LeaderService.initSelectFollows();
                         }
-                        Thread.sleep(EasyTaskConfig.getInstance().getHeartBeat());
                     } catch (Exception e) {
-                        log.error("", e);
+                        log.error("",e);
+                    }
+                    try {
+                        Thread.sleep(EasyTaskConfig.getInstance().getHeartBeat());
+                    } catch (InterruptedException e) {
+                        log.error("",e);
                     }
                 }
             }

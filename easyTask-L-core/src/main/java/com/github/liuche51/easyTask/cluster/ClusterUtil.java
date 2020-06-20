@@ -6,10 +6,11 @@ import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ResultDto;
 import com.github.liuche51.easyTask.util.StringConstant;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClusterUtil {
-    private static final Logger log = Logger.getLogger(ClusterUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ClusterUtil.class);
 
     /**
      * 带重试次数的同步消息发送
