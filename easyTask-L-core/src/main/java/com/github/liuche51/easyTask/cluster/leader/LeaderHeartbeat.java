@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class LeaderHeartbeat {
                            if(node==null)//防止follow节点已经不在zk。导致不能重新选举
                            {
                                log.info("heartBeatToFollow():oldFollow is not exist in zk,so to selectNewFollow.");
-                               VoteFollows.selectNewFollow(oldFollow);
+                               VoteFollows.selectNewFollow(oldFollow,items);
                                continue;
                            }
                            //如果最后心跳时间超过60s，则直接删除该节点信息。
@@ -79,17 +80,22 @@ public class LeaderHeartbeat {
                            else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOunt())
                                    .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
                                log.info("heartBeatToFollow():start to selectNewFollow");
-                               VoteFollows.selectNewFollow(oldFollow);
+                               VoteFollows.selectNewFollow(oldFollow,items);
                            }
 
                         }
-                    } catch (Exception e) {
-                        log.error( "",e);
+                    }
+                    catch (ConcurrentModificationException ce){
+                        //多线程并发导致items.next()异常，但是没啥太大影响(影响后续元素迭代)。可以直接忽略
+                        log.info("normally exception error.can ignore.{}",ce.getMessage());
+                    }
+                    catch (Exception e) {
+                        log.error( "heartBeatToFollow()",e);
                     }
                     try {
                         Thread.sleep(EasyTaskConfig.getInstance().getHeartBeat());
                     } catch (InterruptedException e) {
-                        log.error("",e);
+                        log.error("heartBeatToFollow()",e);
                     }
                 }
             }

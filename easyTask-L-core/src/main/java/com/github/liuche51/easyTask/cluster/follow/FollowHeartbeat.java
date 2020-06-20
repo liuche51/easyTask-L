@@ -42,49 +42,25 @@ public class FollowHeartbeat {
                             //如果最后心跳时间超过60s，则直接删除该节点信息。并从自己的leader集合中移除掉
                             if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOunt())
                                     .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
-                                leaders.remove(item.getKey());
+                                items.remove();
                                 ZKService.deleteNodeByPathIgnoreResult(path);
                             }
                             //如果最后心跳时间超过30s，进入选举新leader流程。并从自己的leader集合中移除掉
                             else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOunt())
                                     .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
                                 log.info("heartBeatToLeader():start to selectNewLeader");
-                                List<ZKHost> follows = node.getFollows();
-                                ZKHost newLeader = null;
-                                int smallest = 0;
-                                for (ZKHost x : follows) {
-                                    if (smallest == 0||x.getAddress().hashCode() < smallest) {
-                                        smallest = x.getAddress().hashCode();
-                                        newLeader = x;
-                                    }
-                                }
-                                //自己就是新leader
-                                if(newLeader!=null&&newLeader.getAddress().equals(EasyTaskConfig.getInstance().getzKServerName())){
-                                    leaders.remove(item.getKey());
-                                    List<ScheduleBak> baks= ScheduleBakDao.getBySource(item.getValue().getAddress());
-                                    baks.forEach(x->{
-                                        Task task=Task.valueOf(x);
-                                        try {
-                                            AnnularQueue.getInstance().submit(task);//模拟客户端重新提交任务
-
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    });
-                                }else{
-                                    leaders.remove(item.getKey());
-                                }
-
+                                VoteLeader.selectNewLeader(node,item.getValue().getAddress());
+                                items.remove();
                             }
 
                         }
                     } catch (Exception e) {
-                        log.error( "",e);
+                        log.error( "heartBeatToLeader()",e);
                     }
                     try {
                         Thread.sleep(EasyTaskConfig.getInstance().getHeartBeat());
                     } catch (InterruptedException e) {
-                        log.error("",e);
+                        log.error("heartBeatToLeader()",e);
                     }
                 }
             }

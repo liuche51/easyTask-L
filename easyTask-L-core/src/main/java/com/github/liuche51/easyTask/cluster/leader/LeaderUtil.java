@@ -87,13 +87,13 @@ public class LeaderUtil {
         NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
         if (client == null) {
             log.info("client == null,so start to selectNewFollow.");
-            Node newFollow = VoteFollows.selectNewFollow(follow);
+            Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return syncDataToFollow(schedule, newFollow);
         }
         boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
         if (!ret) {
             log.info("sendSyncMsgWithCount return false,so start to selectNewFollow.");
-            Node newFollow = VoteFollows.selectNewFollow(follow);
+            Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return syncDataToFollow(schedule, newFollow);
         }
         return true;
@@ -112,13 +112,13 @@ public class LeaderUtil {
         NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
         if (client == null) {
             log.info("client == null,so start to selectNewFollow.");
-            Node newFollow = VoteFollows.selectNewFollow(follow);
+            Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return deleteTaskToFollow(taskId, newFollow);
         }
         boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
         if (!ret) {
             log.info("sendSyncMsgWithCount return false,so start to selectNewFollow.");
-            Node newFollow = VoteFollows.selectNewFollow(follow);
+            Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return deleteTaskToFollow(taskId, newFollow);
         }
         return true;

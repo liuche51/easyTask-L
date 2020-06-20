@@ -43,24 +43,26 @@ public class VoteFollows {
     /**
      * 选择新follow
      * leader同步数据失败或心跳检测失败，则进入选新follow程序
-     *
+     * @param items 是否在迭代器中访问，是则使用迭代器移除元素
      * @return
      */
-    public static Node selectNewFollow(Node oldFollow) throws Exception {
+    public static Node selectNewFollow(Node oldFollow,Iterator<Node> items) throws Exception {
         if (selecting) throw new Exception("cluster is voting,please retry later.");
         selecting = true;
         List<Node> follows = null;
         try {
             lock.lock();
-            if (ClusterService.CURRENTNODE.getFollows().contains(oldFollow))
-                ClusterService.CURRENTNODE.getFollows().remove(oldFollow);//移除失效的follow
+            if (ClusterService.CURRENTNODE.getFollows().contains(oldFollow)){
+                if(items!=null)  items.remove();//如果使用以下List集合方法移除，会导致下次items.next()方法报错
+            }else
+               ClusterService.CURRENTNODE.getFollows().remove(oldFollow);//移除失效的follow
             //多线程下，如果follows已经选好，则让客户端重新提交任务。以后可以优化为获取选举后的follow
             if(ClusterService.CURRENTNODE.getFollows()!=null&&ClusterService.CURRENTNODE.getFollows().size()>=EasyTaskConfig.getInstance().getBackupCount())
                 throw new Exception("cluster is voted,please retry again.");
             List<String> availableFollows = getAvailableFollows(Arrays.asList(oldFollow.getAddress()));
             follows = selectFollows(1, availableFollows);
             if (follows.size() < 1)
-                selectNewFollow(oldFollow);//数量不够递归重新选
+                selectNewFollow(oldFollow,items);//数量不够递归重新选
             else
                 ClusterService.CURRENTNODE.getFollows().add(follows.get(0));
         } finally {
