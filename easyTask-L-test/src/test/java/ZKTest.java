@@ -1,7 +1,7 @@
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.dto.zk.ZKHost;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
-import com.github.liuche51.easyTask.register.ZKService;
+import com.github.liuche51.easyTask.zk.ZKService;
 import org.junit.Test;
 
 import java.time.ZonedDateTime;

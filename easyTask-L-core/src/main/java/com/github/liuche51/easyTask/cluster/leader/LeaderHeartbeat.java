@@ -5,7 +5,7 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
-import com.github.liuche51.easyTask.register.ZKService;
+import com.github.liuche51.easyTask.zk.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
 import org.slf4j.Logger;

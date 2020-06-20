@@ -1,4 +1,4 @@
-package com.github.liuche51.easyTask.backup.server;
+package com.github.liuche51.easyTask.netty.server;
 
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;

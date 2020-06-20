@@ -1,4 +1,4 @@
-package com.github.liuche51.easyTask.backup.server;
+package com.github.liuche51.easyTask.netty.server;
 
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import io.netty.channel.ChannelInitializer;
@@ -7,9 +7,6 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
 
 /**
  *

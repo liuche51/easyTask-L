@@ -1,4 +1,4 @@
-package com.github.liuche51.easyTask.backup.client;
+package com.github.liuche51.easyTask.netty.client;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;

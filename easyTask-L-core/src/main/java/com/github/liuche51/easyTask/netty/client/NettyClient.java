@@ -1,4 +1,4 @@
-package com.github.liuche51.easyTask.backup.client;
+package com.github.liuche51.easyTask.netty.client;
 
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.Dto;

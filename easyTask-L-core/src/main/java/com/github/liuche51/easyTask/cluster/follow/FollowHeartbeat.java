@@ -10,7 +10,7 @@ import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKHost;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
-import com.github.liuche51.easyTask.register.ZKService;
+import com.github.liuche51.easyTask.zk.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
 import org.slf4j.Logger;

@@ -8,7 +8,7 @@ import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
-import com.github.liuche51.easyTask.register.ZKService;
+import com.github.liuche51.easyTask.zk.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

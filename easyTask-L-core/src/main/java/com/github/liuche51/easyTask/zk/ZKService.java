@@ -1,9 +1,8 @@
-package com.github.liuche51.easyTask.register;
+package com.github.liuche51.easyTask.zk;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
-import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;

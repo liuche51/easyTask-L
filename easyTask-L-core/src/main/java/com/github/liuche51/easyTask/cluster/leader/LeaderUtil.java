@@ -1,16 +1,12 @@
 package com.github.liuche51.easyTask.cluster.leader;
 
-import com.github.liuche51.easyTask.backup.client.NettyClient;
-import com.github.liuche51.easyTask.cluster.ClusterService;
+import com.github.liuche51.easyTask.netty.client.NettyClient;
 import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
-import com.github.liuche51.easyTask.dto.zk.ZKNode;
-import com.github.liuche51.easyTask.register.ZKService;
-import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.Future;
@@ -18,11 +14,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.ZonedDateTime;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 /**
  * leader类

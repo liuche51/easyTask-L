@@ -1,12 +1,9 @@
-package com.github.liuche51.easyTask.register;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import com.github.liuche51.easyTask.core.Util;
+package com.github.liuche51.easyTask.zk;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.ZooKeeper;
-import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

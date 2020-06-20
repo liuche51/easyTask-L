@@ -1,12 +1,8 @@
-import com.github.liuche51.easyTask.backup.client.ClientHandler;
-import com.github.liuche51.easyTask.backup.client.NettyClient;
+import com.github.liuche51.easyTask.netty.client.NettyClient;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.util.StringConstant;
-import com.github.liuche51.easyTask.util.StringUtils;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.junit.Test;

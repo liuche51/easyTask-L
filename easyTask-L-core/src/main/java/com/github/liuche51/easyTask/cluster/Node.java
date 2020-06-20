@@ -1,7 +1,7 @@
 package com.github.liuche51.easyTask.cluster;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.github.liuche51.easyTask.backup.client.NettyClient;
+import com.github.liuche51.easyTask.netty.client.NettyClient;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
