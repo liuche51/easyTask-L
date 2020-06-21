@@ -116,9 +116,9 @@ public class AnnularQueue {
         //避免重复执行
         if (isRunning)
             return;
+        DbInit.init();
         NettyServer.getInstance().run();//启动组件的Netty服务端口
         ClusterService.initCurrentNode();
-        DbInit.init();
         recover();
         setDefaultThreadPool();
         isRunning = true;

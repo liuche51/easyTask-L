@@ -5,6 +5,7 @@ import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.ResultDto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.dto.proto.Dto;
+import com.github.liuche51.easyTask.util.NettyInterfaceEnum;
 import com.github.liuche51.easyTask.util.StringConstant;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -40,16 +41,21 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
             Dto.Frame frame = (Dto.Frame) msg;
             builder.setIdentity(frame.getIdentity());
             switch (frame.getInterfaceName()) {
-                case StringConstant
+                case NettyInterfaceEnum
                         .SYNC_SCHEDULE_BACKUP:
                     ScheduleDto.Schedule schedule = ScheduleDto.Schedule.parseFrom(frame.getBodyBytes());
                     FollowService.saveScheduleBak(schedule);
                     break;
-                case StringConstant.SYNC_LEADER_POSITION:
+                case NettyInterfaceEnum
+                        .SYNC_SCHEDULE_BACKUP_BATCH:
+                    ScheduleDto.ScheduleList scheduleList = ScheduleDto.ScheduleList.parseFrom(frame.getBodyBytes());
+                    FollowService.saveScheduleBakBatch(scheduleList);
+                    break;
+                case NettyInterfaceEnum.SYNC_LEADER_POSITION:
                     String ret = frame.getBody();
                     FollowService.updateLeaderPosition(ret);
                     break;
-                case StringConstant.DELETE_SCHEDULEBACKUP:
+                case NettyInterfaceEnum.DELETE_SCHEDULEBACKUP:
                     String taskId = frame.getBody();
                     FollowService.deleteScheduleBak(taskId);
                     break;

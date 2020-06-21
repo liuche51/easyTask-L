@@ -8,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,26 +36,53 @@ public class ScheduleBakDao {
     }
 
     public static boolean save(ScheduleBak scheduleBak) {
-        String sql="";
+        String sql = "";
         try {
             if (!DbInit.hasInit)
                 DbInit.init();
             scheduleBak.setCreateTime(DateUtils.getCurrentDateTime());
-            sql = "insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,source,create_time) values('"
-                    + scheduleBak.getId() + "','" + scheduleBak.getClassPath() + "'," + scheduleBak.getExecuteTime()
-                    + ",'" + scheduleBak.getTaskType() + "'," + scheduleBak.getPeriod() + ",'" + scheduleBak.getUnit()
-                    + "','" + scheduleBak.getParam()  + "','" + scheduleBak.getSource()+ "','"+ scheduleBak.getCreateTime() + "');";
+            sql = contactSaveSql(Arrays.asList(scheduleBak));
             int count = SqliteHelper.executeUpdateForSync(sql);
             if (count > 0) {
                 log.debug("任务:{} 已经持久化", scheduleBak.getId());
                 return true;
             }
         } catch (Exception e) {
-            log.info("SQL:"+ sql);
-            log.error("ScheduleBakDao.save Exception taskId:"+ scheduleBak.getId(), e);
+            log.info("SQL:" + sql);
+            log.error("ScheduleBakDao.save Exception taskId:" + scheduleBak.getId(), e);
         }
         return false;
     }
+
+    public static void saveBatch(List<ScheduleBak> scheduleBaks) throws Exception {
+        String sql = contactSaveSql(scheduleBaks);
+        int count = SqliteHelper.executeUpdateForSync(sql.toString());
+        if (count <= 0) {
+            throw new Exception("saveBatch result count=" + count);
+        }
+    }
+
+    private static String contactSaveSql(List<ScheduleBak> scheduleBaks) {
+        StringBuilder sql1 = new StringBuilder("insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,source,create_time) values");
+        for (ScheduleBak scheduleBak : scheduleBaks) {
+            scheduleBak.setCreateTime(DateUtils.getCurrentDateTime());
+            sql1.append("('");
+            sql1.append(scheduleBak.getId()).append("','");
+            sql1.append(scheduleBak.getClassPath()).append("',");
+            sql1.append(scheduleBak.getExecuteTime()).append(",'");
+            sql1.append(scheduleBak.getTaskType()).append("',");
+            sql1.append(scheduleBak.getPeriod()).append(",'");
+            sql1.append(scheduleBak.getUnit()).append("','");
+            sql1.append(scheduleBak.getParam()).append("','");
+            sql1.append(scheduleBak.getSource()).append("','");
+            sql1.append(scheduleBak.getCreateTime()).append("')").append(',');
+        }
+        log.info(sql1.toString());
+        String sql=sql1.substring(0, sql1.length() - 1);//去掉最后一个逗号
+        log.info(sql);
+        return sql.concat(";");
+    }
+
     public static boolean delete(String id) {
         try {
             String sql = "delete FROM schedule_bak where id='" + id + "';";
@@ -66,6 +95,7 @@ public class ScheduleBakDao {
         }
         return true;
     }
+
     public static List<ScheduleBak> getBySource(String source) {
         List<ScheduleBak> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();

@@ -6,20 +6,5 @@ public class StringConstant {
     public static final String TRUE="true";
     public static final String FALSE="false";
     public static final String SUCCESS="success";
-    /**
-     * 同步任务数据备份接口
-     */
-    public static final String SYNC_SCHEDULE_BACKUP="SyncScheduleBackup";
-    /**
-     * 同步任务数据备份接口，批量方式
-     */
-    public static final String SYNC_SCHEDULE_BACKUP_BATCH="SyncScheduleBackupBatch";
-    /**
-     * 删除备份任务数据接口
-     */
-    public static final String DELETE_SCHEDULEBACKUP="DeleteScheduleBackup";
-    /**
-     * 同步leader位置信息接口
-     */
-    public static final String SYNC_LEADER_POSITION="SyncLeaderPosition";
+
 }

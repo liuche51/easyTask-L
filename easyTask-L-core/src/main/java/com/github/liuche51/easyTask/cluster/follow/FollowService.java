@@ -10,6 +10,8 @@ import com.github.liuche51.easyTask.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +30,21 @@ public class FollowService {
         ScheduleBakDao.save(bak);
     }
 
+    /**
+     * 接受leader批量同步任务入备库
+     *
+     * @param scheduleList
+     */
+    public static void saveScheduleBakBatch(ScheduleDto.ScheduleList scheduleList) throws Exception {
+        List<ScheduleDto.Schedule> list= scheduleList.getSchedulesList();
+        if(list==null) return;
+        List<ScheduleBak> baklist=new ArrayList<>(list.size());
+        list.forEach(x->{
+            ScheduleBak bak = ScheduleBak.valueOf(x);
+            baklist.add(bak);
+        });
+        ScheduleBakDao.saveBatch(baklist);
+    }
     /**
      * 删除备库任务
      *

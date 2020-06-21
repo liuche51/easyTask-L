@@ -7,6 +7,7 @@ import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
+import com.github.liuche51.easyTask.util.NettyInterfaceEnum;
 import com.github.liuche51.easyTask.util.StringConstant;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.Future;
@@ -52,7 +53,7 @@ public class LeaderUtil {
         final boolean[] ret = {false};
         try {
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setInterfaceName(StringConstant.SYNC_LEADER_POSITION).setSource(EasyTaskConfig.getInstance().getzKServerName())
+            builder.setInterfaceName(NettyInterfaceEnum.SYNC_LEADER_POSITION).setSource(EasyTaskConfig.getInstance().getzKServerName())
                     .setBody(EasyTaskConfig.getInstance().getzKServerName());
             ChannelFuture future = follow.getClient().sendASyncMsgWithoutPromise(builder.build());
             tryCount--;
@@ -84,7 +85,7 @@ public class LeaderUtil {
     public static boolean syncDataToFollow(Schedule schedule, Node follow) throws Exception {
         ScheduleDto.Schedule s = schedule.toScheduleDto();
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(s.getId()).setInterfaceName(StringConstant.SYNC_SCHEDULE_BACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
+        builder.setIdentity(s.getId()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
                 .setBodyBytes(s.toByteString());
         NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
        /* if (client == null) {
@@ -115,7 +116,7 @@ public class LeaderUtil {
             builder0.addSchedules(s);
         }
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(UUID.randomUUID().toString()).setInterfaceName(StringConstant.SYNC_SCHEDULE_BACKUP_BATCH).setSource(EasyTaskConfig.getInstance().getzKServerName())
+        builder.setIdentity(UUID.randomUUID().toString()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP_BATCH).setSource(EasyTaskConfig.getInstance().getzKServerName())
                 .setBodyBytes(builder0.build().toByteString());
         NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
         if (client == null) {
@@ -140,7 +141,7 @@ public class LeaderUtil {
      */
     public static boolean deleteTaskToFollow(String taskId, Node follow) throws Exception {
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(taskId).setInterfaceName(StringConstant.DELETE_SCHEDULEBACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
+        builder.setIdentity(taskId).setInterfaceName(NettyInterfaceEnum.DELETE_SCHEDULEBACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
                 .setBody(taskId);
         NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
         if (client == null) {
