@@ -51,6 +51,17 @@ public class DbInit {
                         ");";
                 SqliteHelper.executeUpdateForSync(sql2);
             }
+            boolean exist3 = ScheduleDao.existTable();
+            if (!exist3) {
+                //本地待运行的任务
+                String sql3 = "CREATE TABLE \"schedule_sync\" (\n" +
+                        "\"schedule_id\"  TEXT NOT NULL,\n" +
+                        "\"follow\"  TEXT,\n" +
+                        "\"status\"  INTEGER,\n" +
+                        "\"create_time\"  TEXT,\n" +
+                        ");";
+                SqliteHelper.executeUpdateForSync(sql3);
+            }
             hasInit = true;
             log.debug("Sqlite 初始化完成。线程:{}", Thread.currentThread().getId());
             return true;

@@ -33,12 +33,12 @@ public class ClusterService {
         node.setCreateTime(DateUtils.getCurrentDateTime());
         node.setLastHeartbeat(DateUtils.getCurrentDateTime());
         ZKService.register(node);
-        LeaderService.heartBeatToZK();
+        LeaderService.initHeartBeatToZK();
         LeaderService.initSelectFollows();
         node.setFollows(Util.nodeToZKHost(CURRENTNODE.getFollows()));
         ZKService.setDataByCurrentNode(node);
-        LeaderService.heartBeatToFollow();
-        FollowService.heartBeatToLeader();
+        LeaderService.initCheckFollowAlive();
+        FollowService.initCheckLeaderAlive();
         return true;
     }
     /**

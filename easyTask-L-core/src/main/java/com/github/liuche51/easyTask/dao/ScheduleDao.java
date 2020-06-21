@@ -5,6 +5,7 @@ import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.core.TaskType;
 import com.github.liuche51.easyTask.core.TimeUnit;
+import com.github.liuche51.easyTask.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ScheduleDao {
-    private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
+    private static Logger log = LoggerFactory.getLogger(ScheduleDao.class);
     private int count;
 
     public static boolean existTable() {
@@ -40,7 +41,7 @@ public class ScheduleDao {
         try {
             if (!DbInit.hasInit)
                 DbInit.init();
-            schedule.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            schedule.setCreateTime(DateUtils.getCurrentDateTime());
             String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,create_time) values('"
                     + schedule.getId() + "','" + schedule.getClassPath() + "'," + schedule.getExecuteTime()
                     + ",'" + schedule.getTaskType() + "'," + schedule.getPeriod() + ",'" + schedule.getUnit()
@@ -63,23 +64,35 @@ public class ScheduleDao {
             ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule;");
             while (resultSet.next()) {
                 try {
-                    String id = resultSet.getString("id");
-                    String classPath = resultSet.getString("class_path");
-                    Long executeTime = resultSet.getLong("execute_time");
-                    String taskType = resultSet.getString("task_type");
-                    Long period = resultSet.getLong("period");
-                    String unit = resultSet.getString("unit");
-                    String param = resultSet.getString("param");
-                    String createTime = resultSet.getString("create_time");
-                    Schedule schedule = new Schedule();
-                    schedule.setId(id);
-                    schedule.setClassPath(classPath);
-                    schedule.setExecuteTime(executeTime);
-                    schedule.setTaskType(taskType);
-                    schedule.setPeriod(period);
-                    schedule.setUnit(unit);
-                    schedule.setParam(param);
-                    schedule.setCreateTime(createTime);
+                    Schedule schedule = getSchedule(resultSet);
+                    list.add(schedule);
+                } catch (Exception e) {
+                    log.error("ScheduleDao.selectAll a item exception:{}", e);
+                }
+            }
+        } catch (Exception e) {
+            log.error("ScheduleDao.selectAll exception:{}", e);
+        } finally {
+            helper.destroyed();
+        }
+        return list;
+    }
+
+    public static List<Schedule> selectByIds( String[] ids) {
+        List<Schedule> list = new LinkedList<>();
+        SqliteHelper helper = new SqliteHelper();
+        try {
+            StringBuilder instr = new StringBuilder("('");
+            for (int i = 0; i < ids.length; i++) {
+                if (i == ids.length - 1)//最后一个
+                    instr.append(ids[i]).append("')");
+                else
+                    instr.append(ids[i]).append("','");
+            }
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule where id in " + instr + ";");
+            while (resultSet.next()) {
+                try {
+                    Schedule schedule = getSchedule(resultSet);
                     list.add(schedule);
                 } catch (Exception e) {
                     log.error("ScheduleDao.selectAll a item exception:{}", e);
@@ -113,5 +126,26 @@ public class ScheduleDao {
             helper.destroyed();
         }
         return 0;
+    }
+
+    private static Schedule getSchedule(ResultSet resultSet) throws SQLException {
+        String id = resultSet.getString("id");
+        String classPath = resultSet.getString("class_path");
+        Long executeTime = resultSet.getLong("execute_time");
+        String taskType = resultSet.getString("task_type");
+        Long period = resultSet.getLong("period");
+        String unit = resultSet.getString("unit");
+        String param = resultSet.getString("param");
+        String createTime = resultSet.getString("create_time");
+        Schedule schedule = new Schedule();
+        schedule.setId(id);
+        schedule.setClassPath(classPath);
+        schedule.setExecuteTime(executeTime);
+        schedule.setTaskType(taskType);
+        schedule.setPeriod(period);
+        schedule.setUnit(unit);
+        schedule.setParam(param);
+        schedule.setCreateTime(createTime);
+        return schedule;
     }
 }

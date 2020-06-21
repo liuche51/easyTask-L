@@ -5,6 +5,8 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
+import com.github.liuche51.easyTask.util.exception.VotedException;
+import com.github.liuche51.easyTask.util.exception.VotingException;
 import com.github.liuche51.easyTask.zk.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
@@ -51,7 +53,7 @@ public class LeaderHeartbeat {
     }
     /**
      * 节点对zk的心跳。检查follows是否失效。
-     * 失效则进入选举
+     * 失效则进入选举。选举后将原follow备份数据同步给新follow
      */
     public static void heartBeatToFollow() {
         Thread th1 = new Thread(new Runnable() {
@@ -76,18 +78,28 @@ public class LeaderHeartbeat {
                                    .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
                                ZKService.deleteNodeByPathIgnoreResult(path);
                            }
-                           //如果最后心跳时间超过30s，进入选举新leader流程
+                           //如果最后心跳时间超过30s，进入选举新follow流程
                            else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOunt())
                                    .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
                                log.info("heartBeatToFollow():start to selectNewFollow");
-                               VoteFollows.selectNewFollow(oldFollow,items);
+                               Node newFollow=VoteFollows.selectNewFollow(oldFollow,items);
+                               LeaderService.syncDataToNewFollow(oldFollow,newFollow);
                            }
 
                         }
                     }
-                    catch (ConcurrentModificationException ce){
+                    catch (ConcurrentModificationException e){
                         //多线程并发导致items.next()异常，但是没啥太大影响(影响后续元素迭代)。可以直接忽略
-                        log.info("normally exception error.can ignore.{}",ce.getMessage());
+                        log.info("normally exception error.can ignore.{}",e.getMessage());
+                    }
+                    catch (VotingException e){
+                        //异常导致选新follow。但此时刚好有其他地方触发正在选举中。
+                        //心跳这里就没必要继续触发选新follow了
+                        log.info("normally exception error.can ignore.{}",e.getMessage());
+                    }
+                    catch (VotedException e){
+                        //原因同上VotingException
+                        log.info("normally exception error.can ignore.{}",e.getMessage());
                     }
                     catch (Exception e) {
                         log.error( "heartBeatToFollow()",e);

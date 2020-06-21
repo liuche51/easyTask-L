@@ -9,3 +9,6 @@ message Schedule {
   optional  string param = 7;
   required string source = 8;
 }
+message ScheduleList {
+  repeated Schedule schedules = 1;
+}

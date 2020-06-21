@@ -3,6 +3,7 @@ package com.github.liuche51.easyTask.dao;
 import com.github.liuche51.easyTask.core.*;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
+import com.github.liuche51.easyTask.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ScheduleBakDao {
-    private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
+    private static Logger log = LoggerFactory.getLogger(ScheduleBakDao.class);
 
     public static boolean existTable() {
         SqliteHelper helper = new SqliteHelper();
@@ -37,7 +38,7 @@ public class ScheduleBakDao {
         try {
             if (!DbInit.hasInit)
                 DbInit.init();
-            scheduleBak.setCreateTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            scheduleBak.setCreateTime(DateUtils.getCurrentDateTime());
             sql = "insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,source,create_time) values('"
                     + scheduleBak.getId() + "','" + scheduleBak.getClassPath() + "'," + scheduleBak.getExecuteTime()
                     + ",'" + scheduleBak.getTaskType() + "'," + scheduleBak.getPeriod() + ",'" + scheduleBak.getUnit()

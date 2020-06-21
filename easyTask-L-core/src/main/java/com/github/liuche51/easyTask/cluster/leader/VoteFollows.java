@@ -4,6 +4,8 @@ import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
+import com.github.liuche51.easyTask.util.exception.VotedException;
+import com.github.liuche51.easyTask.util.exception.VotingException;
 import com.github.liuche51.easyTask.zk.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
@@ -47,7 +49,7 @@ public class VoteFollows {
      * @return
      */
     public static Node selectNewFollow(Node oldFollow,Iterator<Node> items) throws Exception {
-        if (selecting) throw new Exception("cluster is voting,please retry later.");
+        if (selecting) throw new VotingException("cluster is voting,please retry later.");
         selecting = true;
         List<Node> follows = null;
         try {
@@ -58,7 +60,7 @@ public class VoteFollows {
                ClusterService.CURRENTNODE.getFollows().remove(oldFollow);//移除失效的follow
             //多线程下，如果follows已经选好，则让客户端重新提交任务。以后可以优化为获取选举后的follow
             if(ClusterService.CURRENTNODE.getFollows()!=null&&ClusterService.CURRENTNODE.getFollows().size()>=EasyTaskConfig.getInstance().getBackupCount())
-                throw new Exception("cluster is voted,please retry again.");
+                throw new VotedException("cluster is voted,please retry again.");
             List<String> availableFollows = getAvailableFollows(Arrays.asList(oldFollow.getAddress()));
             follows = selectFollows(1, availableFollows);
             if (follows.size() < 1)
