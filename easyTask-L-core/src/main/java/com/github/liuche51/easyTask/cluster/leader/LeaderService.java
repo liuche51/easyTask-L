@@ -6,6 +6,7 @@ import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleSync;
+import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.ScheduleSyncStatusEnum;
 import com.github.liuche51.easyTask.util.exception.VotedException;
 import com.github.liuche51.easyTask.util.exception.VotingException;
@@ -41,7 +42,15 @@ public class LeaderService {
         if (follows != null) {
             Iterator<Node> items = follows.iterator();//防止remove操作导致线程不安全异常
             while (items.hasNext()) {
-                LeaderUtil.syncDataToFollow(schedule, items.next());
+                Node follow=items.next();
+                ScheduleSync scheduleSync=new ScheduleSync();
+                scheduleSync.setScheduleId(schedule.getId());
+                scheduleSync.setFollow(follow.getAddress());
+                scheduleSync.setStatus(ScheduleSyncStatusEnum.SYNCING);
+                scheduleSync.setCreateTime(DateUtils.getCurrentDateTime());
+                ScheduleSyncDao.save(scheduleSync);
+                LeaderUtil.syncDataToFollow(schedule,follow);
+                ScheduleSyncDao.updateStatusByScheduleIdAndFollow(schedule.getId(),follow.getAddress(),ScheduleSyncStatusEnum.SYNCED);
             }
         }
     }
