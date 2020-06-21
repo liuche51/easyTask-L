@@ -77,9 +77,7 @@ public class ScheduleBakDao {
             sql1.append(scheduleBak.getSource()).append("','");
             sql1.append(scheduleBak.getCreateTime()).append("')").append(',');
         }
-        log.info(sql1.toString());
         String sql=sql1.substring(0, sql1.length() - 1);//去掉最后一个逗号
-        log.info(sql);
         return sql.concat(";");
     }
 
