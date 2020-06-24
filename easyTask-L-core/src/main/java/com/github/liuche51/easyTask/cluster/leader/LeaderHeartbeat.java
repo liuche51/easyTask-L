@@ -83,6 +83,7 @@ public class LeaderHeartbeat {
                                    .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
                                log.info("heartBeatToFollow():start to selectNewFollow");
                                Node newFollow=VoteFollows.selectNewFollow(oldFollow,items);
+                               log.info("heartBeatToFollow():start to syncDataToNewFollow");
                                LeaderService.syncDataToNewFollow(oldFollow,newFollow);
                            }
 

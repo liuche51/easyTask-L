@@ -104,6 +104,8 @@ public class LeaderUtil {
     /**
      * 同步任务数据到follow，批量方式
      *用于将数据同步给新follow
+     *暂时不支持失败进入选新follow流程。代码注释掉
+     * 目前仅在leader心跳follow是否存活那边进行选新follow流程
      * @param schedules
      * @param follow
      * @return
@@ -119,17 +121,17 @@ public class LeaderUtil {
         builder.setIdentity(UUID.randomUUID().toString()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP_BATCH).setSource(EasyTaskConfig.getInstance().getzKServerName())
                 .setBodyBytes(builder0.build().toByteString());
         NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
-        if (client == null) {
+       /* if (client == null) {
             log.info("client == null,so start to syncDataToFollowBatch.");
             Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return syncDataToFollowBatch(schedules, newFollow);
-        }
+        }*/
         boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
-        if (!ret) {
+      /*  if (!ret) {
             log.info("sendSyncMsgWithCount return false,so start to syncDataToFollowBatch.");
             Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return syncDataToFollowBatch(schedules, newFollow);
-        }
+        }*/
         return true;
     }
 

@@ -104,6 +104,7 @@ public class LeaderService {
                     //先将失效的follow数据同步标记为未同步，同时修改其follow标识
                     ScheduleSyncDao.updateFollowAndStatusByFollow(oldFollow.getAddress(), newFollow.getAddress(), ScheduleSyncStatusEnum.UNSYNC);
                     while (true) {
+                        //获取批次数据
                         List<ScheduleSync> list = ScheduleSyncDao.selectByFollowAndStatusWithCount(newFollow.getAddress(), ScheduleSyncStatusEnum.UNSYNC, 5);
                         if (list.size() == 0) break;//如果已经同步完，则跳出循环
                         ScheduleSyncDao.updateStatusByFollowAndStatus(newFollow.getAddress(),ScheduleSyncStatusEnum.UNSYNC,ScheduleSyncStatusEnum.SYNCING);
