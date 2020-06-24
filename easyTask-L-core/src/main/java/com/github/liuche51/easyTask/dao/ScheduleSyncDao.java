@@ -39,9 +39,10 @@ public class ScheduleSyncDao {
         if (!DbInit.hasInit)
             DbInit.init();
         scheduleSync.setCreateTime(DateUtils.getCurrentDateTime());
-        String sql = "insert into schedule_sync(schedule_id,follow,status,create_time) values('"
+        scheduleSync.setModifyTime(DateUtils.getCurrentDateTime());
+        String sql = "insert into schedule_sync(schedule_id,follow,status,create_time,modify_time) values('"
                 + scheduleSync.getScheduleId() + "','" + scheduleSync.getFollow() + "'," + scheduleSync.getStatus()
-                + ",'" + scheduleSync.getCreateTime() + "');";
+                + ",'" + scheduleSync.getCreateTime()  + "','" + scheduleSync.getCreateTime() + "');";
         int count = SqliteHelper.executeUpdateForSync(sql);
         if (count > 0) {
             return true;
@@ -61,11 +62,13 @@ public class ScheduleSyncDao {
                     String follow1 = resultSet.getString("follow");
                     short status1 = resultSet.getShort("status");
                     String createTime = resultSet.getString("create_time");
+                    String modifyTime = resultSet.getString("modify_time");
                     ScheduleSync scheduleSync = new ScheduleSync();
                     scheduleSync.setScheduleId(scheduleId1);
                     scheduleSync.setFollow(follow1);
                     scheduleSync.setStatus(status1);
                     scheduleSync.setCreateTime(createTime);
+                    scheduleSync.setModifyTime(modifyTime);
                     list.add(scheduleSync);
                 } catch (Exception e) {
                     log.error("selectByFollowAndStatusWithCount.selectAll a item exception:{}", e);
@@ -80,17 +83,17 @@ public class ScheduleSyncDao {
     }
 
     public static void updateFollowAndStatusByFollow(String oldFollow, String newFollow, short status) throws SQLException, ClassNotFoundException {
-        String sql = "update schedule_sync set ollow='" + newFollow + "', status=" + status + " where follow='" + oldFollow + "';";
+        String sql = "update schedule_sync set follow='" + newFollow + "', status=" + status + ",modify_time='"+DateUtils.getCurrentDateTime()+"' where follow='" + oldFollow + "';";
         SqliteHelper.executeUpdateForSync(sql);
     }
 
     public static void updateStatusByFollowAndStatus(String follow, short status, short updateStatus) throws SQLException, ClassNotFoundException {
-        String sql = "update schedule_sync set status=" + updateStatus + " where follow='" + follow + "' and status=" + status + ";";
+        String sql = "update schedule_sync set status=" + updateStatus + ",modify_time='"+DateUtils.getCurrentDateTime()+"' where follow='" + follow + "' and status=" + status + ";";
         SqliteHelper.executeUpdateForSync(sql);
     }
 
     public static void updateStatusByScheduleIdAndFollow(String scheduleId, String follow, short status) throws SQLException, ClassNotFoundException {
-        String sql = "update schedule_sync set status=" + status + " where schedule_id='" + scheduleId + "' and follow='" + follow + "';";
+        String sql = "update schedule_sync set status=" + status + ",modify_time='"+DateUtils.getCurrentDateTime()+"' where schedule_id='" + scheduleId + "' and follow='" + follow + "';";
         SqliteHelper.executeUpdateForSync(sql);
     }
 

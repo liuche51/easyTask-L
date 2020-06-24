@@ -9,6 +9,7 @@ public class ScheduleSync {
     private String follow;
     private short status;
     private String createTime;
+    private String modifyTime;
 
     public String getScheduleId() {
         return scheduleId;
@@ -40,5 +41,13 @@ public class ScheduleSync {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public String getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(String modifyTime) {
+        this.modifyTime = modifyTime;
     }
 }

@@ -5,7 +5,9 @@ import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
+import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
 import com.github.liuche51.easyTask.dto.Schedule;
+import com.github.liuche51.easyTask.dto.ScheduleSync;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.zk.ZKService;
@@ -43,6 +45,7 @@ public class ClusterService {
     }
     /**
      * 任务数据持久化。含同步至备份库
+     * 后期需要考虑数据一致性的事务机制
      * @throws Exception
      */
     public static void save(Task task) throws Exception {
@@ -55,6 +58,7 @@ public class ClusterService {
 
     /**
      * 删除完成的一次性任务。含同步至备份库
+     * 后期需要考虑数据一致性的事务机制
      * @param taskId
      * @return
      */

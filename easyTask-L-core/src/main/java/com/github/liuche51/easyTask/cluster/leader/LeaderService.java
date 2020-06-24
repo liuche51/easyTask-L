@@ -33,7 +33,8 @@ public class LeaderService {
 
     /**
      * 同步任务至follow。
-     *
+     *先写同步记录，同步成功再更新同步状态为成功。如果发生异常，则认为本次任务提交失败
+     * 后期需要考虑数据一致性的事务机制
      * @param schedule
      * @return
      */
@@ -47,7 +48,6 @@ public class LeaderService {
                 scheduleSync.setScheduleId(schedule.getId());
                 scheduleSync.setFollow(follow.getAddress());
                 scheduleSync.setStatus(ScheduleSyncStatusEnum.SYNCING);
-                scheduleSync.setCreateTime(DateUtils.getCurrentDateTime());
                 ScheduleSyncDao.save(scheduleSync);
                 LeaderUtil.syncDataToFollow(schedule,follow);
                 ScheduleSyncDao.updateStatusByScheduleIdAndFollow(schedule.getId(),follow.getAddress(),ScheduleSyncStatusEnum.SYNCED);
@@ -57,7 +57,8 @@ public class LeaderService {
 
     /**
      * 同步删除任务至follow。
-     *
+     * 先将同步记录表中的状态更新为删除中，删除成功后再更新状态为已删除
+     *后期需要考虑数据一致性的事务机制
      * @param taskId
      * @return
      */
@@ -66,7 +67,10 @@ public class LeaderService {
         if (follows != null) {
             Iterator<Node> items = follows.iterator();//防止remove操作导致线程不安全异常
             while (items.hasNext()) {
-                LeaderUtil.deleteTaskToFollow(taskId, items.next());
+                Node node=items.next();
+                ScheduleSyncDao.updateStatusByScheduleIdAndFollow(taskId,node.getAddress(),ScheduleSyncStatusEnum.DELETEING);
+                LeaderUtil.deleteTaskToFollow(taskId,node );
+                ScheduleSyncDao.updateStatusByScheduleIdAndFollow(taskId,node.getAddress(),ScheduleSyncStatusEnum.DELETED);
             }
         }
     }
