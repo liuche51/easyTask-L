@@ -3,8 +3,10 @@ package com.github.liuche51.easyTask.cluster.follow;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
+import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.util.StringUtils;
 import org.slf4j.Logger;
@@ -80,5 +82,17 @@ public class FollowService {
      */
     public static void initCheckLeaderAlive() {
         FollowHeartbeat.heartBeatToLeader();
+    }
+    public static void submitNewTaskByOldLeader(String oldLeaderAddress){
+        List<ScheduleBak> baks= ScheduleBakDao.getBySourceWithCount(oldLeaderAddress,5);
+        baks.forEach(x->{
+            Task task=Task.valueOf(x);
+            try {
+                AnnularQueue.getInstance().submit(task);//模拟客户端重新提交任务
+                ScheduleBakDao.delete(x.getId());
+            } catch (Exception e) {
+                log.error("submitNewTaskByOldLeader()->",e);
+            }
+        });
     }
 }

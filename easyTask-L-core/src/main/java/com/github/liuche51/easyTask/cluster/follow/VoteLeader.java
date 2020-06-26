@@ -34,16 +34,7 @@ public class VoteLeader {
         //自己就是新leader
         if(newLeader!=null&&newLeader.getAddress().equals(EasyTaskConfig.getInstance().getzKServerName())){
             log.info("selectNewLeader():start to submit new task to leader by simulate client");
-            List<ScheduleBak> baks= ScheduleBakDao.getBySource(oldLeaderAddress);
-            baks.forEach(x->{
-                Task task=Task.valueOf(x);
-                try {
-                    //AnnularQueue.getInstance().submit(task);//模拟客户端重新提交任务
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
         }
     }
 }

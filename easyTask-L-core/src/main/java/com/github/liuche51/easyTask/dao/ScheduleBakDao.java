@@ -94,11 +94,11 @@ public class ScheduleBakDao {
         return true;
     }
 
-    public static List<ScheduleBak> getBySource(String source) {
+    public static List<ScheduleBak> getBySourceWithCount(String source,int count) {
         List<ScheduleBak> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();
         try {
-            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where source='" + source + "';");
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where source='" + source + "' limit "+count+";");
             while (resultSet.next()) {
                 try {
                     String id = resultSet.getString("id");
