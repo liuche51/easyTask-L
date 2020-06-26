@@ -91,12 +91,10 @@ public class ScheduleSyncDao {
         String sql = "update schedule_sync set status=" + updateStatus + ",modify_time='"+DateUtils.getCurrentDateTime()+"' where follow='" + follow + "' and status=" + status + ";";
         SqliteHelper.executeUpdateForSync(sql);
     }
-    public static void updateStatusByFollowAndScheduleId(String follow, List<String> scheduleIds, short updateStatus) throws SQLException, ClassNotFoundException {
-        StringBuilder str=new StringBuilder("('");
-        for(String scheduleId:scheduleIds){
-            str.append(scheduleId).append("',（");
-        }
-        String sql = "update schedule_sync set status=" + updateStatus + ",modify_time='"+DateUtils.getCurrentDateTime()+"' where follow='" + follow + "' and status="  + ";";
+    public static void updateStatusByFollowAndScheduleIds(String follow, String[] scheduleIds, short updateStatus) throws SQLException, ClassNotFoundException {
+        String str=SqliteHelper.getInConditionStr(scheduleIds);
+        String sql = "update schedule_sync set status=" + updateStatus + ",modify_time='"+DateUtils.getCurrentDateTime()
+                +"' where follow='" + follow + "' and schedule_id in"+str+ ";";
         SqliteHelper.executeUpdateForSync(sql);
     }
     public static void updateStatusByScheduleIdAndFollow(String scheduleId, String follow, short status) throws SQLException, ClassNotFoundException {

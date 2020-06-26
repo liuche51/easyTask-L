@@ -2,6 +2,7 @@ package com.github.liuche51.easyTask.netty.client;
 
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.Dto;
+import com.github.liuche51.easyTask.util.exception.ConnectionException;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -67,11 +68,11 @@ public class NettyClient {
                 future.get();
                 //如果连接成功
                 if (future.isSuccess()) {
-                    log.info("客户端[" + channelFuture.channel().localAddress().toString() + "]已连接...");
+                    log.info("Client[" + channelFuture.channel().localAddress().toString() + "]connected...");
                 }
                 //如果连接失败，尝试重新连接
                 else {
-                    log.info("客户端[" + channelFuture.channel().localAddress().toString() + "]连接失败，重新连接中...");
+                    log.info("Client[" + channelFuture.channel().localAddress().toString() + "]connect failed，重新连接中...");
                     future.channel().close();
                     channelFuture = bootstrap.connect(address).sync();
                     clientChannel = channelFuture.channel();
@@ -81,7 +82,7 @@ public class NettyClient {
             //注册关闭事件
             channelFuture.channel().closeFuture().addListener(cfl -> {
                 close();
-                log.info("客户端[" + channelFuture.channel().localAddress().toString() + "]已断开...");
+                log.info("Client[" + channelFuture.channel().localAddress().toString() + "]disconnected...");
             });
             log.info("nettyClinet started...");
         } catch (Exception e) {
@@ -99,8 +100,9 @@ public class NettyClient {
      * @param msg
      * @return
      */
-    public Object sendSyncMsg(Object msg) throws InterruptedException {
+    public Object sendSyncMsg(Object msg) throws InterruptedException, ConnectionException {
         sendMsgPrintLog(msg);
+        if(clientChannel==null) throw new ConnectionException("sendSyncMsg->"+this.address+": object node has disconnected!");
         ChannelPromise promise = clientChannel.newPromise();
         handler.setPromise(promise);
         clientChannel.writeAndFlush(msg);
@@ -128,8 +130,9 @@ public class NettyClient {
      * @param msg
      * @return
      */
-    public ChannelFuture sendASyncMsg(Object msg) {
+    public ChannelFuture sendASyncMsg(Object msg) throws ConnectionException {
         sendMsgPrintLog(msg);
+        if(clientChannel==null) throw new ConnectionException("sendASyncMsg->"+this.address+": object node has disconnected!");
         ChannelPromise promise = clientChannel.newPromise();
         handler.setPromise(promise);
         return clientChannel.writeAndFlush(msg);

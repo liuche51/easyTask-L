@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Leader服务入口
@@ -107,8 +108,8 @@ public class LeaderService {
                         //获取批次数据
                         List<ScheduleSync> list = ScheduleSyncDao.selectByFollowAndStatusWithCount(newFollow.getAddress(), ScheduleSyncStatusEnum.UNSYNC, 5);
                         if (list.size() == 0) break;//如果已经同步完，则跳出循环
-                        ScheduleSyncDao.updateStatusByFollowAndStatus(newFollow.getAddress(),ScheduleSyncStatusEnum.UNSYNC,ScheduleSyncStatusEnum.SYNCING);
                         String[] ids = list.stream().distinct().map(ScheduleSync::getScheduleId).toArray(String[]::new);
+                        ScheduleSyncDao.updateStatusByFollowAndScheduleIds(newFollow.getAddress(),ids,ScheduleSyncStatusEnum.SYNCING);
                         List<Schedule> list1 = ScheduleDao.selectByIds(ids);
                         boolean ret=LeaderUtil.syncDataToFollowBatch(list1, oldFollow);
                         if(ret)

@@ -139,4 +139,20 @@ class SqliteHelper {
             logger.error("Sqlite数据库关闭时异常", e);
         }
     }
+
+    /**
+     * 获取SQL IN 条件的拼接字符串
+     * @param ids
+     * @return
+     */
+    public static String getInConditionStr(String[] ids){
+        StringBuilder instr = new StringBuilder("('");
+        for (int i = 0; i < ids.length; i++) {
+            if (i == ids.length - 1)//最后一个
+                instr.append(ids[i]).append("')");
+            else
+                instr.append(ids[i]).append("','");
+        }
+        return instr.toString();
+    }
 }

@@ -1,6 +1,5 @@
 package com.github.liuche51.easyTask.cluster.follow;
 
-import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
@@ -8,10 +7,13 @@ import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKHost;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class VoteLeader {
+    private static final Logger log = LoggerFactory.getLogger(VoteLeader.class);
     /**
      * 选举失效leader后新leader
      * 如果新leader是自己，则将备份数据重新提交给自己，否则不用管
@@ -31,11 +33,12 @@ public class VoteLeader {
         }
         //自己就是新leader
         if(newLeader!=null&&newLeader.getAddress().equals(EasyTaskConfig.getInstance().getzKServerName())){
+            log.info("selectNewLeader():start to submit new task to leader by simulate client");
             List<ScheduleBak> baks= ScheduleBakDao.getBySource(oldLeaderAddress);
             baks.forEach(x->{
                 Task task=Task.valueOf(x);
                 try {
-                    AnnularQueue.getInstance().submit(task);//模拟客户端重新提交任务
+                    //AnnularQueue.getInstance().submit(task);//模拟客户端重新提交任务
 
                 } catch (Exception e) {
                     e.printStackTrace();

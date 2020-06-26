@@ -82,13 +82,7 @@ public class ScheduleDao {
         List<Schedule> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();
         try {
-            StringBuilder instr = new StringBuilder("('");
-            for (int i = 0; i < ids.length; i++) {
-                if (i == ids.length - 1)//最后一个
-                    instr.append(ids[i]).append("')");
-                else
-                    instr.append(ids[i]).append("','");
-            }
+            String instr = SqliteHelper.getInConditionStr(ids);
             ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule where id in " + instr + ";");
             while (resultSet.next()) {
                 try {
