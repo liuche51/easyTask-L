@@ -27,7 +27,7 @@ public class ClusterTest {
         try {
             config.setTaskStorePath("C:\\db\\node1");
             config.setServerPort(2021);
-            initData(annularQueue);
+            initData(annularQueue,"Node1");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,7 +40,7 @@ public class ClusterTest {
         try {
             config.setTaskStorePath("C:\\db\\node2");
             config.setServerPort(2022);
-            initData(annularQueue);
+            initData(annularQueue,"Node2");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,7 +53,7 @@ public class ClusterTest {
         try {
             config.setTaskStorePath("C:\\db\\node3");
             config.setServerPort(2023);
-            initData(annularQueue);
+            initData(annularQueue,"Node3");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,13 +66,13 @@ public class ClusterTest {
         try {
             config.setTaskStorePath("C:\\db\\node4");
             config.setServerPort(2024);
-            initData(annularQueue);
+            initData(annularQueue,"Node4");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void initData(AnnularQueue annularQueue) throws Exception {
+    private void initData(AnnularQueue annularQueue,String name) throws Exception {
         EasyTaskConfig config = EasyTaskConfig.getInstance();
         config.setSQLlitePoolSize(5);
         config.setBackupCount(2);
@@ -87,7 +87,7 @@ public class ClusterTest {
         task1.setEndTimestamp(ZonedDateTime.now().plusSeconds(10).toInstant().toEpochMilli());//10秒后执行
         Map<String, String> param = new HashMap<String, String>() {
             {
-                put("name", "刘彻");
+                put("name", name);
                 put("birthday", "1988-1-1");
                 put("age", "25");
                 put("threadid", String.valueOf(Thread.currentThread().getId()));
@@ -101,7 +101,7 @@ public class ClusterTest {
         task2.setUnit(TimeUnit.SECONDS);
         Map<String, String> param2 = new HashMap<String, String>() {
             {
-                put("name", "Jack");
+                put("name", name);
                 put("birthday", "1986-1-1");
                 put("age", "32");
                 put("threadid", String.valueOf(Thread.currentThread().getId()));

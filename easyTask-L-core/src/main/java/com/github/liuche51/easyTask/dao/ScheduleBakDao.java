@@ -56,7 +56,7 @@ public class ScheduleBakDao {
 
     public static void saveBatch(List<ScheduleBak> scheduleBaks) throws Exception {
         String sql = contactSaveSql(scheduleBaks);
-        int count = SqliteHelper.executeUpdateForSync(sql.toString());
+        int count = SqliteHelper.executeUpdateForSync(sql);
         if (count <= 0) {
             throw new Exception("saveBatch result count=" + count);
         }
@@ -77,56 +77,42 @@ public class ScheduleBakDao {
             sql1.append(scheduleBak.getSource()).append("','");
             sql1.append(scheduleBak.getCreateTime()).append("')").append(',');
         }
-        String sql=sql1.substring(0, sql1.length() - 1);//去掉最后一个逗号
+        String sql = sql1.substring(0, sql1.length() - 1);//去掉最后一个逗号
         return sql.concat(";");
     }
 
-    public static boolean delete(String id) {
-        try {
-            String sql = "delete FROM schedule_bak where id='" + id + "';";
-            int count = SqliteHelper.executeUpdateForSync(sql);
-            if (count > 0)
-                log.debug("任务:{} 已经删除", id);
-        } catch (Exception e) {
-            log.error("ScheduleDao.delete Exception:{}", e);
-            return false;
-        }
-        return true;
+    public static void delete(String id) throws SQLException, ClassNotFoundException {
+        String sql = "delete FROM schedule_bak where id='" + id + "';";
+        SqliteHelper.executeUpdateForSync(sql);
     }
 
-    public static List<ScheduleBak> getBySourceWithCount(String source,int count) {
+    public static List<ScheduleBak> getBySourceWithCount(String source, int count) throws SQLException, ClassNotFoundException {
         List<ScheduleBak> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();
         try {
-            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where source='" + source + "' limit "+count+";");
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where source='" + source + "' limit " + count + ";");
             while (resultSet.next()) {
-                try {
-                    String id = resultSet.getString("id");
-                    String classPath = resultSet.getString("class_path");
-                    Long executeTime = resultSet.getLong("execute_time");
-                    String taskType = resultSet.getString("task_type");
-                    Long period = resultSet.getLong("period");
-                    String unit = resultSet.getString("unit");
-                    String param = resultSet.getString("param");
-                    String source1 = resultSet.getString("source");
-                    String createTime = resultSet.getString("create_time");
-                    ScheduleBak schedulebak = new ScheduleBak();
-                    schedulebak.setId(id);
-                    schedulebak.setClassPath(classPath);
-                    schedulebak.setExecuteTime(executeTime);
-                    schedulebak.setTaskType(taskType);
-                    schedulebak.setPeriod(period);
-                    schedulebak.setUnit(unit);
-                    schedulebak.setParam(param);
-                    schedulebak.setSource(source1);
-                    schedulebak.setCreateTime(createTime);
-                    list.add(schedulebak);
-                } catch (Exception e) {
-                    log.error("ScheduleDao.selectAll a item exception:{}", e);
-                }
+                String id = resultSet.getString("id");
+                String classPath = resultSet.getString("class_path");
+                Long executeTime = resultSet.getLong("execute_time");
+                String taskType = resultSet.getString("task_type");
+                Long period = resultSet.getLong("period");
+                String unit = resultSet.getString("unit");
+                String param = resultSet.getString("param");
+                String source1 = resultSet.getString("source");
+                String createTime = resultSet.getString("create_time");
+                ScheduleBak schedulebak = new ScheduleBak();
+                schedulebak.setId(id);
+                schedulebak.setClassPath(classPath);
+                schedulebak.setExecuteTime(executeTime);
+                schedulebak.setTaskType(taskType);
+                schedulebak.setPeriod(period);
+                schedulebak.setUnit(unit);
+                schedulebak.setParam(param);
+                schedulebak.setSource(source1);
+                schedulebak.setCreateTime(createTime);
+                list.add(schedulebak);
             }
-        } catch (Exception e) {
-            log.error("ScheduleBakDao.getAllCount Exception:{}", e);
         } finally {
             helper.destroyed();
         }

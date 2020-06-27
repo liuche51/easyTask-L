@@ -16,6 +16,9 @@ public class Task {
      */
     private long endTimestamp;
     private TaskType taskType=TaskType.ONECE;
+    /**
+     * 是否立即执行一次
+     */
     private boolean immediateExecute=false;
     private long period;
     private TimeUnit unit;
@@ -109,22 +112,7 @@ public class Task {
         else if ("ONECE".equals(schedule.getTaskType()))
             task.setTaskType(TaskType.ONECE);
         task.setPeriod(schedule.getPeriod());
-        switch (schedule.getUnit()) {
-            case "DAYS":
-                task.setUnit(TimeUnit.DAYS);
-                break;
-            case "HOURS":
-                task.setUnit(TimeUnit.HOURS);
-                break;
-            case "MINUTES":
-                task.setUnit(TimeUnit.MINUTES);
-                break;
-            case "SECONDS":
-                task.setUnit(TimeUnit.SECONDS);
-                break;
-            default:
-                break;
-        }
+        task.setUnit(getTimeUnit(schedule.getUnit()));
         return task;
     }
     public static Task valueOf(ScheduleBak scheduleBak){
@@ -138,22 +126,21 @@ public class Task {
         else if ("ONECE".equals(scheduleBak.getTaskType()))
             task.setTaskType(TaskType.ONECE);
         task.setPeriod(scheduleBak.getPeriod());
-        switch (scheduleBak.getUnit()) {
-            case "DAYS":
-                task.setUnit(TimeUnit.DAYS);
-                break;
-            case "HOURS":
-                task.setUnit(TimeUnit.HOURS);
-                break;
-            case "MINUTES":
-                task.setUnit(TimeUnit.MINUTES);
-                break;
-            case "SECONDS":
-                task.setUnit(TimeUnit.SECONDS);
-                break;
-            default:
-                break;
-        }
+        task.setUnit(getTimeUnit(scheduleBak.getUnit()));
         return task;
+    }
+
+    private static TimeUnit getTimeUnit(String unit) {
+        switch (unit) {
+            case "DAYS":
+               return TimeUnit.DAYS;
+            case "HOURS":
+                return TimeUnit.HOURS;
+            case "MINUTES":
+                return TimeUnit.MINUTES;
+            case "SECONDS":
+                return TimeUnit.SECONDS;
+            default:return null;
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.github.liuche51.easyTask.cluster.follow;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
+import com.github.liuche51.easyTask.cluster.leader.VoteFollows;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
@@ -39,6 +40,11 @@ public class FollowHeartbeat {
                            Map.Entry<String, Node> item=items.next();
                             String path = StringConstant.CHAR_SPRIT + item.getValue().getAddress();
                             ZKNode node = ZKService.getDataByPath(path);
+                           if(node==null)//防止leader节点已经不在zk。导致不能重新选举。需要考虑这种情况如何选举。目前暂缺
+                           {
+                               log.info("heartBeatToLeader():leader is not exist in zk,so to selectNewFollow.");
+                               continue;
+                           }
                             //如果最后心跳时间超过60s，则直接删除该节点信息。并从自己的leader集合中移除掉
                             if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOunt())
                                     .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {

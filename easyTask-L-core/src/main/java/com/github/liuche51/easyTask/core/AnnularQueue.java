@@ -194,7 +194,23 @@ public class AnnularQueue {
         log.debug("已添加类型:{}任务:{}，所属分片:{} 预计执行时间:{} 线程ID:{}", task.getTaskType().name(), task.getScheduleExt().getId(), time.getSecond(), time.toLocalTime(), Thread.currentThread().getId());
         return task.getScheduleExt().getId();
     }
-
+    /**
+     * 新leader将旧leader的备份数据重新提交给自己
+     *任务ID是新的
+     * @param task
+     * @return
+     * @throws Exception
+     */
+    public String submitForInner(Task task) throws Exception {
+        task.getScheduleExt().setId(Util.generateUniqueId());
+        if (task.getTaskType().equals(TaskType.PERIOD)) {
+                task.setEndTimestamp(Task.getTimeStampByTimeUnit(task.getPeriod(), task.getUnit()));
+        }
+        //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
+        ClusterService.save(task);
+        AddSchedule(task);
+        return task.getScheduleExt().getId();
+    }
     /**
      * 批量创建新周期任务
      *

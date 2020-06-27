@@ -12,6 +12,7 @@ import com.github.liuche51.easyTask.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class FollowService {
      *
      * @param taskId
      */
-    public static void deleteScheduleBak(String taskId) {
+    public static void deleteScheduleBak(String taskId) throws SQLException, ClassNotFoundException {
         ScheduleBakDao.delete(taskId);
     }
 
@@ -83,16 +84,5 @@ public class FollowService {
     public static void initCheckLeaderAlive() {
         FollowHeartbeat.heartBeatToLeader();
     }
-    public static void submitNewTaskByOldLeader(String oldLeaderAddress){
-        List<ScheduleBak> baks= ScheduleBakDao.getBySourceWithCount(oldLeaderAddress,5);
-        baks.forEach(x->{
-            Task task=Task.valueOf(x);
-            try {
-                AnnularQueue.getInstance().submit(task);//模拟客户端重新提交任务
-                ScheduleBakDao.delete(x.getId());
-            } catch (Exception e) {
-                log.error("submitNewTaskByOldLeader()->",e);
-            }
-        });
-    }
+
 }

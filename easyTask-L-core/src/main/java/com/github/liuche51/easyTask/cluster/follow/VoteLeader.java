@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.cluster.follow;
 
+import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
@@ -7,6 +8,7 @@ import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKHost;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
+import org.apache.zookeeper.server.quorum.Leader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +36,7 @@ public class VoteLeader {
         //自己就是新leader
         if(newLeader!=null&&newLeader.getAddress().equals(EasyTaskConfig.getInstance().getzKServerName())){
             log.info("selectNewLeader():start to submit new task to leader by simulate client");
-
+            LeaderService.submitNewTaskByOldLeader(oldLeaderAddress);
         }
     }
 }
