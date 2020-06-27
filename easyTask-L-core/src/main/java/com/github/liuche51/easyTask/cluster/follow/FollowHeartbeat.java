@@ -46,13 +46,13 @@ public class FollowHeartbeat {
                                continue;
                            }
                             //如果最后心跳时间超过60s，则直接删除该节点信息。并从自己的leader集合中移除掉
-                            if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOunt())
+                            if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOut())
                                     .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
                                 items.remove();
                                 ZKService.deleteNodeByPathIgnoreResult(path);
                             }
                             //如果最后心跳时间超过30s，进入选举新leader流程。并从自己的leader集合中移除掉
-                            else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOunt())
+                            else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOut())
                                     .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
                                 log.info("heartBeatToLeader():start to selectNewLeader");
                                 VoteLeader.selectNewLeader(node,item.getValue().getAddress());

@@ -74,12 +74,12 @@ public class LeaderHeartbeat {
                                continue;
                            }
                            //如果最后心跳时间超过60s，则直接删除该节点信息。
-                           if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOunt())
+                           if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOut())
                                    .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
                                ZKService.deleteNodeByPathIgnoreResult(path);
                            }
                            //如果最后心跳时间超过30s，进入选举新follow流程
-                           else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOunt())
+                           else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOut())
                                    .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
                                log.info("heartBeatToFollow():start to selectNewFollow");
                                Node newFollow=VoteFollows.selectNewFollow(oldFollow,items);

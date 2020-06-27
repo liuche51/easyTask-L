@@ -125,10 +125,10 @@ public class VoteFollows {
             int index = random.nextInt(availableFollows.size());//随机生成的随机数范围就变成[0,size)。
             ZKNode node2 = ZKService.getDataByPath(StringConstant.CHAR_SPRIT + availableFollows.get(index));
             //如果最后心跳时间超过60s，则直接删除该节点信息。
-            if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOunt())
+            if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOut())
                     .compareTo(DateUtils.parse(node2.getLastHeartbeat())) > 0) {
                 ZKService.deleteNodeByPathIgnoreResult(StringConstant.CHAR_SPRIT + availableFollows.get(index));
-            } else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOunt())
+            } else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOut())
                     .compareTo(DateUtils.parse(node2.getLastHeartbeat())) > 0) {
                 //如果最后心跳时间超过30s，也不能将该节点作为follow
             } else if (follows.size() < count) {

@@ -61,11 +61,11 @@ public class EasyTaskConfig {
     /**
      * ZK节点信息更新超过60s就判断为失效节点，任何其他节点可删除掉
      */
-    private int deleteZKTimeOunt=60;
+    private int deleteZKTimeOut=60;
     /**
      * ZK节点信息更新超过30s就判断为Leader失效节点，其Follow节点可进入选举新Leader
      */
-    private int selectLeaderZKNodeTimeOunt=30;
+    private int selectLeaderZKNodeTimeOut=30;
     /**
      * 节点对zk的心跳频率。默认2s一次
      */
@@ -74,6 +74,10 @@ public class EasyTaskConfig {
      * 集群通信失败重试次数。默认3次
      */
     private int tryCount=3;
+    /**
+     * 清理任务备份表中失效的leader备份。默认1小时一次。单位小时
+     */
+    private int clearScheduleBakTime=1;
     /**
      * 集群总线程池
      */
@@ -174,20 +178,20 @@ public class EasyTaskConfig {
         this.enablePseudoCluster = enablePseudoCluster;
     }
 
-    public int getDeleteZKTimeOunt() {
-        return deleteZKTimeOunt;
+    public int getDeleteZKTimeOut() {
+        return deleteZKTimeOut;
     }
 
-    public void setDeleteZKTimeOunt(int deleteZKTimeOunt) {
-        this.deleteZKTimeOunt = deleteZKTimeOunt;
+    public void setDeleteZKTimeOut(int deleteZKTimeOunt) {
+        this.deleteZKTimeOut = deleteZKTimeOunt;
     }
 
-    public int getSelectLeaderZKNodeTimeOunt() {
-        return selectLeaderZKNodeTimeOunt;
+    public int getSelectLeaderZKNodeTimeOut() {
+        return selectLeaderZKNodeTimeOut;
     }
 
-    public void setSelectLeaderZKNodeTimeOunt(int selectLeaderZKNodeTimeOunt) {
-        this.selectLeaderZKNodeTimeOunt = selectLeaderZKNodeTimeOunt;
+    public void setSelectLeaderZKNodeTimeOut(int selectLeaderZKNodeTimeOunt) {
+        this.selectLeaderZKNodeTimeOut = selectLeaderZKNodeTimeOunt;
     }
 
     public int getHeartBeat() {
@@ -204,6 +208,14 @@ public class EasyTaskConfig {
 
     public void setTryCount(int tryCount) {
         this.tryCount = tryCount;
+    }
+
+    public int getClearScheduleBakTime() {
+        return clearScheduleBakTime;
+    }
+
+    public void setClearScheduleBakTime(int clearScheduleBakTime) {
+        this.clearScheduleBakTime = clearScheduleBakTime;
     }
 
     public ExecutorService getClusterPool() {
