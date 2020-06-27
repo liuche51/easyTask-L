@@ -37,6 +37,13 @@ public class VoteLeader {
         if(newLeader!=null&&newLeader.getAddress().equals(EasyTaskConfig.getInstance().getzKServerName())){
             log.info("selectNewLeader():start to submit new task to leader by simulate client");
             LeaderService.submitNewTaskByOldLeader(oldLeaderAddress);
+        }else {
+            try {
+                LeaderService.deleteOldLeaderBackTask(oldLeaderAddress);
+            }catch (Exception e){
+                log.error("selectNewLeader()->deleteOldLeaderBackTask",e);
+            }
+
         }
     }
 }

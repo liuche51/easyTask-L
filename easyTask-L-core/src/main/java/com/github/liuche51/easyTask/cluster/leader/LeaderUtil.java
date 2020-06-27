@@ -137,7 +137,8 @@ public class LeaderUtil {
 
     /**
      * 同步删除任务至follow。
-     *
+     *暂时不支持失败进入选新follow流程。代码注释掉
+     * 目前仅在leader心跳follow是否存活那边进行选新follow流程
      * @param taskId
      * @return
      */
@@ -146,17 +147,17 @@ public class LeaderUtil {
         builder.setIdentity(taskId).setInterfaceName(NettyInterfaceEnum.DELETE_SCHEDULEBACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
                 .setBody(taskId);
         NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
-        if (client == null) {
+      /*  if (client == null) {
             log.info("client == null,so start to selectNewFollow.");
             Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return deleteTaskToFollow(taskId, newFollow);
-        }
+        }*/
         boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
-        if (!ret) {
+      /*  if (!ret) {
             log.info("sendSyncMsgWithCount return false,so start to selectNewFollow.");
             Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return deleteTaskToFollow(taskId, newFollow);
-        }
+        }*/
         return true;
     }
 }

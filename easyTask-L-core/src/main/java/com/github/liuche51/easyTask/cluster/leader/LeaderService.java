@@ -17,6 +17,7 @@ import com.github.liuche51.easyTask.util.exception.VotingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,6 +81,16 @@ public class LeaderService {
                 ScheduleSyncDao.updateStatusByScheduleIdAndFollow(taskId, node.getAddress(), ScheduleSyncStatusEnum.DELETED);
             }
         }
+    }
+
+    /**
+     * 将失效的leader的备份任务数据删除掉
+     * @param oldLeaderAddress
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public static void deleteOldLeaderBackTask(String oldLeaderAddress) throws SQLException, ClassNotFoundException {
+        ScheduleBakDao.deleteBySource(oldLeaderAddress);
     }
 
     /**
