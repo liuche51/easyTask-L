@@ -96,16 +96,16 @@ public class LeaderService {
     /**
      * 节点对zk的心跳。2s一次
      */
-    public static void initHeartBeatToZK() {
-        LeaderHeartbeat.heartBeatToZK();
+    public static Thread initHeartBeatToZK() {
+       return LeaderHeartbeat.heartBeatToZK();
     }
 
     /**
      * 节点对zk的心跳。检查follows是否失效。
      * 失效则进入选举
      */
-    public static void initCheckFollowAlive() {
-        LeaderHeartbeat.heartBeatToFollow();
+    public static Thread initCheckFollowAlive() {
+        return LeaderHeartbeat.heartBeatToFollow();
     }
 
     /**

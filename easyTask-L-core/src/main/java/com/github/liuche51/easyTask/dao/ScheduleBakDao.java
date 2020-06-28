@@ -85,6 +85,10 @@ public class ScheduleBakDao {
         String sql = "delete FROM schedule_bak where id='" + id + "';";
         SqliteHelper.executeUpdateForSync(sql);
     }
+    public static void deleteAll() throws SQLException, ClassNotFoundException {
+        String sql = "delete FROM schedule_bak;";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
     public static void deleteBySource(String source) throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule_bak where source='" + source + "';";
         SqliteHelper.executeUpdateForSync(sql);

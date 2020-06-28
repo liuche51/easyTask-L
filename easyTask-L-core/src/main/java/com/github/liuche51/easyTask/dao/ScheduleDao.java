@@ -106,7 +106,10 @@ public class ScheduleDao {
         if (count > 0)
             log.debug("任务:{} 已经删除", id);
     }
-
+    public static void deleteAll() throws SQLException, ClassNotFoundException {
+        String sql = "delete FROM schedule;";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
     public static int getAllCount() {
         SqliteHelper helper = new SqliteHelper();
         try {

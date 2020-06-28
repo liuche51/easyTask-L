@@ -16,7 +16,7 @@ public class TimerTask {
      * 选举新的leader，会主动清理一次。这里防止异常情况遗留下来未清理掉的数据。
      * 建议频率不要太高
      */
-    public static void clearScheduleBak() {
+    public static Thread clearScheduleBak() {
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -42,5 +42,6 @@ public class TimerTask {
             }
         });
         th1.start();
+        return th1;
     }
 }

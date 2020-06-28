@@ -23,7 +23,7 @@ public class LeaderHeartbeat {
     /**
      * 节点对zk的心跳。2s一次
      */
-    public static void heartBeatToZK() {
+    public static Thread heartBeatToZK() {
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -50,12 +50,13 @@ public class LeaderHeartbeat {
             }
         });
         th1.start();
+        return th1;
     }
     /**
      * 节点对zk的心跳。检查follows是否失效。
      * 失效则进入选举。选举后将原follow备份数据同步给新follow
      */
-    public static void heartBeatToFollow() {
+    public static Thread heartBeatToFollow() {
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -114,5 +115,6 @@ public class LeaderHeartbeat {
             }
         });
         th1.start();
+        return th1;
     }
 }

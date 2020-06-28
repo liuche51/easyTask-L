@@ -28,7 +28,7 @@ public class FollowHeartbeat {
      * 节点对zk的心跳。检查leader是否失效。
      * 失效则进入选举
      */
-    public static void heartBeatToLeader() {
+    public static Thread heartBeatToLeader() {
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -72,5 +72,6 @@ public class FollowHeartbeat {
             }
         });
         th1.start();
+        return th1;
     }
 }
