@@ -35,7 +35,7 @@ public class VoteFollows {
         List<Node> follows = VoteFollows.selectFollows(count, availableFollows);
         if (follows.size() < count) {
             log.info("follows.size() < count,so start to initSelectFollows");
-            initSelectFollows();//数量不够递归重新选
+            initSelectFollows();//数量不够递归重新选VoteFollows.selectFollows中
         }else {
             ClusterService.CURRENTNODE.setFollows(follows);
             //通知follows当前Leader位置
@@ -117,7 +117,7 @@ public class VoteFollows {
      * @param count            需要的数量
      * @param availableFollows 可用follows
      */
-    private static List<Node> selectFollows(int count, List<String> availableFollows) {
+    private static List<Node> selectFollows(int count, List<String> availableFollows) throws InterruptedException {
         List<Node> follows = new LinkedList<>();//备选follows
         int size = availableFollows.size();
         Random random = new Random();
@@ -136,6 +136,7 @@ public class VoteFollows {
             }
             availableFollows.remove(index);
         }
+        if(follows.size()<count)   Thread.sleep(1000);//此处防止不满足条件时重复高频递归本方法
         return follows;
     }
 }

@@ -92,7 +92,8 @@ public class ZKService {
             byte[] bytes = ZKUtil.getClient().getData().forPath(path);
             return JSONObject.parseObject(bytes, ZKNode.class);
         } catch (Exception e) {
-            log.error("getDataByPath exception!", e);
+            //节点不存在了，属于正常情况。
+            log.error("getDataByPath exception! is normally,"+e.getMessage());
         }
         return null;
     }

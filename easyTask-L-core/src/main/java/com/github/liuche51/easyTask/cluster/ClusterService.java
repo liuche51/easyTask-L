@@ -40,7 +40,8 @@ public class ClusterService {
      * @return
      */
     public static boolean initCurrentNode() throws Exception {
-        threadList.forEach(Thread::stop);//先停止目前所有内部线程工作
+        threadList.forEach(Thread::isInterrupted);//先停止目前所有内部线程工作
+        threadList.clear();
         deleteAllData();
         CURRENTNODE = new Node(Util.getLocalIP(), EasyTaskConfig.getInstance().getServerPort());
         ZKNode node = new ZKNode(CURRENTNODE.getHost(), CURRENTNODE.getPort());

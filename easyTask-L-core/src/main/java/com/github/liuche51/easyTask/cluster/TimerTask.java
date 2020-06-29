@@ -22,6 +22,10 @@ public class TimerTask {
             public void run() {
                 while (true) {
                     try {
+                        //判断是否被中断。
+                        if(Thread.currentThread().isInterrupted()){
+                            break;
+                        }
                         Map<String, Node> leaders = ClusterService.CURRENTNODE.getLeaders();
                         Iterator<Map.Entry<String, Node>> items = leaders.entrySet().iterator();//使用遍历+移除操作安全的迭代器方式
                         List<String> sources = new ArrayList<>(leaders.size());

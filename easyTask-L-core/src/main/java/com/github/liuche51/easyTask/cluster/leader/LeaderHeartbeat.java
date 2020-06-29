@@ -29,6 +29,10 @@ public class LeaderHeartbeat {
             public void run() {
                 while (true) {
                     try {
+                        //判断是否被中断。
+                        if(Thread.currentThread().isInterrupted()){
+                            break;
+                        }
                         ZKNode node = ZKService.getDataByCurrentNode();
                         //防止节点信息已经被其他节点删除了。说明当前节点实际上已经失去了和zk的心跳。重新初始化集群
                         //心跳超出死亡时间的也重新初始化集群
@@ -69,6 +73,10 @@ public class LeaderHeartbeat {
             public void run() {
                 while (true) {
                     try {
+                        //判断是否被中断。
+                        if(Thread.currentThread().isInterrupted()){
+                            break;
+                        }
                         List<Node> follows = ClusterService.CURRENTNODE.getFollows();
                         Iterator<Node> items=follows.iterator();
                        while (items.hasNext()){
