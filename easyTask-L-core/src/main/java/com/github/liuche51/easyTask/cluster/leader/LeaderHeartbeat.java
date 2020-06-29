@@ -30,14 +30,21 @@ public class LeaderHeartbeat {
                 while (true) {
                     try {
                         ZKNode node = ZKService.getDataByCurrentNode();
-                        node.setLastHeartbeat(DateUtils.getCurrentDateTime());
-                        node.setLeaders(Util.nodeToZKHost(ClusterService.CURRENTNODE.getLeaders()));//直接将本地数据覆盖到zk
-                        node.setFollows(Util.nodeToZKHost(ClusterService.CURRENTNODE.getFollows()));//直接将本地数据覆盖到zk
-                        boolean ret = ZKService.setDataByCurrentNode(node);
-                        if (!ret) {//设置新值失败，说明zk注册信息已经被follow删除，follows已经重新选举出一个新leader。本节点只能重新选follows了
-                            ZKService.register(new ZKNode(ClusterService.CURRENTNODE.getHost(), ClusterService.CURRENTNODE.getPort()));
-                            LeaderService.initSelectFollows();
+                        //防止节点信息已经被其他节点删除了。说明当前节点实际上已经失去了和zk的心跳。重新初始化集群
+                        //心跳超出死亡时间的也重新初始化集群
+                        if(node==null||DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat())){
+                            ClusterService.initCurrentNode();
+                        }else {
+                            node.setLastHeartbeat(DateUtils.getCurrentDateTime());
+                            node.setLeaders(Util.nodeToZKHost(ClusterService.CURRENTNODE.getLeaders()));//直接将本地数据覆盖到zk
+                            node.setFollows(Util.nodeToZKHost(ClusterService.CURRENTNODE.getFollows()));//直接将本地数据覆盖到zk
+                            boolean ret = ZKService.setDataByCurrentNode(node);
+                            if (!ret) {//设置新值失败，说明zk注册信息已经被follow删除，follows已经重新选举出一个新leader。本节点只能重新选follows了
+                                ZKService.register(new ZKNode(ClusterService.CURRENTNODE.getHost(), ClusterService.CURRENTNODE.getPort()));
+                                LeaderService.initSelectFollows();
+                            }
                         }
+
                     } catch (Exception e) {
                         log.error("",e);
                     }
@@ -75,13 +82,11 @@ public class LeaderHeartbeat {
                                continue;
                            }
                            //如果最后心跳时间超过60s，则直接删除该节点信息。
-                           if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOut())
-                                   .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
+                           if (DateUtils.isGreaterThanLoseTime(node.getLastHeartbeat())) {
                                ZKService.deleteNodeByPathIgnoreResult(path);
                            }
                            //如果最后心跳时间超过30s，进入选举新follow流程
-                           else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOut())
-                                   .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
+                           else if (DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat())) {
                                log.info("heartBeatToFollow():start to selectNewFollow");
                                Node newFollow=VoteFollows.selectNewFollow(oldFollow,items);
                                log.info("heartBeatToFollow():start to syncDataToNewFollow");

@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,14 +47,12 @@ public class FollowHeartbeat {
                                continue;
                            }
                             //如果最后心跳时间超过60s，则直接删除该节点信息。并从自己的leader集合中移除掉
-                            if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeleteZKTimeOut())
-                                    .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
+                            if (DateUtils.isGreaterThanLoseTime(node.getLastHeartbeat())) {
                                 items.remove();
                                 ZKService.deleteNodeByPathIgnoreResult(path);
                             }
                             //如果最后心跳时间超过30s，进入选举新leader流程。并从自己的leader集合中移除掉
-                            else if (ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getSelectLeaderZKNodeTimeOut())
-                                    .compareTo(DateUtils.parse(node.getLastHeartbeat())) > 0) {
+                            else if (DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat())) {
                                 log.info("heartBeatToLeader():start to selectNewLeader");
                                 VoteLeader.selectNewLeader(node,item.getValue().getAddress());
                                 items.remove();

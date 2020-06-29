@@ -61,11 +61,11 @@ public class EasyTaskConfig {
     /**
      * ZK节点信息更新超过60s就判断为失效节点，任何其他节点可删除掉
      */
-    private int deleteZKTimeOut=60;
+    private int loseTimeOut=60;
     /**
      * ZK节点信息更新超过30s就判断为Leader失效节点，其Follow节点可进入选举新Leader
      */
-    private int selectLeaderZKNodeTimeOut=30;
+    private int deadTimeOut=30;
     /**
      * 节点对zk的心跳频率。默认2s一次
      */
@@ -178,20 +178,20 @@ public class EasyTaskConfig {
         this.enablePseudoCluster = enablePseudoCluster;
     }
 
-    public int getDeleteZKTimeOut() {
-        return deleteZKTimeOut;
+    public int getLoseTimeOut() {
+        return loseTimeOut;
     }
 
-    public void setDeleteZKTimeOut(int deleteZKTimeOunt) {
-        this.deleteZKTimeOut = deleteZKTimeOunt;
+    public void setLoseTimeOut(int loseTimeOut) {
+        this.loseTimeOut = loseTimeOut;
     }
 
-    public int getSelectLeaderZKNodeTimeOut() {
-        return selectLeaderZKNodeTimeOut;
+    public int getDeadTimeOut() {
+        return deadTimeOut;
     }
 
-    public void setSelectLeaderZKNodeTimeOut(int selectLeaderZKNodeTimeOunt) {
-        this.selectLeaderZKNodeTimeOut = selectLeaderZKNodeTimeOunt;
+    public void setDeadTimeOut(int deadTimeOut) {
+        this.deadTimeOut = deadTimeOut;
     }
 
     public int getHeartBeat() {
