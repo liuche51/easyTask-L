@@ -40,7 +40,10 @@ public class ClusterService {
      * @return
      */
     public static boolean initCurrentNode() throws Exception {
-        threadList.forEach(Thread::isInterrupted);//先停止目前所有内部线程工作
+        threadList.forEach(x->{//先停止目前所有内部定时任务线程工作
+            x.interrupt();//似乎没什么作用，经过测试，原线程并没有中断
+            x.stop();//暂时使用强制退出，经测试有效
+        });
         threadList.clear();
         deleteAllData();
         CURRENTNODE = new Node(Util.getLocalIP(), EasyTaskConfig.getInstance().getServerPort());

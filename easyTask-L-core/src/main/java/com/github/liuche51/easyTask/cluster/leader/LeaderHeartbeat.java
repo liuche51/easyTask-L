@@ -29,6 +29,7 @@ public class LeaderHeartbeat {
             public void run() {
                 while (true) {
                     try {
+                        log.info("当前线程运行中。ID"+Thread.currentThread().getId());
                         //判断是否被中断。
                         if(Thread.currentThread().isInterrupted()){
                             break;
@@ -37,7 +38,19 @@ public class LeaderHeartbeat {
                         //防止节点信息已经被其他节点删除了。说明当前节点实际上已经失去了和zk的心跳。重新初始化集群
                         //心跳超出死亡时间的也重新初始化集群
                         if(node==null||DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat())){
-                            ClusterService.initCurrentNode();
+                            Thread th2=new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        log.info("重启集群初始化");
+                                        ClusterService.initCurrentNode();
+                                        log.info("重启集群初始化完成");
+                                    }catch (Exception e){
+                                        log.error("",e);
+                                    }
+                                }
+                            });
+                            th2.start();
                         }else {
                             node.setLastHeartbeat(DateUtils.getCurrentDateTime());
                             node.setLeaders(Util.nodeToZKHost(ClusterService.CURRENTNODE.getLeaders()));//直接将本地数据覆盖到zk
