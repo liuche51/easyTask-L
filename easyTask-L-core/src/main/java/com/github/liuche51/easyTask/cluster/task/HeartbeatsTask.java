@@ -15,7 +15,6 @@ public class HeartbeatsTask extends TimerTask{
     public void run() {
         while (!isExit()) {
             try {
-                log.info("当前线程运行中。ID"+Thread.currentThread().getId());
                 ZKNode node = ZKService.getDataByCurrentNode();
                 //防止节点信息已经被其他节点删除了。说明当前节点实际上已经失去了和zk的心跳。重新初始化集群
                 //心跳超出死亡时间的也重新初始化集群
@@ -24,11 +23,11 @@ public class HeartbeatsTask extends TimerTask{
                         @Override
                         public void run() {
                             try {
-                                log.info("重启集群初始化");
+                                log.info("restart cluster initCurrentNode()");
                                 ClusterService.initCurrentNode();
-                                log.info("重启集群初始化完成");
+                                log.info("finished restarted cluster");
                             }catch (Exception e){
-                                log.error("",e);
+                                log.error("restart cluster initCurrentNode() exception!",e);
                             }
                         }
                     });

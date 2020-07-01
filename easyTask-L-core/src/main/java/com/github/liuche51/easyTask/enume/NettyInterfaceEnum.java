@@ -1,4 +1,4 @@
-package com.github.liuche51.easyTask.util;
+package com.github.liuche51.easyTask.enume;
 
 public class NettyInterfaceEnum {
     /**

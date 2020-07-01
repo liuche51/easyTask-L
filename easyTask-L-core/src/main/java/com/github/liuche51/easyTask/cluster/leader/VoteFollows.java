@@ -4,6 +4,7 @@ import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
+import com.github.liuche51.easyTask.enume.NodeSyncDataStatusEnum;
 import com.github.liuche51.easyTask.util.exception.VotedException;
 import com.github.liuche51.easyTask.util.exception.VotingException;
 import com.github.liuche51.easyTask.zk.ZKService;
@@ -65,8 +66,11 @@ public class VoteFollows {
             follows = selectFollows(1, availableFollows);
             if (follows.size() < 1)
                 selectNewFollow(oldFollow,items);//数量不够递归重新选
-            else
+            else{
+                follows.get(0).setDataStatus(NodeSyncDataStatusEnum.UNSYNC);//选举成功，将新follow数据同步状态标记为未同步
                 ClusterService.CURRENTNODE.getFollows().add(follows.get(0));
+            }
+
         } finally {
             selecting=false;//复原选举装填
             lock.unlock();

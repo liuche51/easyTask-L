@@ -5,7 +5,7 @@ import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.ResultDto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.dto.proto.Dto;
-import com.github.liuche51.easyTask.util.NettyInterfaceEnum;
+import com.github.liuche51.easyTask.enume.NettyInterfaceEnum;
 import com.github.liuche51.easyTask.util.StringConstant;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

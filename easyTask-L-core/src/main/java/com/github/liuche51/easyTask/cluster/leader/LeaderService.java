@@ -13,7 +13,8 @@ import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.ScheduleSync;
 import com.github.liuche51.easyTask.dto.Task;
-import com.github.liuche51.easyTask.util.ScheduleSyncStatusEnum;
+import com.github.liuche51.easyTask.enume.NodeSyncDataStatusEnum;
+import com.github.liuche51.easyTask.enume.ScheduleSyncStatusEnum;
 import com.github.liuche51.easyTask.util.exception.VotedException;
 import com.github.liuche51.easyTask.util.exception.VotingException;
 import org.slf4j.Logger;
@@ -130,7 +131,10 @@ public class LeaderService {
                     while (true) {
                         //获取批次数据
                         List<ScheduleSync> list = ScheduleSyncDao.selectByFollowAndStatusWithCount(newFollow.getAddress(), ScheduleSyncStatusEnum.UNSYNC, 5);
-                        if (list.size() == 0) break;//如果已经同步完，则跳出循环
+                        if (list.size() == 0) {//如果已经同步完，标记状态并则跳出循环
+                            newFollow.setDataStatus(NodeSyncDataStatusEnum.SYNC);
+                            break;
+                        }
                         String[] ids = list.stream().distinct().map(ScheduleSync::getScheduleId).toArray(String[]::new);
                         ScheduleSyncDao.updateStatusByFollowAndScheduleIds(newFollow.getAddress(), ids, ScheduleSyncStatusEnum.SYNCING);
                         List<Schedule> list1 = ScheduleDao.selectByIds(ids);

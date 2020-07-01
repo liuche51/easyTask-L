@@ -82,6 +82,7 @@ public class Util {
         for (Map.Entry<String, Node> key : list.entrySet()) {
             Node x = key.getValue();
             ZKHost temp = new ZKHost(x.getHost(), x.getPort());
+            temp.setDataStatus(x.getDataStatus());
             ret.add(temp);
         }
         return ret;
