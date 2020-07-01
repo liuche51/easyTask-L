@@ -2,21 +2,12 @@ package com.github.liuche51.easyTask.cluster.leader;
 
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
-import com.github.liuche51.easyTask.cluster.task.CheckFollowsAliveTask;
-import com.github.liuche51.easyTask.cluster.task.HeartbeatsTask;
-import com.github.liuche51.easyTask.cluster.task.TimerTask;
-import com.github.liuche51.easyTask.core.AnnularQueue;
+import com.github.liuche51.easyTask.cluster.task.*;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
-import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
 import com.github.liuche51.easyTask.dto.Schedule;
-import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.ScheduleSync;
-import com.github.liuche51.easyTask.dto.Task;
-import com.github.liuche51.easyTask.enume.NodeSyncDataStatusEnum;
 import com.github.liuche51.easyTask.enume.ScheduleSyncStatusEnum;
-import com.github.liuche51.easyTask.util.exception.VotedException;
-import com.github.liuche51.easyTask.util.exception.VotingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,40 +112,10 @@ public class LeaderService {
      * @param oldFollow
      * @param newFollow
      */
-    public static void syncDataToNewFollow(Node oldFollow, Node newFollow) {
-        Thread th1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    //先将失效的follow数据同步标记为未同步，同时修改其follow标识
-                    ScheduleSyncDao.updateFollowAndStatusByFollow(oldFollow.getAddress(), newFollow.getAddress(), ScheduleSyncStatusEnum.UNSYNC);
-                    while (true) {
-                        //获取批次数据
-                        List<ScheduleSync> list = ScheduleSyncDao.selectByFollowAndStatusWithCount(newFollow.getAddress(), ScheduleSyncStatusEnum.UNSYNC, 5);
-                        if (list.size() == 0) {//如果已经同步完，标记状态并则跳出循环
-                            newFollow.setDataStatus(NodeSyncDataStatusEnum.SYNC);
-                            break;
-                        }
-                        String[] ids = list.stream().distinct().map(ScheduleSync::getScheduleId).toArray(String[]::new);
-                        ScheduleSyncDao.updateStatusByFollowAndScheduleIds(newFollow.getAddress(), ids, ScheduleSyncStatusEnum.SYNCING);
-                        List<Schedule> list1 = ScheduleDao.selectByIds(ids);
-                        boolean ret = LeaderUtil.syncDataToFollowBatch(list1, oldFollow);
-                        if (ret)
-                            ScheduleSyncDao.updateStatusByFollowAndStatus(newFollow.getAddress(), ScheduleSyncStatusEnum.SYNCING, ScheduleSyncStatusEnum.SYNCED);
-                    }
-                } catch (VotingException e) {
-                    //同步数据异常，进入选举新follow。但此时刚好有其他地方触发正在选举中。当前新follow可能又失效了。
-                    //此时就没必要继续同步数据给当前新follow了。终止同步线程
-                    log.info("normally exception error.can ignore.{}", e.getMessage());
-                } catch (VotedException e) {
-                    //原因同上VotingException
-                    log.info("normally exception error.can ignore.{}", e.getMessage());
-                } catch (Exception e) {
-                    log.error("syncDataToNewFollow()", e);
-                }
-            }
-        });
-        th1.start();
+    public static TimerTask syncDataToNewFollow(Node oldFollow, Node newFollow) {
+        SyncDataToNewFollowTask task=new SyncDataToNewFollowTask(oldFollow,newFollow);
+        task.start();
+        return task;
     }
 
     /**
@@ -163,26 +124,9 @@ public class LeaderService {
      *
      * @param oldLeaderAddress
      */
-    public static void submitNewTaskByOldLeader(String oldLeaderAddress) {
-        Thread th1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<ScheduleBak> baks = ScheduleBakDao.getBySourceWithCount(oldLeaderAddress, 5);
-                    baks.forEach(x -> {
-                        Task task = Task.valueOf(x);
-                        try {
-                            AnnularQueue.getInstance().submitForInner(task);//模拟客户端重新提交任务
-                            ScheduleBakDao.delete(x.getId());
-                        } catch (Exception e) {
-                            log.error("submitNewTaskByOldLeader()->", e);
-                        }
-                    });
-                } catch (Exception e) {
-                    log.error("submitNewTaskByOldLeader()->", e);
-                }
-            }
-        });
-        th1.start();
+    public static TimerTask submitNewTaskByOldLeader(String oldLeaderAddress) {
+        NewLeaderSyncBakDataTask task=new NewLeaderSyncBakDataTask(oldLeaderAddress);
+        task.start();
+        return task;
     }
 }
