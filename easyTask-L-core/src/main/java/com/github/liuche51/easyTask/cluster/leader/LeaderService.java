@@ -2,6 +2,9 @@ package com.github.liuche51.easyTask.cluster.leader;
 
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
+import com.github.liuche51.easyTask.cluster.task.CheckFollowsAliveTask;
+import com.github.liuche51.easyTask.cluster.task.HeartbeatsTask;
+import com.github.liuche51.easyTask.cluster.task.TimerTask;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
@@ -10,7 +13,6 @@ import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.ScheduleSync;
 import com.github.liuche51.easyTask.dto.Task;
-import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.ScheduleSyncStatusEnum;
 import com.github.liuche51.easyTask.util.exception.VotedException;
 import com.github.liuche51.easyTask.util.exception.VotingException;
@@ -20,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Leader服务入口
@@ -96,16 +97,20 @@ public class LeaderService {
     /**
      * 节点对zk的心跳。2s一次
      */
-    public static Thread initHeartBeatToZK() {
-       return LeaderHeartbeat.heartBeatToZK();
+    public static TimerTask initHeartBeatToZK() {
+        HeartbeatsTask task=new HeartbeatsTask();
+        task.start();
+       return task;
     }
 
     /**
      * 节点对zk的心跳。检查follows是否失效。
      * 失效则进入选举
      */
-    public static Thread initCheckFollowAlive() {
-        return LeaderHeartbeat.heartBeatToFollow();
+    public static TimerTask initCheckFollowAlive() {
+        CheckFollowsAliveTask task=new CheckFollowsAliveTask();
+        task.start();
+        return task;
     }
 
     /**

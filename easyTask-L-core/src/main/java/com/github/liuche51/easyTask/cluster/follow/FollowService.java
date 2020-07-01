@@ -3,6 +3,9 @@ package com.github.liuche51.easyTask.cluster.follow;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
+import com.github.liuche51.easyTask.cluster.task.CheckFollowsAliveTask;
+import com.github.liuche51.easyTask.cluster.task.CheckLeadersAliveTask;
+import com.github.liuche51.easyTask.cluster.task.TimerTask;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
@@ -81,8 +84,10 @@ public class FollowService {
      * 节点对zk的心跳。检查leader是否失效。
      * 失效则进入选举
      */
-    public static Thread initCheckLeaderAlive() {
-        return FollowHeartbeat.heartBeatToLeader();
+    public static TimerTask initCheckLeaderAlive() {
+        CheckLeadersAliveTask task=new CheckLeadersAliveTask();
+        task.start();
+        return task;
     }
 
 }

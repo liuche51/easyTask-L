@@ -2,13 +2,15 @@ package com.github.liuche51.easyTask.cluster;
 
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
+import com.github.liuche51.easyTask.cluster.task.ClearScheduleBakTask;
+import com.github.liuche51.easyTask.cluster.task.HeartbeatsTask;
+import com.github.liuche51.easyTask.cluster.task.TimerTask;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
 import com.github.liuche51.easyTask.dto.Schedule;
-import com.github.liuche51.easyTask.dto.ScheduleSync;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.zk.ZKService;
@@ -16,7 +18,6 @@ import com.github.liuche51.easyTask.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,10 +31,10 @@ public class ClusterService {
      * 集群定时任务线程集合。
      * 失效相当于重启，需要将原有的线程强制停止。然后重新初始化
      */
-    public static List<Thread> threadList=new LinkedList<>();
+    public static List<TimerTask> threadList=new LinkedList<TimerTask>();
 
     /**
-     * 初始化当前节点。
+     * 初始化当前节点的集群。(系统重启或心跳超时重启)
      * zk注册，选follows,开始心跳
      * 这里不考虑短暂宕机重启继续使用原follows情况。让原follows等待超时后重新选举leader就好了
      *
@@ -41,8 +42,7 @@ public class ClusterService {
      */
     public static boolean initCurrentNode() throws Exception {
         threadList.forEach(x->{//先停止目前所有内部定时任务线程工作
-            x.interrupt();//似乎没什么作用，经过测试，原线程并没有中断
-            x.stop();//暂时使用强制退出，经测试有效
+            x.setExit(true);
         });
         threadList.clear();
         deleteAllData();
@@ -57,7 +57,7 @@ public class ClusterService {
         ZKService.setDataByCurrentNode(node);
         threadList.add(LeaderService.initCheckFollowAlive());
         threadList.add(FollowService.initCheckLeaderAlive());
-        threadList.add(TimerTask.clearScheduleBak());
+        threadList.add(clearScheduleBak());
         return true;
     }
 
@@ -106,5 +106,9 @@ public class ClusterService {
             log.error("deleteAllData exception!", e);
         }
     }
-
+    public static TimerTask clearScheduleBak() {
+        ClearScheduleBakTask task=new ClearScheduleBakTask();
+        task.start();
+        return task;
+    }
 }
