@@ -16,7 +16,7 @@ import java.util.List;
  * leader同步数据到新follow
  * 目前设计为只有一个线程同步给某个follow
  */
-public class SyncDataToNewFollowTask extends TimerTask {
+public class SyncDataToNewFollowTask extends OnceTask {
     private Node oldFollow;
     private Node newFollow;
 

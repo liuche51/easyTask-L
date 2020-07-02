@@ -11,7 +11,7 @@ import java.util.List;
  * 新leader将旧leader的备份数据同步给自己的follow
  * 后期需要考虑数据一致性
  */
-public class NewLeaderSyncBakDataTask extends TimerTask {
+public class NewLeaderSyncBakDataTask extends OnceTask {
     private String oldLeaderAddress;
 
     public String getOldLeaderAddress() {

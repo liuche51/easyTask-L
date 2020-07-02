@@ -4,6 +4,7 @@ import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.cluster.task.ClearScheduleBakTask;
 import com.github.liuche51.easyTask.cluster.task.HeartbeatsTask;
+import com.github.liuche51.easyTask.cluster.task.OnceTask;
 import com.github.liuche51.easyTask.cluster.task.TimerTask;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
@@ -32,7 +33,7 @@ public class ClusterService {
      * 系统没有重启只是初始化了集群initCurrentNode()。此时也需要立即停止运行的一次性后台任务
      * 需要定时检查其中的线程是否已经运行完，完了需要移除线程对象，释放内存资源
      */
-    public static List<TimerTask> onceTasks=new LinkedList<TimerTask>();
+    public static List<OnceTask> onceTasks=new LinkedList<OnceTask>();
     /**
      * 集群定时任务线程集合。
      * 系统没有重启只是初始化了集群initCurrentNode()。此时需要停止之前的定时任务，重新启动新的
