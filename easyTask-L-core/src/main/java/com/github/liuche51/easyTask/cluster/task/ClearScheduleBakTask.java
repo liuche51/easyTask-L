@@ -27,7 +27,7 @@ public class ClearScheduleBakTask extends TimerTask {
                 log.error("clearScheduleBak()", e);
             }
             try {
-                Thread.sleep(EasyTaskConfig.getInstance().getClearScheduleBakTime() * 60 * 60 * 1000);
+                Thread.sleep(EasyTaskConfig.getInstance().getClearScheduleBakTime());
             } catch (InterruptedException e) {
                 log.error("clearScheduleBak()", e);
             }

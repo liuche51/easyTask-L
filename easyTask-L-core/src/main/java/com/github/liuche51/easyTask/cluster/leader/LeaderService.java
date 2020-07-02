@@ -112,9 +112,10 @@ public class LeaderService {
      * @param oldFollow
      * @param newFollow
      */
-    public static TimerTask syncDataToNewFollow(Node oldFollow, Node newFollow) {
+    public static OnceTask syncDataToNewFollow(Node oldFollow, Node newFollow) {
         SyncDataToNewFollowTask task=new SyncDataToNewFollowTask(oldFollow,newFollow);
         task.start();
+        ClusterService.onceTasks.add(task);
         return task;
     }
 
@@ -124,9 +125,10 @@ public class LeaderService {
      *
      * @param oldLeaderAddress
      */
-    public static TimerTask submitNewTaskByOldLeader(String oldLeaderAddress) {
+    public static OnceTask submitNewTaskByOldLeader(String oldLeaderAddress) {
         NewLeaderSyncBakDataTask task=new NewLeaderSyncBakDataTask(oldLeaderAddress);
         task.start();
+        ClusterService.onceTasks.add(task);
         return task;
     }
 }

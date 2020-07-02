@@ -48,10 +48,7 @@ public class ClusterService {
      * @return
      */
     public static boolean initCurrentNode() throws Exception {
-        timerTasks.forEach(x->{//先停止目前所有内部定时任务线程工作
-            x.setExit(true);
-        });
-        timerTasks.clear();
+        clearThreadTask();
         deleteAllData();
         CURRENTNODE = new Node(Util.getLocalIP(), EasyTaskConfig.getInstance().getServerPort());
         ZKNode node = new ZKNode(CURRENTNODE.getHost(), CURRENTNODE.getPort());
@@ -117,5 +114,19 @@ public class ClusterService {
         ClearScheduleBakTask task=new ClearScheduleBakTask();
         task.start();
         return task;
+    }
+
+    /**
+     * 清理掉所有定时或后台线程任务
+     */
+    public static void clearThreadTask(){
+        timerTasks.forEach(x->{//先停止目前所有内部定时任务线程工作
+            x.setExit(true);
+        });
+        timerTasks.clear();
+        onceTasks.forEach(x->{
+            x.setExit(true);
+        });
+        onceTasks.clear();
     }
 }

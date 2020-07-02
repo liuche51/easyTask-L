@@ -75,9 +75,9 @@ public class EasyTaskConfig {
      */
     private int tryCount=3;
     /**
-     * 清理任务备份表中失效的leader备份。默认1小时一次。单位小时
+     * 清理任务备份表中失效的leader备份。默认1小时一次。单位毫秒
      */
-    private int clearScheduleBakTime=1;
+    private int clearScheduleBakTime=36500000;
     /**
      * 集群总线程池
      */
