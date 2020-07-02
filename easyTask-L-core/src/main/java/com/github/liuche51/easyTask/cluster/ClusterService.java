@@ -28,10 +28,16 @@ public class ClusterService {
      */
     public static Node CURRENTNODE;
     /**
-     * 集群定时任务线程集合。
-     * 失效相当于重启，需要将原有的线程强制停止。然后重新初始化
+     * 集群一次性任务线程集合。
+     * 系统没有重启只是初始化了集群initCurrentNode()。此时也需要立即停止运行的一次性后台任务
+     * 需要定时检查其中的线程是否已经运行完，完了需要移除线程对象，释放内存资源
      */
-    public static List<TimerTask> threadList=new LinkedList<TimerTask>();
+    public static List<TimerTask> onceTasks=new LinkedList<TimerTask>();
+    /**
+     * 集群定时任务线程集合。
+     * 系统没有重启只是初始化了集群initCurrentNode()。此时需要停止之前的定时任务，重新启动新的
+     */
+    public static List<TimerTask> timerTasks=new LinkedList<TimerTask>();
 
     /**
      * 初始化当前节点的集群。(系统重启或心跳超时重启)
@@ -41,23 +47,23 @@ public class ClusterService {
      * @return
      */
     public static boolean initCurrentNode() throws Exception {
-        threadList.forEach(x->{//先停止目前所有内部定时任务线程工作
+        timerTasks.forEach(x->{//先停止目前所有内部定时任务线程工作
             x.setExit(true);
         });
-        threadList.clear();
+        timerTasks.clear();
         deleteAllData();
         CURRENTNODE = new Node(Util.getLocalIP(), EasyTaskConfig.getInstance().getServerPort());
         ZKNode node = new ZKNode(CURRENTNODE.getHost(), CURRENTNODE.getPort());
         node.setCreateTime(DateUtils.getCurrentDateTime());
         node.setLastHeartbeat(DateUtils.getCurrentDateTime());
         ZKService.register(node);
-        threadList.add(LeaderService.initHeartBeatToZK());
+        timerTasks.add(LeaderService.initHeartBeatToZK());
         LeaderService.initSelectFollows();
         node.setFollows(Util.nodeToZKHost(CURRENTNODE.getFollows()));
         ZKService.setDataByCurrentNode(node);
-        threadList.add(LeaderService.initCheckFollowAlive());
-        threadList.add(FollowService.initCheckLeaderAlive());
-        threadList.add(clearScheduleBak());
+        timerTasks.add(LeaderService.initCheckFollowAlive());
+        timerTasks.add(FollowService.initCheckLeaderAlive());
+        timerTasks.add(clearScheduleBak());
         return true;
     }
 
