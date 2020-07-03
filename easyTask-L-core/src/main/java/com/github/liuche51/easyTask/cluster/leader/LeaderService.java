@@ -38,7 +38,7 @@ public class LeaderService {
      * @param schedule
      * @return
      */
-    public static void syncDataToFollows(Schedule schedule) throws Exception {
+    public static void syncPreDataToFollows(Schedule schedule) throws Exception {
         List<Node> follows = ClusterService.CURRENTNODE.getFollows();
         if (follows != null) {
             Iterator<Node> items = follows.iterator();//防止remove操作导致线程不安全异常
@@ -49,7 +49,7 @@ public class LeaderService {
                 scheduleSync.setFollow(follow.getAddress());
                 scheduleSync.setStatus(ScheduleSyncStatusEnum.SYNCING);
                 ScheduleSyncDao.save(scheduleSync);
-                LeaderUtil.syncDataToFollow(schedule, follow);
+                LeaderUtil.syncPreDataToFollow(schedule, follow);
                 ScheduleSyncDao.updateStatusByScheduleIdAndFollow(schedule.getId(), follow.getAddress(), ScheduleSyncStatusEnum.SYNCED);
             }
         }

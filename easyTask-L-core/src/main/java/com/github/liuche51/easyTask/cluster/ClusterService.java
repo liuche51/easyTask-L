@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.cluster;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.cluster.task.ClearScheduleBakTask;
@@ -11,9 +12,13 @@ import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
+import com.github.liuche51.easyTask.dao.TransactionDao;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.Task;
+import com.github.liuche51.easyTask.dto.Transaction;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
+import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
+import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
 import com.github.liuche51.easyTask.zk.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import org.slf4j.Logger;
@@ -72,11 +77,7 @@ public class ClusterService {
      * @throws Exception
      */
     public static void save(Task task) throws Exception {
-        Schedule schedule = Schedule.valueOf(task);
-        boolean ret1 = ScheduleDao.save(schedule);
-        if (!ret1) throw new Exception("scheduleDao save exception!");
-        //数据高可靠分布式存储
-        LeaderService.syncDataToFollows(schedule);
+
     }
 
     /**

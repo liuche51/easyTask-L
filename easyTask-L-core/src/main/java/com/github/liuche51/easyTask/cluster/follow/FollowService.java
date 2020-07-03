@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.cluster.follow;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
@@ -8,9 +9,14 @@ import com.github.liuche51.easyTask.cluster.task.CheckLeadersAliveTask;
 import com.github.liuche51.easyTask.cluster.task.TimerTask;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
+import com.github.liuche51.easyTask.dao.TransactionDao;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.Task;
+import com.github.liuche51.easyTask.dto.Transaction;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
+import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
+import com.github.liuche51.easyTask.enume.TransactionTableEnum;
+import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
 import com.github.liuche51.easyTask.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +31,21 @@ import java.util.Map;
  */
 public class FollowService {
     private static final Logger log = LoggerFactory.getLogger(LeaderService.class);
-
+    /**
+     * 接受leader同步任务入备库
+     *
+     * @param schedule
+     */
+    public static void saveTransaction(ScheduleDto.Schedule schedule) throws Exception {
+        ScheduleBak bak = ScheduleBak.valueOf(schedule);
+        Transaction transaction=new Transaction();
+        transaction.setId(bak.getId());
+        transaction.setContent(JSONObject.toJSONString(bak));
+        transaction.setStatus(TransactionStatusEnum.STARTED);
+        transaction.setType(TransactionTypeEnum.SAVE);
+        transaction.setTable(TransactionTableEnum.SCHEDULE_BAK);
+        TransactionDao.save(transaction);
+    }
     /**
      * 接受leader同步任务入备库
      *

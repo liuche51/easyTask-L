@@ -2,6 +2,10 @@ package com.github.liuche51.easyTask.enume;
 
 public class NettyInterfaceEnum {
     /**
+     * 预备提交任务接口。阶段一
+     */
+    public static final String TRAN_TRY_PRESAVETASK="Tran_Try_PreSaveTask";
+    /**
      * 同步任务数据备份接口
      */
     public static final String SYNC_SCHEDULE_BACKUP="SyncScheduleBackup";

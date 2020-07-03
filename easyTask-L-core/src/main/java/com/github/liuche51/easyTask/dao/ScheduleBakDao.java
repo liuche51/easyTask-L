@@ -18,7 +18,7 @@ import java.util.List;
 public class ScheduleBakDao {
     private static Logger log = LoggerFactory.getLogger(ScheduleBakDao.class);
 
-    public static boolean existTable() {
+    public static boolean existTable() throws SQLException, ClassNotFoundException {
         SqliteHelper helper = new SqliteHelper();
         try {
             ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM sqlite_master where type='table' and name='schedule_bak';");
@@ -27,8 +27,6 @@ public class ScheduleBakDao {
                 if (count > 0)
                     return true;
             }
-        } catch (Exception e) {
-            log.error("ScheduleBakDao.existTable Exception:{}", e);
         } finally {
             helper.destroyed();
         }

@@ -20,7 +20,7 @@ public class ScheduleDao {
     private static Logger log = LoggerFactory.getLogger(ScheduleDao.class);
     private int count;
 
-    public static boolean existTable() {
+    public static boolean existTable() throws SQLException, ClassNotFoundException {
         SqliteHelper helper = new SqliteHelper();
         try {
             ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM sqlite_master where type='table' and name='schedule';");
@@ -29,32 +29,21 @@ public class ScheduleDao {
                 if (count > 0)
                     return true;
             }
-        } catch (Exception e) {
-            log.error("ScheduleDao.existTable Exception:{}", e);
         } finally {
             helper.destroyed();
         }
         return false;
     }
 
-    public static boolean save(Schedule schedule) {
-        try {
-            if (!DbInit.hasInit)
-                DbInit.init();
-            schedule.setCreateTime(DateUtils.getCurrentDateTime());
-            String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,create_time) values('"
-                    + schedule.getId() + "','" + schedule.getClassPath() + "'," + schedule.getExecuteTime()
-                    + ",'" + schedule.getTaskType() + "'," + schedule.getPeriod() + ",'" + schedule.getUnit()
-                    + "','" + schedule.getParam() + "','" + schedule.getCreateTime() + "');";
-            int count = SqliteHelper.executeUpdateForSync(sql);
-            if (count > 0) {
-                log.debug("任务:{} 已经持久化", schedule.getId());
-                return true;
-            }
-        } catch (Exception e) {
-            log.error("ScheduleDao.save Exception taskId:" + schedule.getId(), e);
-        }
-        return false;
+    public static void save(Schedule schedule) throws SQLException, ClassNotFoundException {
+        if (!DbInit.hasInit)
+            DbInit.init();
+        schedule.setCreateTime(DateUtils.getCurrentDateTime());
+        String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,create_time) values('"
+                + schedule.getId() + "','" + schedule.getClassPath() + "'," + schedule.getExecuteTime()
+                + ",'" + schedule.getTaskType() + "'," + schedule.getPeriod() + ",'" + schedule.getUnit()
+                + "','" + schedule.getParam() + "','" + schedule.getCreateTime() + "');";
+        SqliteHelper.executeUpdateForSync(sql);
     }
 
     public static List<Schedule> selectAll() {
@@ -78,7 +67,7 @@ public class ScheduleDao {
         return list;
     }
 
-    public static List<Schedule> selectByIds( String[] ids) {
+    public static List<Schedule> selectByIds(String[] ids) {
         List<Schedule> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();
         try {
@@ -106,10 +95,12 @@ public class ScheduleDao {
         if (count > 0)
             log.debug("任务:{} 已经删除", id);
     }
+
     public static void deleteAll() throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule;";
         SqliteHelper.executeUpdateForSync(sql);
     }
+
     public static int getAllCount() {
         SqliteHelper helper = new SqliteHelper();
         try {

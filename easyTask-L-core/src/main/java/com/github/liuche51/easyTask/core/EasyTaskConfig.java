@@ -71,9 +71,9 @@ public class EasyTaskConfig {
      */
     private int heartBeat=2;
     /**
-     * 集群通信失败重试次数。默认3次
+     * 集群通信失败重试次数。默认2次
      */
-    private int tryCount=3;
+    private int tryCount=2;
     /**
      * 清理任务备份表中失效的leader备份。默认1小时一次。单位毫秒
      */

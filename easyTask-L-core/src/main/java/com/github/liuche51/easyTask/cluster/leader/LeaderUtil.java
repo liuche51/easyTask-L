@@ -81,7 +81,7 @@ public class LeaderUtil {
      * @return
      * @throws InterruptedException
      */
-    public static boolean syncDataToFollow(Schedule schedule, Node follow) throws Exception {
+    public static boolean syncPreDataToFollow(Schedule schedule, Node follow) throws Exception {
         ScheduleDto.Schedule s = schedule.toScheduleDto();
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
         builder.setIdentity(s.getId()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
