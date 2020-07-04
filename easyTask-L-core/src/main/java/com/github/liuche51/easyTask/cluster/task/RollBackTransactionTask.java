@@ -1,6 +1,9 @@
 package com.github.liuche51.easyTask.cluster.task;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.github.liuche51.easyTask.cluster.Node;
+import com.github.liuche51.easyTask.cluster.leader.SaveTCC;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.TransactionDao;
@@ -10,35 +13,43 @@ import com.github.liuche51.easyTask.dto.Transaction;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTableEnum;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SubmitTransactionTask extends TimerTask {
+public class RollBackTransactionTask extends TimerTask {
     @Override
     public void run() {
         List<Transaction> list = null;
         while (!isExit()) {
             List<Transaction> scheduleList = null, scheduleBakList = null;
-            List<Schedule> scheduleList1 = null;
-            List<ScheduleBak> scheduleBakList1 = null;
             try {
-                list = TransactionDao.selectByStatus(TransactionStatusEnum.CONFIRM,100);
+                list = TransactionDao.selectByStatus(TransactionStatusEnum.CANCEL,100);
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
                 scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTable())).collect(Collectors.toList());
                 if (scheduleList != null&&scheduleList.size()>0) {
+                    String[] scheduleTranIds=scheduleList.stream().map(Transaction::getId).toArray(String[]::new);
+                    ScheduleDao.deleteByTransactionIds(scheduleTranIds);//先清掉自己已经提交的事务
                     scheduleList.forEach(x->{
-                        scheduleList1.add(JSONObject.parseObject(x.getContent(),Schedule.class));
+                        try {
+                            List<String> cancelFollowsHost=JSONObject.parseObject(x.getCancelHost(),new TypeReference<List<String>>() {});
+                            List<Node> cancelFollows=new ArrayList<>(cancelFollowsHost.size());
+                            if(cancelFollows!=null){
+                                cancelFollowsHost.forEach(y->{
+                                    String[] hp=y.split(":");
+                                    cancelFollows.add(new Node(hp[0],Integer.parseInt(hp[1])));
+                                });
+                                SaveTCC.retryCancel(x.getId(),cancelFollows);
+                            }
+                            TransactionDao.updateStatusById(x.getId(),TransactionStatusEnum.FINISHED);
+                        }catch (Exception e){
+                            log.error("",e);
+                        }
                     });
-                    ScheduleDao.saveBatch(scheduleList1);
-                    String[] scheduleIds=scheduleList.stream().map(Transaction::getId).toArray(String[]::new);
-                    TransactionDao.updateStatusByIds(scheduleIds,TransactionStatusEnum.FINISHED);
                 }
                 if (scheduleBakList != null&&scheduleBakList.size()>0) {
-                    scheduleBakList.forEach(x->{
-                        scheduleBakList1.add(JSONObject.parseObject(x.getContent(),ScheduleBak.class));
-                    });
-                    ScheduleBakDao.saveBatch(scheduleBakList1);
                     String[] scheduleBakIds=scheduleList.stream().map(Transaction::getId).toArray(String[]::new);
+                    ScheduleDao.deleteByTransactionIds(scheduleBakIds);
                     TransactionDao.updateStatusByIds(scheduleBakIds,TransactionStatusEnum.FINISHED);
                 }
 

@@ -18,7 +18,9 @@ public class Schedule {
      */
     private String unit;
     private String param;
+    private String transactionId;
     private String createTime;
+    private String modifyTime;
 
     public String getId() {
         return id;
@@ -74,6 +76,22 @@ public class Schedule {
 
     public void setParam(String param) {
         this.param = param;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public String getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(String modifyTime) {
+        this.modifyTime = modifyTime;
     }
 
     public String getCreateTime() {

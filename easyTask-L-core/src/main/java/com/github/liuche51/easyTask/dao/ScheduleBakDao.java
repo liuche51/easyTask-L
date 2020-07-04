@@ -37,6 +37,7 @@ public class ScheduleBakDao {
         if (!DbInit.hasInit)
             DbInit.init();
         scheduleBak.setCreateTime(DateUtils.getCurrentDateTime());
+        scheduleBak.setModifyTime(DateUtils.getCurrentDateTime());
         String sql = contactSaveSql(Arrays.asList(scheduleBak));
         SqliteHelper.executeUpdateForSync(sql);
     }
@@ -66,7 +67,11 @@ public class ScheduleBakDao {
         String sql = "delete FROM schedule_bak where source not in" + conditionStr + ";";
         SqliteHelper.executeUpdateForSync(sql);
     }
-
+    public static void deleteByTransactionIds(String[] ids) throws SQLException, ClassNotFoundException {
+        String instr=SqliteHelper.getInConditionStr(ids);
+        String sql = "delete FROM schedule_bak where transaction_id in" + instr + ";";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
     public static List<ScheduleBak> getBySourceWithCount(String source, int count) throws SQLException, ClassNotFoundException {
         List<ScheduleBak> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();
@@ -100,7 +105,7 @@ public class ScheduleBakDao {
         return list;
     }
     private static String contactSaveSql(List<ScheduleBak> scheduleBaks) {
-        StringBuilder sql1 = new StringBuilder("insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,source,create_time) values");
+        StringBuilder sql1 = new StringBuilder("insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,source,transaction_id,create_time,modify_time) values");
         for (ScheduleBak scheduleBak : scheduleBaks) {
             scheduleBak.setCreateTime(DateUtils.getCurrentDateTime());
             sql1.append("('");
@@ -112,7 +117,9 @@ public class ScheduleBakDao {
             sql1.append(scheduleBak.getUnit()).append("','");
             sql1.append(scheduleBak.getParam()).append("','");
             sql1.append(scheduleBak.getSource()).append("','");
-            sql1.append(scheduleBak.getCreateTime()).append("')").append(',');
+            sql1.append(scheduleBak.getTransactionId()).append("','");
+            sql1.append(scheduleBak.getCreateTime()).append("','");
+            sql1.append(scheduleBak.getModifyTime()).append("')").append(',');
         }
         String sql = sql1.substring(0, sql1.length() - 1);//去掉最后一个逗号
         return sql.concat(";");

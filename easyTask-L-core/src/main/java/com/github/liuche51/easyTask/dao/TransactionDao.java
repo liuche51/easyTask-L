@@ -36,9 +36,10 @@ public class TransactionDao {
             DbInit.init();
         transaction.setCreateTime(DateUtils.getCurrentDateTime());
         transaction.setModifyTime(DateUtils.getCurrentDateTime());
-        String sql = "insert into transaction(id,content,type,status,create_time,modify_time) values('"
+        String sql = "insert into transaction(id,content,type,status,cancel_host,create_time,modify_time) values('"
                 + transaction.getId() + "','" + transaction.getContent() + "','" + transaction.getContent()
-                + "'," + transaction.getStatus() + ",'" + transaction.getCreateTime() + "','" + transaction.getCreateTime() + "');";
+                + "'," + transaction.getStatus() + ",'" + transaction.getCancelHost() + "','" + transaction.getCreateTime()
+                + "','" + transaction.getCreateTime() + "');";
         SqliteHelper.executeUpdateForSync(sql);
     }
     public static void updateStatusById(String id, short status) throws SQLException, ClassNotFoundException {
@@ -85,6 +86,7 @@ public class TransactionDao {
         String table = resultSet.getString("table");
         short type = (short) resultSet.getInt("type");
         short status = (short) resultSet.getInt("status");
+        String cancelHost = resultSet.getString("cancel_host");
         String modifyTime = resultSet.getString("modify_time");
         String createTime = resultSet.getString("create_time");
         Transaction transaction = new Transaction();
@@ -93,6 +95,7 @@ public class TransactionDao {
         transaction.setType(type);
         transaction.setStatus(status);
         transaction.setContent(content);
+        transaction.setCancelHost(content);
         transaction.setModifyTime(modifyTime);
         transaction.setCreateTime(createTime);
         return transaction;

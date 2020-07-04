@@ -29,7 +29,9 @@ public class DbInit {
                         "\"period\"  INTEGER,\n" +
                         "\"unit\"  TEXT,\n" +
                         "\"param\"  TEXT,\n" +
+                        "\"transaction_id\"  TEXT,\n" +
                         "\"create_time\"  TEXT,\n" +
+                        "\"modify_time\"  TEXT,\n" +
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
                 SqliteHelper.executeUpdateForSync(sql);
@@ -46,7 +48,9 @@ public class DbInit {
                         "\"unit\"  TEXT,\n" +
                         "\"param\"  TEXT,\n" +
                         "\"source\"  TEXT,\n" +
+                        "\"transaction_id\"  TEXT,\n" +
                         "\"create_time\"  TEXT,\n" +
+                        "\"modify_time\"  TEXT,\n" +
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
                 SqliteHelper.executeUpdateForSync(sql2);
@@ -55,6 +59,7 @@ public class DbInit {
             if (!exist3) {
                 //本地待运行的任务
                 String sql3 = "CREATE TABLE \"schedule_sync\" (\n" +
+                        "\"transaction_id\"  TEXT,\n" +
                         "\"schedule_id\"  TEXT NOT NULL,\n" +
                         "\"follow\"  TEXT,\n" +
                         "\"status\"  INTEGER,\n" +
@@ -72,6 +77,7 @@ public class DbInit {
                         "\"table\"  TEXT,\n" +
                         "\"type\"  INTEGER,\n" +
                         "\"status\"  INTEGER,\n" +
+                        "\"cancel_host\"  TEXT,\n" +
                         "\"create_time\"  TEXT,\n" +
                         "\"modify_time\"  TEXT\n" +
                         ");";

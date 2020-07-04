@@ -11,7 +11,9 @@ public class ScheduleBak {
     private String unit;
     private String param;
     private String source;
+    private String transactionId;
     private String createTime;
+    private String modifyTime;
 
     public String getId() {
         return id;
@@ -75,6 +77,23 @@ public class ScheduleBak {
     public void setSource(String source) {
         this.source = source;
     }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public String getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(String modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
     public String getCreateTime() {
         return createTime;
     }

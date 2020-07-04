@@ -6,6 +6,7 @@ public class Transaction {
     private String table;
     private short type;
     private short status;
+    private String cancelHost;
     private String createTime;
     private String modifyTime;
 
@@ -47,6 +48,14 @@ public class Transaction {
 
     public void setStatus(short status) {
         this.status = status;
+    }
+
+    public String getCancelHost() {
+        return cancelHost;
+    }
+
+    public void setCancelHost(String cancelHost) {
+        this.cancelHost = cancelHost;
     }
 
     public String getCreateTime() {

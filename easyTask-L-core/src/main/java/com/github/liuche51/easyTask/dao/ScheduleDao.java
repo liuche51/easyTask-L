@@ -43,74 +43,71 @@ public class ScheduleDao {
         String sql = contactSaveSql(Arrays.asList(schedule));
         SqliteHelper.executeUpdateForSync(sql);
     }
+
     public static void saveBatch(List<Schedule> schedules) throws Exception {
+        if (!DbInit.hasInit)
+            DbInit.init();
         String sql = contactSaveSql(schedules);
         SqliteHelper.executeUpdateForSync(sql);
     }
-    public static List<Schedule> selectAll() {
+
+    public static List<Schedule> selectAll() throws SQLException, ClassNotFoundException {
         List<Schedule> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();
         try {
             ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule;");
             while (resultSet.next()) {
-                try {
-                    Schedule schedule = getSchedule(resultSet);
-                    list.add(schedule);
-                } catch (Exception e) {
-                    log.error("ScheduleDao.selectAll a item exception:{}", e);
-                }
+                Schedule schedule = getSchedule(resultSet);
+                list.add(schedule);
             }
-        } catch (Exception e) {
-            log.error("ScheduleDao.selectAll exception:{}", e);
         } finally {
             helper.destroyed();
         }
         return list;
     }
 
-    public static List<Schedule> selectByIds(String[] ids) {
+    public static List<Schedule> selectByIds(String[] ids) throws SQLException, ClassNotFoundException {
         List<Schedule> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();
         try {
             String instr = SqliteHelper.getInConditionStr(ids);
             ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule where id in " + instr + ";");
             while (resultSet.next()) {
-                try {
-                    Schedule schedule = getSchedule(resultSet);
-                    list.add(schedule);
-                } catch (Exception e) {
-                    log.error("ScheduleDao.selectAll a item exception:{}", e);
-                }
+                Schedule schedule = getSchedule(resultSet);
+                list.add(schedule);
             }
-        } catch (Exception e) {
-            log.error("ScheduleDao.selectAll exception:{}", e);
         } finally {
             helper.destroyed();
         }
         return list;
     }
 
-    public static void delete(String id) throws SQLException, ClassNotFoundException {
+    public static void deleteById(String id) throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule where id='" + id + "';";
-        int count = SqliteHelper.executeUpdateForSync(sql);
-        if (count > 0)
-            log.debug("任务:{} 已经删除", id);
+        SqliteHelper.executeUpdateForSync(sql);
     }
-
+    public static void deleteByIds(String[] ids) throws SQLException, ClassNotFoundException {
+        String instr=SqliteHelper.getInConditionStr(ids);
+        String sql = "delete FROM schedule where id in" + instr + ";";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
+    public static void deleteByTransactionIds(String[] ids) throws SQLException, ClassNotFoundException {
+        String instr=SqliteHelper.getInConditionStr(ids);
+        String sql = "delete FROM schedule where transaction_id in" + instr + ";";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
     public static void deleteAll() throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule;";
         SqliteHelper.executeUpdateForSync(sql);
     }
 
-    public static int getAllCount() {
+    public static int getAllCount() throws SQLException, ClassNotFoundException {
         SqliteHelper helper = new SqliteHelper();
         try {
             ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM schedule;");
             while (resultSet.next()) {
                 return resultSet.getInt(1);
             }
-        } catch (Exception e) {
-            log.error("ScheduleDao.getAllCount Exception:{}", e);
         } finally {
             helper.destroyed();
         }
@@ -125,7 +122,9 @@ public class ScheduleDao {
         Long period = resultSet.getLong("period");
         String unit = resultSet.getString("unit");
         String param = resultSet.getString("param");
+        String transactionId = resultSet.getString("transaction_id");
         String createTime = resultSet.getString("create_time");
+        String modifyTime = resultSet.getString("modify_time");
         Schedule schedule = new Schedule();
         schedule.setId(id);
         schedule.setClassPath(classPath);
@@ -134,13 +133,17 @@ public class ScheduleDao {
         schedule.setPeriod(period);
         schedule.setUnit(unit);
         schedule.setParam(param);
+        schedule.setTransactionId(transactionId);
         schedule.setCreateTime(createTime);
+        schedule.setModifyTime(modifyTime);
         return schedule;
     }
+
     private static String contactSaveSql(List<Schedule> schedules) {
-        StringBuilder sql1 = new StringBuilder("insert into schedule(id,class_path,execute_time,task_type,period,unit,param,create_time) values");
+        StringBuilder sql1 = new StringBuilder("insert into schedule(id,class_path,execute_time,task_type,period,unit,param,transaction_id,create_time,modify_time) values");
         for (Schedule schedule : schedules) {
             schedule.setCreateTime(DateUtils.getCurrentDateTime());
+            schedule.setModifyTime(DateUtils.getCurrentDateTime());
             sql1.append("('");
             sql1.append(schedule.getId()).append("','");
             sql1.append(schedule.getClassPath()).append("',");
@@ -149,7 +152,9 @@ public class ScheduleDao {
             sql1.append(schedule.getPeriod()).append(",'");
             sql1.append(schedule.getUnit()).append("','");
             sql1.append(schedule.getParam()).append("','");
-            sql1.append(schedule.getCreateTime()).append("')").append(',');
+            sql1.append(schedule.getTransactionId()).append("','");
+            sql1.append(schedule.getCreateTime()).append("','");
+            sql1.append(schedule.getModifyTime()).append("')").append(',');
         }
         String sql = sql1.substring(0, sql1.length() - 1);//去掉最后一个逗号
         return sql.concat(";");

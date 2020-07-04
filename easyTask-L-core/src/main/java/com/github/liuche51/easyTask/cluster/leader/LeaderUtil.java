@@ -81,23 +81,13 @@ public class LeaderUtil {
      * @return
      * @throws InterruptedException
      */
-    public static boolean syncPreDataToFollow(Schedule schedule, Node follow) throws Exception {
+    public static boolean sendTryTaskToFollow(Schedule schedule, Node follow) throws Exception {
         ScheduleDto.Schedule s = schedule.toScheduleDto();
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(s.getId()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
+        builder.setIdentity(s.getId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
                 .setBodyBytes(s.toByteString());
         NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
-       /* if (client == null) {
-            log.info("client == null,so start to selectNewFollow.");
-            Node newFollow = VoteFollows.selectNewFollow(follow,null);
-            return syncDataToFollow(schedule, newFollow);
-        }*/
         boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
-       /* if (!ret) {
-            log.info("sendSyncMsgWithCount return false,so start to selectNewFollow.");
-            Node newFollow = VoteFollows.selectNewFollow(follow,null);
-            return syncDataToFollow(schedule, newFollow);
-        }*/
         return true;
     }
     /**

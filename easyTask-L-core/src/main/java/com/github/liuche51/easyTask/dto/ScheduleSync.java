@@ -5,11 +5,20 @@ import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 
 public class ScheduleSync {
+    private String transactionId;
     private String scheduleId;
     private String follow;
     private short status;
     private String createTime;
     private String modifyTime;
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
 
     public String getScheduleId() {
         return scheduleId;
