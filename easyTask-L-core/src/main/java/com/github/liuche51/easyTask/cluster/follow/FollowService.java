@@ -36,22 +36,29 @@ public class FollowService {
      *
      * @param schedule
      */
-    public static void saveTransaction(ScheduleDto.Schedule schedule) throws Exception {
+    public static void trySaveTask(ScheduleDto.Schedule schedule) throws Exception {
         ScheduleBak bak = ScheduleBak.valueOf(schedule);
         Transaction transaction=new Transaction();
         transaction.setId(bak.getId());
         transaction.setContent(JSONObject.toJSONString(bak));
-        transaction.setStatus(TransactionStatusEnum.STARTED);
+        transaction.setStatus(TransactionStatusEnum.TRIED);
         transaction.setType(TransactionTypeEnum.SAVE);
         transaction.setTable(TransactionTableEnum.SCHEDULE_BAK);
         TransactionDao.save(transaction);
+    }
+    public static void confirmSaveTask(String transactionId) throws SQLException, ClassNotFoundException {
+        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
+    }
+    public static void cancelTask(String transactionId) throws SQLException, ClassNotFoundException {
+        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CANCEL);
+        ScheduleBakDao.delete(transactionId);//事务ID和TaskID相同
     }
     /**
      * 接受leader同步任务入备库
      *
      * @param schedule
      */
-    public static void saveScheduleBak(ScheduleDto.Schedule schedule) {
+    public static void saveScheduleBak(ScheduleDto.Schedule schedule) throws SQLException, ClassNotFoundException {
         ScheduleBak bak = ScheduleBak.valueOf(schedule);
         ScheduleBakDao.save(bak);
     }

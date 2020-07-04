@@ -30,30 +30,6 @@ public class LeaderService {
         VoteFollows.initSelectFollows();
     }
 
-    /**
-     * 同步任务至follow。
-     * 先写同步记录，同步成功再更新同步状态为成功。如果发生异常，则认为本次任务提交失败
-     * 后期需要考虑数据一致性的事务机制
-     *
-     * @param schedule
-     * @return
-     */
-    public static void syncPreDataToFollows(Schedule schedule) throws Exception {
-        List<Node> follows = ClusterService.CURRENTNODE.getFollows();
-        if (follows != null) {
-            Iterator<Node> items = follows.iterator();//防止remove操作导致线程不安全异常
-            while (items.hasNext()) {
-                Node follow = items.next();
-                ScheduleSync scheduleSync = new ScheduleSync();
-                scheduleSync.setScheduleId(schedule.getId());
-                scheduleSync.setFollow(follow.getAddress());
-                scheduleSync.setStatus(ScheduleSyncStatusEnum.SYNCING);
-                ScheduleSyncDao.save(scheduleSync);
-                LeaderUtil.syncPreDataToFollow(schedule, follow);
-                ScheduleSyncDao.updateStatusByScheduleIdAndFollow(schedule.getId(), follow.getAddress(), ScheduleSyncStatusEnum.SYNCED);
-            }
-        }
-    }
 
     /**
      * 同步删除任务至follow。
@@ -131,4 +107,5 @@ public class LeaderService {
         ClusterService.onceTasks.add(task);
         return task;
     }
+
 }

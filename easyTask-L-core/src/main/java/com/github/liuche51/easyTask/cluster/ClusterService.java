@@ -3,10 +3,8 @@ package com.github.liuche51.easyTask.cluster;
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
-import com.github.liuche51.easyTask.cluster.task.ClearScheduleBakTask;
-import com.github.liuche51.easyTask.cluster.task.HeartbeatsTask;
-import com.github.liuche51.easyTask.cluster.task.OnceTask;
-import com.github.liuche51.easyTask.cluster.task.TimerTask;
+import com.github.liuche51.easyTask.cluster.leader.SaveTCC;
+import com.github.liuche51.easyTask.cluster.task.*;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
@@ -24,6 +22,8 @@ import com.github.liuche51.easyTask.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,12 +38,12 @@ public class ClusterService {
      * 系统没有重启只是初始化了集群initCurrentNode()。此时也需要立即停止运行的一次性后台任务
      * 需要定时检查其中的线程是否已经运行完，完了需要移除线程对象，释放内存资源
      */
-    public static List<OnceTask> onceTasks=new LinkedList<OnceTask>();
+    public static List<OnceTask> onceTasks = new LinkedList<OnceTask>();
     /**
      * 集群定时任务线程集合。
      * 系统没有重启只是初始化了集群initCurrentNode()。此时需要停止之前的定时任务，重新启动新的
      */
-    public static List<TimerTask> timerTasks=new LinkedList<TimerTask>();
+    public static List<TimerTask> timerTasks = new LinkedList<TimerTask>();
 
     /**
      * 初始化当前节点的集群。(系统重启或心跳超时重启)
@@ -67,6 +67,7 @@ public class ClusterService {
         timerTasks.add(LeaderService.initCheckFollowAlive());
         timerTasks.add(FollowService.initCheckLeaderAlive());
         timerTasks.add(clearScheduleBak());
+        timerTasks.add(startSubmitTransactionTask());
         return true;
     }
 
@@ -77,7 +78,20 @@ public class ClusterService {
      * @throws Exception
      */
     public static void save(Task task) throws Exception {
-
+        //防止多线程下，follow元素操作竞争问题。确保参与提交的follow不受集群选举影响
+        List<Node> follows = new ArrayList<>(CURRENTNODE.getFollows().size());
+        Iterator<Node> items = CURRENTNODE.getFollows().iterator();
+        while (items.hasNext()) {
+            follows.add(items.next());
+        }
+        if (follows.size() != EasyTaskConfig.getInstance().getBackupCount())
+            throw new Exception("save() exception！follows.size() not please try again");
+        try {
+            SaveTCC.trySave(task, follows);
+            SaveTCC.confirm(task.getScheduleExt().getId(), task.getScheduleExt().getId(), follows);
+        } catch (Exception e) {
+            SaveTCC.cancel(task.getScheduleExt().getId(), task.getScheduleExt().getId(), follows);
+        }
     }
 
     /**
@@ -111,8 +125,9 @@ public class ClusterService {
             log.error("deleteAllData exception!", e);
         }
     }
+
     public static TimerTask clearScheduleBak() {
-        ClearScheduleBakTask task=new ClearScheduleBakTask();
+        ClearScheduleBakTask task = new ClearScheduleBakTask();
         task.start();
         return task;
     }
@@ -120,14 +135,23 @@ public class ClusterService {
     /**
      * 清理掉所有定时或后台线程任务
      */
-    public static void clearThreadTask(){
-        timerTasks.forEach(x->{//先停止目前所有内部定时任务线程工作
+    public static void clearThreadTask() {
+        timerTasks.forEach(x -> {//先停止目前所有内部定时任务线程工作
             x.setExit(true);
         });
         timerTasks.clear();
-        onceTasks.forEach(x->{
+        onceTasks.forEach(x -> {
             x.setExit(true);
         });
         onceTasks.clear();
+    }
+    /**
+     * 启动批量事务数据提交任务
+     * 次次写优化成批量写
+     */
+    public static TimerTask startSubmitTransactionTask() {
+        SubmitTransactionTask task=new SubmitTransactionTask();
+        task.start();
+        return task;
     }
 }

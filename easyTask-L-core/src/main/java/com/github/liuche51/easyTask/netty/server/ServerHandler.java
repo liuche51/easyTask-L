@@ -42,9 +42,19 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
             builder.setIdentity(frame.getIdentity());
             switch (frame.getInterfaceName()) {
                 case NettyInterfaceEnum
-                        .TRAN_TRY_PRESAVETASK:
+                        .TRAN_TRYSAVETASK:
                     ScheduleDto.Schedule schedule = ScheduleDto.Schedule.parseFrom(frame.getBodyBytes());
-                    FollowService.saveTransaction(schedule);
+                    FollowService.trySaveTask(schedule);
+                    break;
+                case NettyInterfaceEnum
+                        .TRAN_CONFIRMSAVETASK:
+                    String transactionId = frame.getBody();
+                    FollowService.confirmSaveTask(transactionId);
+                    break;
+                case NettyInterfaceEnum
+                        .TRAN_CANCELSAVETASK:
+                    String transactionId1 = frame.getBody();
+                    FollowService.cancelTask(transactionId1);
                     break;
                 case NettyInterfaceEnum
                         .SYNC_SCHEDULE_BACKUP_BATCH:

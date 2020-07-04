@@ -4,7 +4,15 @@ public class NettyInterfaceEnum {
     /**
      * 预备提交任务接口。阶段一
      */
-    public static final String TRAN_TRY_PRESAVETASK="Tran_Try_PreSaveTask";
+    public static final String TRAN_TRYSAVETASK="Tran_TrySaveTask";
+    /**
+     * 确认提交任务接口。阶段二
+     */
+    public static final String TRAN_CONFIRMSAVETASK="Tran_ConfirmSaveTask";
+    /**
+     * 取消任务接口。事务回滚
+     */
+    public static final String TRAN_CANCELSAVETASK="Tran_CancelSaveTask";
     /**
      * 同步任务数据备份接口
      */

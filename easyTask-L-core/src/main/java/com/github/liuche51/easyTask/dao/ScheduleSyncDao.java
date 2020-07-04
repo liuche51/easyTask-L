@@ -100,8 +100,8 @@ public class ScheduleSyncDao {
         SqliteHelper.executeUpdateForSync(sql);
     }
 
-    public static void delete(String id) throws SQLException, ClassNotFoundException {
-        String sql = "delete FROM schedule_sync where id='" + id + "';";
+    public static void deleteByScheduleIdAndFollow(String scheduleId, String follow) throws SQLException, ClassNotFoundException {
+        String sql = "delete FROM schedule_sync where schedule_id='" + scheduleId + "' and follow='" + follow + "';";
         SqliteHelper.executeUpdateForSync(sql);
     }
     public static void deleteAll() throws SQLException, ClassNotFoundException {

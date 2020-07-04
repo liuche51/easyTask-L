@@ -2,6 +2,7 @@ package com.github.liuche51.easyTask.dao;
 
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dto.Schedule;
+import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.core.TaskType;
 import com.github.liuche51.easyTask.core.TimeUnit;
@@ -13,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,14 +40,13 @@ public class ScheduleDao {
     public static void save(Schedule schedule) throws SQLException, ClassNotFoundException {
         if (!DbInit.hasInit)
             DbInit.init();
-        schedule.setCreateTime(DateUtils.getCurrentDateTime());
-        String sql = "insert into schedule(id,class_path,execute_time,task_type,period,unit,param,create_time) values('"
-                + schedule.getId() + "','" + schedule.getClassPath() + "'," + schedule.getExecuteTime()
-                + ",'" + schedule.getTaskType() + "'," + schedule.getPeriod() + ",'" + schedule.getUnit()
-                + "','" + schedule.getParam() + "','" + schedule.getCreateTime() + "');";
+        String sql = contactSaveSql(Arrays.asList(schedule));
         SqliteHelper.executeUpdateForSync(sql);
     }
-
+    public static void saveBatch(List<Schedule> schedules) throws Exception {
+        String sql = contactSaveSql(schedules);
+        SqliteHelper.executeUpdateForSync(sql);
+    }
     public static List<Schedule> selectAll() {
         List<Schedule> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper();
@@ -135,5 +136,22 @@ public class ScheduleDao {
         schedule.setParam(param);
         schedule.setCreateTime(createTime);
         return schedule;
+    }
+    private static String contactSaveSql(List<Schedule> schedules) {
+        StringBuilder sql1 = new StringBuilder("insert into schedule(id,class_path,execute_time,task_type,period,unit,param,create_time) values");
+        for (Schedule schedule : schedules) {
+            schedule.setCreateTime(DateUtils.getCurrentDateTime());
+            sql1.append("('");
+            sql1.append(schedule.getId()).append("','");
+            sql1.append(schedule.getClassPath()).append("',");
+            sql1.append(schedule.getExecuteTime()).append(",'");
+            sql1.append(schedule.getTaskType()).append("',");
+            sql1.append(schedule.getPeriod()).append(",'");
+            sql1.append(schedule.getUnit()).append("','");
+            sql1.append(schedule.getParam()).append("','");
+            sql1.append(schedule.getCreateTime()).append("')").append(',');
+        }
+        String sql = sql1.substring(0, sql1.length() - 1);//去掉最后一个逗号
+        return sql.concat(";");
     }
 }
