@@ -7,6 +7,7 @@ public class Transaction {
     private short type;
     private short status;
     private String cancelHost;
+    private short cancelRetryCount;
     private String createTime;
     private String modifyTime;
 
@@ -56,6 +57,14 @@ public class Transaction {
 
     public void setCancelHost(String cancelHost) {
         this.cancelHost = cancelHost;
+    }
+
+    public short getCancelRetryCount() {
+        return cancelRetryCount;
+    }
+
+    public void setCancelRetryCount(short cancelRetryCount) {
+        this.cancelRetryCount = cancelRetryCount;
     }
 
     public String getCreateTime() {

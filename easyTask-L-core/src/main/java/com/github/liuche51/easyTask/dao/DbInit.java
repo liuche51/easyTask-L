@@ -78,6 +78,7 @@ public class DbInit {
                         "\"type\"  INTEGER,\n" +
                         "\"status\"  INTEGER,\n" +
                         "\"cancel_host\"  TEXT,\n" +
+                        "\"cancel_retry_count\"  INTEGER,\n" +
                         "\"create_time\"  TEXT,\n" +
                         "\"modify_time\"  TEXT\n" +
                         ");";

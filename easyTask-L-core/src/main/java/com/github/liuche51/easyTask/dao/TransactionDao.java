@@ -36,10 +36,10 @@ public class TransactionDao {
             DbInit.init();
         transaction.setCreateTime(DateUtils.getCurrentDateTime());
         transaction.setModifyTime(DateUtils.getCurrentDateTime());
-        String sql = "insert into transaction(id,content,type,status,cancel_host,create_time,modify_time) values('"
+        String sql = "insert into transaction(id,content,type,status,cancel_host,cancel_retry_count,create_time,modify_time) values('"
                 + transaction.getId() + "','" + transaction.getContent() + "','" + transaction.getContent()
-                + "'," + transaction.getStatus() + ",'" + transaction.getCancelHost() + "','" + transaction.getCreateTime()
-                + "','" + transaction.getCreateTime() + "');";
+                + "'," + transaction.getStatus() + ",'" + transaction.getCancelHost() + ",'" + transaction.getCancelRetryCount()
+                + "','" + transaction.getCreateTime() + "','" + transaction.getCreateTime() + "');";
         SqliteHelper.executeUpdateForSync(sql);
     }
     public static void updateStatusById(String id, short status) throws SQLException, ClassNotFoundException {
@@ -80,13 +80,28 @@ public class TransactionDao {
         }
         return list;
     }
+    public static List<Transaction> selectByStatusAndCancelReTryCount(short status,short lessThanCancelReTryCount,int count) throws SQLException, ClassNotFoundException {
+        List<Transaction> list = new LinkedList<>();
+        SqliteHelper helper = new SqliteHelper();
+        try {
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM transaction where status = " + status + " and cancel_retry_count<"+lessThanCancelReTryCount+" limit " + count + ";");
+            while (resultSet.next()) {
+                Transaction transaction = getTransaction(resultSet);
+                list.add(transaction);
+            }
+        } finally {
+            helper.destroyed();
+        }
+        return list;
+    }
     private static Transaction getTransaction(ResultSet resultSet) throws SQLException {
         String id = resultSet.getString("id");
         String content = resultSet.getString("content");
         String table = resultSet.getString("table");
-        short type = (short) resultSet.getInt("type");
-        short status = (short) resultSet.getInt("status");
+        short type = resultSet.getShort("type");
+        short status = resultSet.getShort("status");
         String cancelHost = resultSet.getString("cancel_host");
+        short cancelRetryCount = resultSet.getShort("cancel_retry_count");
         String modifyTime = resultSet.getString("modify_time");
         String createTime = resultSet.getString("create_time");
         Transaction transaction = new Transaction();
@@ -95,7 +110,8 @@ public class TransactionDao {
         transaction.setType(type);
         transaction.setStatus(status);
         transaction.setContent(content);
-        transaction.setCancelHost(content);
+        transaction.setCancelHost(cancelHost);
+        transaction.setCancelRetryCount(cancelRetryCount);
         transaction.setModifyTime(modifyTime);
         transaction.setCreateTime(createTime);
         return transaction;
