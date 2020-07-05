@@ -16,8 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ScheduleBakDao {
-    private static Logger log = LoggerFactory.getLogger(ScheduleBakDao.class);
-
     public static boolean existTable() throws SQLException, ClassNotFoundException {
         SqliteHelper helper = new SqliteHelper();
         try {
@@ -69,11 +67,6 @@ public class ScheduleBakDao {
         if (sources == null || sources.length == 0) return;
         String conditionStr = SqliteHelper.getInConditionStr(sources);
         String sql = "delete FROM schedule_bak where source not in" + conditionStr + ";";
-        SqliteHelper.executeUpdateForSync(sql);
-    }
-    public static void deleteByTransactionIds(String[] ids) throws SQLException, ClassNotFoundException {
-        String instr=SqliteHelper.getInConditionStr(ids);
-        String sql = "delete FROM schedule_bak where transaction_id in" + instr + ";";
         SqliteHelper.executeUpdateForSync(sql);
     }
     public static List<ScheduleBak> getBySourceWithCount(String source, int count) throws SQLException, ClassNotFoundException {

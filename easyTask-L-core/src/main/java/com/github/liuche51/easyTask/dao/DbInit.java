@@ -68,7 +68,7 @@ public class DbInit {
                         ");";
                 SqliteHelper.executeUpdateForSync(sql3);
             }
-            boolean exist4 = ScheduleSyncDao.existTable();
+            boolean exist4 = TransactionDao.existTable();
             if (!exist4) {
                 //本地待运行的任务
                 String sql4 = "CREATE TABLE \"transaction\" (\n" +

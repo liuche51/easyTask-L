@@ -19,9 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ScheduleDao {
-    private static Logger log = LoggerFactory.getLogger(ScheduleDao.class);
-    private int count;
-
     public static boolean existTable() throws SQLException, ClassNotFoundException {
         SqliteHelper helper = new SqliteHelper();
         try {
@@ -80,11 +77,6 @@ public class ScheduleDao {
             helper.destroyed();
         }
         return list;
-    }
-
-    public static void deleteById(String id) throws SQLException, ClassNotFoundException {
-        String sql = "delete FROM schedule where id='" + id + "';";
-        SqliteHelper.executeUpdateForSync(sql);
     }
     public static void deleteByIds(String[] ids) throws SQLException, ClassNotFoundException {
         String instr=SqliteHelper.getInConditionStr(ids);

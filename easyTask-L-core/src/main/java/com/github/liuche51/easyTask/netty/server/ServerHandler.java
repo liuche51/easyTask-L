@@ -54,7 +54,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
                 case NettyInterfaceEnum
                         .TRAN_CANCELSAVETASK:
                     String transactionId1 = frame.getBody();
-                    FollowService.cancelTask(transactionId1);
+                    FollowService.cancelSaveTask(transactionId1);
                     break;
                 case NettyInterfaceEnum
                         .SYNC_SCHEDULE_BACKUP_BATCH:

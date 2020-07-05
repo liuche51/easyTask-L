@@ -16,8 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ScheduleSyncDao {
-    private static Logger log = LoggerFactory.getLogger(ScheduleSyncDao.class);
-
     public static boolean existTable() throws SQLException, ClassNotFoundException {
         SqliteHelper helper = new SqliteHelper();
         try {
@@ -91,25 +89,16 @@ public class ScheduleSyncDao {
         String sql = "update schedule_sync set status=" + status + ",modify_time='" + DateUtils.getCurrentDateTime() + "' where schedule_id='" + scheduleId + "' and follow='" + follow + "';";
         SqliteHelper.executeUpdateForSync(sql);
     }
-    public static void updateStatusByTransactionIdAndFollow(String transactionId, String follow, short status) throws SQLException, ClassNotFoundException {
-        String sql = "update schedule_sync set status=" + status + ",modify_time='" + DateUtils.getCurrentDateTime() + "' where transaction_id='" + transactionId + "' and follow='" + follow + "';";
-        SqliteHelper.executeUpdateForSync(sql);
-    }
-    public static void updateStatusByTransactionId(String transactionId, short status) throws SQLException, ClassNotFoundException {
-        String sql = "update schedule_sync set status=" + status + ",modify_time='" + DateUtils.getCurrentDateTime() + "' where transaction_id='" + transactionId + "';";
-        SqliteHelper.executeUpdateForSync(sql);
-    }
     public static void updateStatusAndTransactionIdByScheduleId(String scheduleId, short status,String transactionId) throws SQLException, ClassNotFoundException {
         String sql = "update schedule_sync set status=" + status + ",transaction_id='" + transactionId + "',modify_time='" + DateUtils.getCurrentDateTime() + "' where schedule_id='" + scheduleId + "';";
         SqliteHelper.executeUpdateForSync(sql);
     }
-
-    public static void deleteByScheduleIdAndFollow(String scheduleId, String follow) throws SQLException, ClassNotFoundException {
-        String sql = "delete FROM schedule_sync where schedule_id='" + scheduleId + "' and follow='" + follow + "';";
-        SqliteHelper.executeUpdateForSync(sql);
-    }
     public static void deleteByTransactionIdAndFollow(String transactionId, String follow) throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule_sync where transaction_id='" + transactionId + "' and follow='" + follow + "';";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
+    public static void deleteByStatus(short status) throws SQLException, ClassNotFoundException {
+        String sql = "delete FROM schedule_sync where status = " + status+";";
         SqliteHelper.executeUpdateForSync(sql);
     }
     public static void deleteAll() throws SQLException, ClassNotFoundException {

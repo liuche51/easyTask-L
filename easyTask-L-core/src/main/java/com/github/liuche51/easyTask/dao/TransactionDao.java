@@ -14,8 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TransactionDao {
-    private static Logger log = LoggerFactory.getLogger(TransactionDao.class);
-
     public static boolean existTable() throws SQLException, ClassNotFoundException {
         SqliteHelper helper = new SqliteHelper();
         try {
@@ -55,21 +53,6 @@ public class TransactionDao {
     public static void updateRetryInfoById(String id,short retryCount,String retryTime) throws SQLException, ClassNotFoundException {
         String sql = "update transaction set retry_count=" + retryCount + ",modify_time='"+retryTime+"',modify_time='"+DateUtils.getCurrentDateTime()+"' where id='" + id+"';";
         SqliteHelper.executeUpdateForSync(sql);
-    }
-    public static List<Transaction> selectByIds(String[] ids) throws SQLException, ClassNotFoundException {
-        List<Transaction> list = new ArrayList<>(ids.length);
-        SqliteHelper helper = new SqliteHelper();
-        try {
-            String instr = SqliteHelper.getInConditionStr(ids);
-            ResultSet resultSet = helper.executeQuery("SELECT * FROM transaction where id in " + instr + ";");
-            while (resultSet.next()) {
-                Transaction transaction = getTransaction(resultSet);
-                list.add(transaction);
-            }
-        } finally {
-            helper.destroyed();
-        }
-        return list;
     }
     public static List<Transaction> selectByStatusAndType(short status,short type,int count) throws SQLException, ClassNotFoundException {
         List<Transaction> list = new LinkedList<>();
@@ -113,6 +96,10 @@ public class TransactionDao {
             helper.destroyed();
         }
         return list;
+    }
+    public static void deleteByStatus(short status) throws SQLException, ClassNotFoundException {
+        String sql = "delete FROM transaction where status = " + status+";";
+        SqliteHelper.executeUpdateForSync(sql);
     }
     private static Transaction getTransaction(ResultSet resultSet) throws SQLException {
         String id = resultSet.getString("id");

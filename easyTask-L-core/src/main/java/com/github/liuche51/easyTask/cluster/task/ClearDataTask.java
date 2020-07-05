@@ -4,13 +4,20 @@ import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
+import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
+import com.github.liuche51.easyTask.dao.TransactionDao;
+import com.github.liuche51.easyTask.enume.ScheduleSyncStatusEnum;
+import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ClearScheduleBakTask extends TimerTask {
+/**
+ * 清理无用的数据定时任务
+ */
+public class ClearDataTask extends TimerTask {
     @Override
     public void run() {
         while (!isExit()) {
@@ -23,6 +30,8 @@ public class ClearScheduleBakTask extends TimerTask {
                     sources.add(item.getValue().getAddress());
                 }
                 ScheduleBakDao.deleteBySources(sources.toArray(new String[sources.size()]));
+                TransactionDao.deleteByStatus(TransactionStatusEnum.FINISHED);
+                ScheduleSyncDao.deleteByStatus(ScheduleSyncStatusEnum.DELETED);
             } catch (Exception e) {
                 log.error("clearScheduleBak()", e);
             }

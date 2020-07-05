@@ -5,12 +5,13 @@ import com.github.liuche51.easyTask.cluster.leader.DeleteTaskTCC;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.cluster.leader.SaveTaskTCC;
 import com.github.liuche51.easyTask.cluster.task.*;
-import com.github.liuche51.easyTask.cluster.task.tran.CommitSaveTransactionTask;
+import com.github.liuche51.easyTask.cluster.task.tran.*;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
+import com.github.liuche51.easyTask.dao.TransactionDao;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.zk.ZKService;
@@ -62,8 +63,13 @@ public class ClusterService {
         ZKService.setDataByCurrentNode(node);
         timerTasks.add(LeaderService.initCheckFollowAlive());
         timerTasks.add(FollowService.initCheckLeaderAlive());
-        timerTasks.add(clearScheduleBak());
-        timerTasks.add(startSubmitTransactionTask());
+        timerTasks.add(clearDataTask());
+        timerTasks.add(commitSaveTransactionTask());
+        timerTasks.add(commitDelTransactionTask());
+        timerTasks.add(cancelSaveTransactionTask());
+        timerTasks.add(retryCancelSaveTransactionTask());
+        timerTasks.add(retryDelTransactionTask());
+
         return true;
     }
 
@@ -117,6 +123,7 @@ public class ClusterService {
     /**
      * 清空所有表的记录
      * 节点宕机后，重启。或失去联系zk后又重新连接了。都视为新节点加入集群。加入前需要清空所有记录，避免有重复数据在集群中
+     * 事务表不清除
      */
     public static void deleteAllData() {
         try {
@@ -128,8 +135,8 @@ public class ClusterService {
         }
     }
 
-    public static TimerTask clearScheduleBak() {
-        ClearScheduleBakTask task = new ClearScheduleBakTask();
+    public static TimerTask clearDataTask() {
+        ClearDataTask task = new ClearDataTask();
         task.start();
         return task;
     }
@@ -149,10 +156,41 @@ public class ClusterService {
     }
     /**
      * 启动批量事务数据提交任务
-     * 次次写优化成批量写
      */
-    public static TimerTask startSubmitTransactionTask() {
+    public static TimerTask commitSaveTransactionTask() {
         CommitSaveTransactionTask task=new CommitSaveTransactionTask();
+        task.start();
+        return task;
+    }
+    /**
+     * 启动批量事务数据删除任务
+     */
+    public static TimerTask commitDelTransactionTask() {
+        CommitDelTransactionTask task=new CommitDelTransactionTask();
+        task.start();
+        return task;
+    }
+    /**
+     * 启动批量事务数据取消提交任务
+     */
+    public static TimerTask cancelSaveTransactionTask() {
+        CancelSaveTransactionTask task=new CancelSaveTransactionTask();
+        task.start();
+        return task;
+    }
+    /**
+     * 启动重试取消保持任务
+     */
+    public static TimerTask retryCancelSaveTransactionTask() {
+        RetryCancelSaveTransactionTask task=new RetryCancelSaveTransactionTask();
+        task.start();
+        return task;
+    }
+    /**
+     * 启动重试删除任务
+     */
+    public static TimerTask retryDelTransactionTask() {
+        RetryDelTransactionTask task=new RetryDelTransactionTask();
         task.start();
         return task;
     }

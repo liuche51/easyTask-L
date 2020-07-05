@@ -46,21 +46,25 @@ public class FollowService {
         transaction.setTable(TransactionTableEnum.SCHEDULE_BAK);
         TransactionDao.save(transaction);
     }
+
+    /**
+     * 确认提交任务备份
+     * @param transactionId
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public static void confirmSaveTask(String transactionId) throws SQLException, ClassNotFoundException {
         TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
     }
-    public static void cancelTask(String transactionId) throws SQLException, ClassNotFoundException {
-        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CANCEL);
-        ScheduleBakDao.delete(transactionId);//事务ID和TaskID相同
-    }
+
     /**
-     * 接受leader同步任务入备库
-     *
-     * @param schedule
+     * 取消备份任务
+     * @param transactionId
+     * @throws SQLException
+     * @throws ClassNotFoundException
      */
-    public static void saveScheduleBak(ScheduleDto.Schedule schedule) throws SQLException, ClassNotFoundException {
-        ScheduleBak bak = ScheduleBak.valueOf(schedule);
-        ScheduleBakDao.save(bak);
+    public static void cancelSaveTask(String transactionId) throws SQLException, ClassNotFoundException {
+        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CANCEL);
     }
 
     /**
