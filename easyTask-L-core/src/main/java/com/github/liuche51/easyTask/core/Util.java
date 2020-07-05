@@ -19,7 +19,12 @@ public class Util {
         str.append(Thread.currentThread().getId());
         return str.toString();
     }
-
+    public static String generateTransactionId() {
+        return "T"+generateUniqueId();
+    }
+    public static String generateIdentityId() {
+        return "I"+generateUniqueId();
+    }
     public static String getDefaultDbDirect() throws IOException {
         // 第二种：获取项目路径    D:\git\daotie\daotie
         File directory = new File("");// 参数为空

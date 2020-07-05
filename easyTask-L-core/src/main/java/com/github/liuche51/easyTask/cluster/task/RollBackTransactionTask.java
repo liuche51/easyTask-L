@@ -24,7 +24,7 @@ public class RollBackTransactionTask extends TimerTask {
         while (!isExit()) {
             List<Transaction> scheduleList = null, scheduleBakList = null;
             try {
-                list = TransactionDao.selectByStatusAndCancelReTryCount(TransactionStatusEnum.CANCEL,3,100);
+                list = TransactionDao.selectByStatusAndCancelReTryCount(TransactionStatusEnum.CANCEL,new Short("3"),100);
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
                 scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTable())).collect(Collectors.toList());
                 if (scheduleList != null&&scheduleList.size()>0) {

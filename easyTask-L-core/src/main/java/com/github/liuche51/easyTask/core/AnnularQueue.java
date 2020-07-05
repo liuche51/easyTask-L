@@ -188,7 +188,7 @@ public class AnnularQueue {
         String path = task.getClass().getName();
         task.getScheduleExt().setTaskClassPath(path);
         //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
-        ClusterService.save(task);
+        ClusterService.saveTask(task);
         AddSchedule(task);
         ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(task.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
         log.debug("已添加类型:{}任务:{}，所属分片:{} 预计执行时间:{} 线程ID:{}", task.getTaskType().name(), task.getScheduleExt().getId(), time.getSecond(), time.toLocalTime(), Thread.currentThread().getId());
@@ -207,7 +207,7 @@ public class AnnularQueue {
                 task.setEndTimestamp(Task.getTimeStampByTimeUnit(task.getPeriod(), task.getUnit()));
         }
         //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
-        ClusterService.save(task);
+        ClusterService.saveTask(task);
         AddSchedule(task);
         return task.getScheduleExt().getId();
     }
@@ -235,8 +235,8 @@ public class AnnularQueue {
      * 恢复中断后的系统任务
      */
     private void recover() {
-        List<Schedule> list = ScheduleDao.selectAll();
         try {
+            List<Schedule> list = ScheduleDao.selectAll();
             for (Schedule schedule : list) {
                 try {
                     Task task = Task.valueOf(schedule);
@@ -257,7 +257,7 @@ public class AnnularQueue {
             }
             log.debug("easyTask recover success! count:{}", list.size());
         } catch (Exception e) {
-            log.error("easyTask recover fail.");
+            log.error("easyTask recover fail.",e);
         }
     }
 

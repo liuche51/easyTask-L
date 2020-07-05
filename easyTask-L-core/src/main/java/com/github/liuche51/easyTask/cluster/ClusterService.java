@@ -1,6 +1,7 @@
 package com.github.liuche51.easyTask.cluster;
 
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
+import com.github.liuche51.easyTask.cluster.leader.DeleteTaskTCC;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.cluster.leader.SaveTCC;
 import com.github.liuche51.easyTask.cluster.task.*;
@@ -66,12 +67,11 @@ public class ClusterService {
     }
 
     /**
-     * 任务数据持久化。含同步至备份库
-     * 后期需要考虑数据一致性的事务机制
-     *
+     * 任务数据持久化。并同步至备份库
+     *使用TCC机制实现事务，达到数据最终一致性
      * @throws Exception
      */
-    public static void save(Task task) throws Exception {
+    public static void saveTask(Task task) throws Exception {
         //防止多线程下，follow元素操作竞争问题。确保参与提交的follow不受集群选举影响
         List<Node> follows = new ArrayList<>(CURRENTNODE.getFollows().size());
         Iterator<Node> items = CURRENTNODE.getFollows().iterator();
@@ -84,22 +84,28 @@ public class ClusterService {
             SaveTCC.trySave(task, follows);
             SaveTCC.confirm(task.getScheduleExt().getId(), task.getScheduleExt().getId(), follows);
         } catch (Exception e) {
-            SaveTCC.cancel(task.getScheduleExt().getId(), task.getScheduleExt().getId(), follows);
+            SaveTCC.cancel(task.getScheduleExt().getId(), follows);
             throw new Exception("task submit failed!");
         }
     }
 
     /**
      * 删除完成的一次性任务。含同步至备份库
-     * 后期需要考虑数据一致性的事务机制
-     *
+     * 使用TCC机制实现事务，达到数据最终一致性
      * @param taskId
      * @return
      */
     public static boolean deleteTask(String taskId) {
+        //防止多线程下，follow元素操作竞争问题。确保参与提交的follow不受集群选举影响
+        List<Node> follows = new ArrayList<>(CURRENTNODE.getFollows().size());
+        Iterator<Node> items = CURRENTNODE.getFollows().iterator();
+        while (items.hasNext()) {
+            follows.add(items.next());
+        }
+        String transactionId=Util.generateTransactionId();
         try {
-            ScheduleDao.delete(taskId);
-            LeaderService.deleteTaskToFollows(taskId);
+            DeleteTaskTCC.tryDel(transactionId,taskId, follows);
+            DeleteTaskTCC.confirm(transactionId, follows);
             return true;
         } catch (Exception e) {
             log.error("deleteTask exception!", e);

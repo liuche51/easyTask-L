@@ -14,9 +14,17 @@ public class NettyInterfaceEnum {
      */
     public static final String TRAN_CANCELSAVETASK="Tran_CancelSaveTask";
     /**
-     * 同步任务数据备份接口
+     * 预备删除任务接口。阶段一
      */
-    public static final String SYNC_SCHEDULE_BACKUP="SyncScheduleBackup";
+    public static final String TRAN_TRYDELTASK="Tran_TryDelTask";
+    /**
+     * 确认删除任务接口。阶段二
+     */
+    public static final String TRAN_CONFIRMDELTASK="Tran_ConfirmDelTask";
+    /**
+     * 取消任务接口。事务回滚
+     */
+    public static final String TRAN_CANCELDELTASK="Tran_CancelDelTask";
     /**
      * 同步任务数据备份接口，批量方式
      */
