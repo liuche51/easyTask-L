@@ -36,6 +36,7 @@ public class TransactionDao {
             DbInit.init();
         transaction.setCreateTime(DateUtils.getCurrentDateTime());
         transaction.setModifyTime(DateUtils.getCurrentDateTime());
+        transaction.setRetryCount(new Short("0"));
         String sql = "insert into transaction(id,content,type,status,follows,retry_time,retry_count,create_time,modify_time) values('"
                 + transaction.getId() + "','" + transaction.getContent() + "','" + transaction.getType()
                 + "'," + transaction.getStatus() + ",'" + transaction.getFollows() + "','" + transaction.getRetryTime() + "',"
@@ -49,6 +50,10 @@ public class TransactionDao {
     public static void updateStatusByIds(String[] ids, short status) throws SQLException, ClassNotFoundException {
         String str=SqliteHelper.getInConditionStr(ids);
         String sql = "update transaction set status=" + status + ",modify_time='"+DateUtils.getCurrentDateTime()+"' where id in" + str+";";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
+    public static void updateRetryInfoById(String id,short retryCount,String retryTime) throws SQLException, ClassNotFoundException {
+        String sql = "update transaction set retry_count=" + retryCount + ",modify_time='"+retryTime+"',modify_time='"+DateUtils.getCurrentDateTime()+"' where id='" + id+"';";
         SqliteHelper.executeUpdateForSync(sql);
     }
     public static List<Transaction> selectByIds(String[] ids) throws SQLException, ClassNotFoundException {

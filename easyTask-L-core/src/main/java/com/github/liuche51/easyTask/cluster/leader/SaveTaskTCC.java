@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SaveTCC {
+public class SaveTaskTCC {
     /**
      * 提交任务事务第一阶段。
      * 先记入事务表，等到第二阶段提交确认
@@ -35,7 +35,7 @@ public class SaveTCC {
         transaction.setTable(TransactionTableEnum.SCHEDULE);
         transaction.setStatus(TransactionStatusEnum.TRIED);
         transaction.setType(TransactionTypeEnum.SAVE);
-        transaction.setCancelHost(JSONObject.toJSONString(cancelHost));
+        transaction.setFollows(JSONObject.toJSONString(cancelHost));
         TransactionDao.save(transaction);
         Iterator<Node> items = follows.iterator();
         while (items.hasNext()) {

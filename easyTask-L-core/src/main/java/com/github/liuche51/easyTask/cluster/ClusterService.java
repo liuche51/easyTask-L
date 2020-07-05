@@ -3,9 +3,9 @@ package com.github.liuche51.easyTask.cluster;
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.cluster.leader.DeleteTaskTCC;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
-import com.github.liuche51.easyTask.cluster.leader.SaveTCC;
+import com.github.liuche51.easyTask.cluster.leader.SaveTaskTCC;
 import com.github.liuche51.easyTask.cluster.task.*;
-import com.github.liuche51.easyTask.cluster.task.tran.CommitTransactionTask;
+import com.github.liuche51.easyTask.cluster.task.tran.CommitSaveTransactionTask;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
@@ -82,10 +82,10 @@ public class ClusterService {
         if (follows.size() != EasyTaskConfig.getInstance().getBackupCount())
             throw new Exception("save() exception！follows.size() not please try again");
         try {
-            SaveTCC.trySave(task, follows);
-            SaveTCC.confirm(task.getScheduleExt().getId(), task.getScheduleExt().getId(), follows);
+            SaveTaskTCC.trySave(task, follows);
+            SaveTaskTCC.confirm(task.getScheduleExt().getId(), task.getScheduleExt().getId(), follows);
         } catch (Exception e) {
-            SaveTCC.cancel(task.getScheduleExt().getId(), follows);
+            SaveTaskTCC.cancel(task.getScheduleExt().getId(), follows);
             throw new Exception("task submit failed!");
         }
     }
@@ -152,7 +152,7 @@ public class ClusterService {
      * 次次写优化成批量写
      */
     public static TimerTask startSubmitTransactionTask() {
-        CommitTransactionTask task=new CommitTransactionTask();
+        CommitSaveTransactionTask task=new CommitSaveTransactionTask();
         task.start();
         return task;
     }

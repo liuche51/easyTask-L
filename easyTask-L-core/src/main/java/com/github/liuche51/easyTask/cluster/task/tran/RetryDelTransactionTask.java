@@ -4,11 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.DeleteTaskTCC;
-import com.github.liuche51.easyTask.cluster.leader.SaveTCC;
 import com.github.liuche51.easyTask.cluster.task.TimerTask;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import com.github.liuche51.easyTask.dao.ScheduleBakDao;
-import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.TransactionDao;
 import com.github.liuche51.easyTask.dto.Transaction;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
@@ -38,16 +34,15 @@ public class RetryDelTransactionTask extends TimerTask {
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
                 if (scheduleList != null && scheduleList.size() > 0) {
                     for (Transaction x : scheduleList) {
-                        try {
-                            //如果距离上次重试时间不足5分钟，则跳过重试
-                            if (x.getRetryTime() != null && x.getRetryTime() != "") {
-                                if (ZonedDateTime.now().minusMinutes(5)
-                                        .compareTo(DateUtils.parse(x.getRetryTime())) > 0) {
-                                    continue;
-                                }
+                        //如果距离上次重试时间不足5分钟，则跳过重试
+                        if (x.getRetryTime() != null && x.getRetryTime() != "") {
+                            if (ZonedDateTime.now().minusMinutes(5)
+                                    .compareTo(DateUtils.parse(x.getRetryTime())) > 0) {
+                                continue;
                             }
-                            List<String> cancelFollowsHost = JSONObject.parseObject(x.getFollows(), new TypeReference<List<String>>() {
-                            });
+                        }
+                        try {
+                            List<String> cancelFollowsHost = JSONObject.parseObject(x.getFollows(), new TypeReference<List<String>>() {});
                             List<Node> cancelFollows = new ArrayList<>(cancelFollowsHost.size());
                             if (cancelFollowsHost != null) {
                                 cancelFollowsHost.forEach(y -> {
@@ -58,6 +53,7 @@ public class RetryDelTransactionTask extends TimerTask {
                             }
                         } catch (Exception e) {
                             log.error("RetryDelTransactionTask item exception!", e);
+                            TransactionDao.updateRetryInfoById(x.getId(), (short) (x.getRetryCount()+1),DateUtils.getCurrentDateTime());
                         }
                     };
                 }
