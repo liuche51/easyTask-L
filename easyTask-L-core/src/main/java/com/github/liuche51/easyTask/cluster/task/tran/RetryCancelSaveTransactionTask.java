@@ -28,6 +28,7 @@ public class RetryCancelSaveTransactionTask extends TimerTask {
             List<Transaction> scheduleList = null, scheduleBakList = null;
             try {
                 list = TransactionDao.selectByStatusAndReTryCount(TransactionStatusEnum.CANCEL, TransactionTypeEnum.SAVE,new Short("3"),100);
+                log.info("RetryCancelSaveTransactionTask() load count="+list.size());
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
                 scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTable())).collect(Collectors.toList());
                 if (scheduleList != null&&scheduleList.size()>0) {

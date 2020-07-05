@@ -93,6 +93,11 @@ public class ScheduleSyncDao {
         String sql = "update schedule_sync set status=" + status + ",transaction_id='" + transactionId + "',modify_time='" + DateUtils.getCurrentDateTime() + "' where schedule_id='" + scheduleId + "';";
         SqliteHelper.executeUpdateForSync(sql);
     }
+    public static void updateStatusByTransactionIds(String[] transactionIds,short status) throws SQLException, ClassNotFoundException {
+        String instr=SqliteHelper.getInConditionStr(transactionIds);
+        String sql = "update schedule_sync set status=" + status + ",modify_time='" + DateUtils.getCurrentDateTime() + "' where transaction_id in " + instr + ";";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
     public static void deleteByTransactionIdAndFollow(String transactionId, String follow) throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule_sync where transaction_id='" + transactionId + "' and follow='" + follow + "';";
         SqliteHelper.executeUpdateForSync(sql);

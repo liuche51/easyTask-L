@@ -14,6 +14,8 @@ import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
 import com.github.liuche51.easyTask.dao.TransactionDao;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
+import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
+import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
 import com.github.liuche51.easyTask.zk.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import org.slf4j.Logger;
@@ -123,13 +125,14 @@ public class ClusterService {
     /**
      * 清空所有表的记录
      * 节点宕机后，重启。或失去联系zk后又重新连接了。都视为新节点加入集群。加入前需要清空所有记录，避免有重复数据在集群中
-     * 事务表不清除
      */
     public static void deleteAllData() {
         try {
             ScheduleDao.deleteAll();
             ScheduleBakDao.deleteAll();
             ScheduleSyncDao.deleteAll();
+            //目前不清除删除类型的事务。因为这样系统重启后可以继续删除操作。最大限度保障从集群中删除
+            TransactionDao.deleteByTypes(new short[]{TransactionTypeEnum.SAVE,TransactionTypeEnum.UPDATE});
         } catch (Exception e) {
             log.error("deleteAllData exception!", e);
         }

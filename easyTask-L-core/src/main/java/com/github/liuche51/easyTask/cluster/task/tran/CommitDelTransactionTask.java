@@ -4,10 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.task.TimerTask;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
+import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
 import com.github.liuche51.easyTask.dao.TransactionDao;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
+import com.github.liuche51.easyTask.dto.ScheduleSync;
 import com.github.liuche51.easyTask.dto.Transaction;
+import com.github.liuche51.easyTask.enume.ScheduleSyncStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTableEnum;
 import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
@@ -35,6 +38,7 @@ public class CommitDelTransactionTask extends TimerTask {
                     String[] scheduleIds=scheduleList.stream().map(Transaction::getContent).toArray(String[]::new);
                     ScheduleDao.deleteByIds(scheduleIds);
                     TransactionDao.updateStatusByIds(scheduleIds,TransactionStatusEnum.FINISHED);
+                    ScheduleSyncDao.updateStatusByTransactionIds(scheduleIds, ScheduleSyncStatusEnum.DELETED);
                 }
                 if (scheduleBakList != null&&scheduleBakList.size()>0) {
                     String[] scheduleBakIds=scheduleList.stream().map(Transaction::getContent).toArray(String[]::new);

@@ -30,7 +30,7 @@ public class RetryDelTransactionTask extends TimerTask {
             List<Transaction> scheduleList = null;
             try {
                 list = TransactionDao.selectByStatusAndReTryCount(TransactionStatusEnum.TRIED, TransactionTypeEnum.DELETE, new Short("3"), 100);
-                log.info("RetryDelTransactionTask load count="+list.size());
+                log.info("RetryDelTransactionTask() load count="+list.size());
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
                 if (scheduleList != null && scheduleList.size() > 0) {
                     for (Transaction x : scheduleList) {

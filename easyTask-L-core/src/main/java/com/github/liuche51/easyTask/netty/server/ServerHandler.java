@@ -57,6 +57,12 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
                     FollowService.cancelSaveTask(transactionId1);
                     break;
                 case NettyInterfaceEnum
+                        .TRAN_TRYDELTASK:
+                    String tranAndSchedule = frame.getBody();
+                    String[] item=tranAndSchedule.split(",");
+                    FollowService.tryDelTask(item[0],item[1]);
+                    break;
+                case NettyInterfaceEnum
                         .SYNC_SCHEDULE_BACKUP_BATCH:
                     ScheduleDto.ScheduleList scheduleList = ScheduleDto.ScheduleList.parseFrom(frame.getBodyBytes());
                     FollowService.saveScheduleBakBatch(scheduleList);

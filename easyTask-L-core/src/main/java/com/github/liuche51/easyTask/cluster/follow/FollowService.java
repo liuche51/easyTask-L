@@ -66,7 +66,18 @@ public class FollowService {
     public static void cancelSaveTask(String transactionId) throws SQLException, ClassNotFoundException {
         TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CANCEL);
     }
-
+    /**
+     * 接受leader同步删除任务
+     */
+    public static void tryDelTask(String transactionId,String scheduleId) throws Exception {
+        Transaction transaction=new Transaction();
+        transaction.setId(transactionId);
+        transaction.setContent(scheduleId);
+        transaction.setStatus(TransactionStatusEnum.TRIED);
+        transaction.setType(TransactionTypeEnum.DELETE);
+        transaction.setTable(TransactionTableEnum.SCHEDULE_BAK);
+        TransactionDao.save(transaction);
+    }
     /**
      * 接受leader批量同步任务入备库
      *

@@ -101,6 +101,12 @@ public class TransactionDao {
         String sql = "delete FROM transaction where status = " + status+";";
         SqliteHelper.executeUpdateForSync(sql);
     }
+
+    public static void deleteByTypes(short[] types) throws SQLException, ClassNotFoundException {
+        String instr=SqliteHelper.getInConditionStr(types);
+        String sql = "delete FROM transaction where type in "+instr+";";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
     private static Transaction getTransaction(ResultSet resultSet) throws SQLException {
         String id = resultSet.getString("id");
         String content = resultSet.getString("content");
