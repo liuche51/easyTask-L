@@ -36,7 +36,7 @@ public class DeleteTaskTCC {
         transaction.setTable(TransactionTableEnum.SCHEDULE);
         transaction.setStatus(TransactionStatusEnum.TRIED);
         transaction.setType(TransactionTypeEnum.DELETE);
-        transaction.setCancelHost(JSONObject.toJSONString(cancelHost));
+        transaction.setFollows(JSONObject.toJSONString(cancelHost));
         TransactionDao.save(transaction);
         //需要将同步记录表原来的提交已同步记录修改为删除中，并更新其事务ID
         ScheduleSyncDao.updateStatusAndTransactionIdByScheduleId(taskId,ScheduleSyncStatusEnum.DELETEING,transaction.getId());
@@ -52,17 +52,19 @@ public class DeleteTaskTCC {
                 throw new Exception("tryDel->sendSyncMsgWithCount():exception! ");
             }
         }
+        //删除操作，如果follow都被通知标记为TRIED了，就不走后面的第二阶段CONFIRM了，可以直接删除任务。只需要leader标记即可
+        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
     }
 
     /**
      * 确认删除任务。第二阶段
-     * 先让follows标记事务确认，最后在标记自己的事务确认。这样有利于事务重试（确认删除阶段重试）
+     * 暂时不需要实现。因为对于删除操作来说是不可逆的，不需要回滚。只要第一阶段被标记为TRIED了就可以直接删除了
      * @param transactionId
      * @param follows
      * @throws Exception
      */
     public static void confirm(String transactionId, List<Node> follows) throws Exception {
-        Iterator<Node> items = follows.iterator();
+       /* Iterator<Node> items = follows.iterator();
         while (items.hasNext()) {
             Node follow = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
@@ -77,7 +79,7 @@ public class DeleteTaskTCC {
                 throw new Exception("confirm()->sendSyncMsgWithCount() exception！");
         }
         //follow都标记为确认删除了。就可以认为数据已经删除，后面不需要重试标记确认删除了。否则后面还需要重试本方法确认删除
-        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
+        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);*/
     }
 
     /**

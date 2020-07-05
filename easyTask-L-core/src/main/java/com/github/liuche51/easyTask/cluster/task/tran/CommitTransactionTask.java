@@ -1,6 +1,7 @@
-package com.github.liuche51.easyTask.cluster.task;
+package com.github.liuche51.easyTask.cluster.task.tran;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.liuche51.easyTask.cluster.task.TimerTask;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.TransactionDao;
@@ -9,6 +10,7 @@ import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.Transaction;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTableEnum;
+import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +24,7 @@ public class CommitTransactionTask extends TimerTask {
             List<Schedule> scheduleList1 = null;
             List<ScheduleBak> scheduleBakList1 = null;
             try {
-                list = TransactionDao.selectByStatus(TransactionStatusEnum.CONFIRM,100);
+                list = TransactionDao.selectByStatusAndType(TransactionStatusEnum.CONFIRM, TransactionTypeEnum.SAVE,100);
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
                 scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTable())).collect(Collectors.toList());
                 if (scheduleList != null&&scheduleList.size()>0) {

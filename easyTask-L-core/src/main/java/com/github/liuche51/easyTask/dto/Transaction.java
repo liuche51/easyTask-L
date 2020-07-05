@@ -6,8 +6,9 @@ public class Transaction {
     private String table;
     private short type;
     private short status;
-    private String cancelHost;
-    private short cancelRetryCount;
+    private String follows;//重试事务所需的follow地址
+    private String retryTime;
+    private short retryCount;
     private String createTime;
     private String modifyTime;
 
@@ -51,20 +52,28 @@ public class Transaction {
         this.status = status;
     }
 
-    public String getCancelHost() {
-        return cancelHost;
+    public String getFollows() {
+        return follows;
     }
 
-    public void setCancelHost(String cancelHost) {
-        this.cancelHost = cancelHost;
+    public void setFollows(String follows) {
+        this.follows = follows;
     }
 
-    public short getCancelRetryCount() {
-        return cancelRetryCount;
+    public String getRetryTime() {
+        return retryTime;
     }
 
-    public void setCancelRetryCount(short cancelRetryCount) {
-        this.cancelRetryCount = cancelRetryCount;
+    public void setRetryTime(String retryTime) {
+        this.retryTime = retryTime;
+    }
+
+    public short getRetryCount() {
+        return retryCount;
+    }
+
+    public void setRetryCount(short retryCount) {
+        this.retryCount = retryCount;
     }
 
     public String getCreateTime() {

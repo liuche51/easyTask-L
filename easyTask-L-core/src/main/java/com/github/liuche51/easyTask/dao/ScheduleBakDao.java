@@ -50,7 +50,11 @@ public class ScheduleBakDao {
         String sql = "delete FROM schedule_bak where id='" + id + "';";
         SqliteHelper.executeUpdateForSync(sql);
     }
-
+    public static void deleteByIds(String[] ids) throws SQLException, ClassNotFoundException {
+        String instr=SqliteHelper.getInConditionStr(ids);
+        String sql = "delete FROM schedule_bak where id in" + instr + ";";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
     public static void deleteAll() throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule_bak;";
         SqliteHelper.executeUpdateForSync(sql);

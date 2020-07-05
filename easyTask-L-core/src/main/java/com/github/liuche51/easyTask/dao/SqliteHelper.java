@@ -142,16 +142,31 @@ class SqliteHelper {
 
     /**
      * 获取SQL IN 条件的拼接字符串
-     * @param ids
+     * @param params
      * @return
      */
-    public static String getInConditionStr(String[] ids){
+    public static String getInConditionStr(String[] params){
         StringBuilder instr = new StringBuilder("('");
-        for (int i = 0; i < ids.length; i++) {
-            if (i == ids.length - 1)//最后一个
-                instr.append(ids[i]).append("')");
+        for (int i = 0; i < params.length; i++) {
+            if (i == params.length - 1)//最后一个
+                instr.append(params[i]).append("')");
             else
-                instr.append(ids[i]).append("','");
+                instr.append(params[i]).append("','");
+        }
+        return instr.toString();
+    }
+    /**
+     * 获取SQL IN 条件的拼接数值
+     * @param params
+     * @return
+     */
+    public static String getInConditionStr(short[] params){
+        StringBuilder instr = new StringBuilder("(");
+        for (int i = 0; i < params.length; i++) {
+            if (i == params.length - 1)//最后一个
+                instr.append(params[i]).append(")");
+            else
+                instr.append(params[i]).append(",");
         }
         return instr.toString();
     }
