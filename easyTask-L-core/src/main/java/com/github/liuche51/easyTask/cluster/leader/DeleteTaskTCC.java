@@ -6,13 +6,9 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
-import com.github.liuche51.easyTask.dao.TransactionDao;
-import com.github.liuche51.easyTask.dto.Schedule;
-import com.github.liuche51.easyTask.dto.ScheduleSync;
-import com.github.liuche51.easyTask.dto.Task;
-import com.github.liuche51.easyTask.dto.Transaction;
+import com.github.liuche51.easyTask.dao.TransactionLogDao;
+import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.dto.proto.Dto;
-import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.enume.*;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
 
@@ -30,22 +26,22 @@ public class DeleteTaskTCC {
      */
     public static void tryDel(String transactionId,String taskId, List<Node> follows) throws Exception {
         List<String> cancelHost=follows.stream().map(Node::getAddress).collect(Collectors.toList());
-        Transaction transaction = new Transaction();
-        transaction.setId(transactionId);
-        transaction.setContent(taskId);
-        transaction.setTable(TransactionTableEnum.SCHEDULE);
-        transaction.setStatus(TransactionStatusEnum.TRIED);
-        transaction.setType(TransactionTypeEnum.DELETE);
-        transaction.setFollows(JSONObject.toJSONString(cancelHost));
-        TransactionDao.save(transaction);
+        TransactionLog transactionLog = new TransactionLog();
+        transactionLog.setId(transactionId);
+        transactionLog.setContent(taskId);
+        transactionLog.setTable(TransactionTableEnum.SCHEDULE);
+        transactionLog.setStatus(TransactionStatusEnum.TRIED);
+        transactionLog.setType(TransactionTypeEnum.DELETE);
+        transactionLog.setFollows(JSONObject.toJSONString(cancelHost));
+        TransactionLogDao.save(transactionLog);
         //需要将同步记录表原来的提交已同步记录修改为删除中，并更新其事务ID
-        ScheduleSyncDao.updateStatusAndTransactionIdByScheduleId(taskId,ScheduleSyncStatusEnum.DELETEING,transaction.getId());
+        ScheduleSyncDao.updateStatusAndTransactionIdByScheduleId(taskId,ScheduleSyncStatusEnum.DELETEING, transactionLog.getId());
         Iterator<Node> items = follows.iterator();
         while (items.hasNext()) {
             Node follow = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
             builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYDELTASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
-                    .setBody(transaction.getId()+","+taskId);
+                    .setBody(transactionLog.getId()+","+taskId);
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);
             if(!ret){
@@ -53,7 +49,7 @@ public class DeleteTaskTCC {
             }
         }
         //删除操作，如果follow都被通知标记为TRIED了，就不走后面的第二阶段CONFIRM了，可以直接删除任务。只需要leader标记即可
-        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
+        TransactionLogDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
     }
 
     /**

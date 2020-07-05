@@ -4,15 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
-import com.github.liuche51.easyTask.cluster.task.CheckFollowsAliveTask;
 import com.github.liuche51.easyTask.cluster.task.CheckLeadersAliveTask;
 import com.github.liuche51.easyTask.cluster.task.TimerTask;
-import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
-import com.github.liuche51.easyTask.dao.TransactionDao;
+import com.github.liuche51.easyTask.dao.TransactionLogDao;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
-import com.github.liuche51.easyTask.dto.Task;
-import com.github.liuche51.easyTask.dto.Transaction;
+import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTableEnum;
@@ -38,13 +35,13 @@ public class FollowService {
      */
     public static void trySaveTask(ScheduleDto.Schedule schedule) throws Exception {
         ScheduleBak bak = ScheduleBak.valueOf(schedule);
-        Transaction transaction=new Transaction();
-        transaction.setId(bak.getId());
-        transaction.setContent(JSONObject.toJSONString(bak));
-        transaction.setStatus(TransactionStatusEnum.TRIED);
-        transaction.setType(TransactionTypeEnum.SAVE);
-        transaction.setTable(TransactionTableEnum.SCHEDULE_BAK);
-        TransactionDao.save(transaction);
+        TransactionLog transactionLog =new TransactionLog();
+        transactionLog.setId(bak.getId());
+        transactionLog.setContent(JSONObject.toJSONString(bak));
+        transactionLog.setStatus(TransactionStatusEnum.TRIED);
+        transactionLog.setType(TransactionTypeEnum.SAVE);
+        transactionLog.setTable(TransactionTableEnum.SCHEDULE_BAK);
+        TransactionLogDao.save(transactionLog);
     }
 
     /**
@@ -54,7 +51,7 @@ public class FollowService {
      * @throws ClassNotFoundException
      */
     public static void confirmSaveTask(String transactionId) throws SQLException, ClassNotFoundException {
-        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
+        TransactionLogDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
     }
 
     /**
@@ -64,19 +61,19 @@ public class FollowService {
      * @throws ClassNotFoundException
      */
     public static void cancelSaveTask(String transactionId) throws SQLException, ClassNotFoundException {
-        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CANCEL);
+        TransactionLogDao.updateStatusById(transactionId,TransactionStatusEnum.CANCEL);
     }
     /**
      * 接受leader同步删除任务
      */
     public static void tryDelTask(String transactionId,String scheduleId) throws Exception {
-        Transaction transaction=new Transaction();
-        transaction.setId(transactionId);
-        transaction.setContent(scheduleId);
-        transaction.setStatus(TransactionStatusEnum.TRIED);
-        transaction.setType(TransactionTypeEnum.DELETE);
-        transaction.setTable(TransactionTableEnum.SCHEDULE_BAK);
-        TransactionDao.save(transaction);
+        TransactionLog transactionLog =new TransactionLog();
+        transactionLog.setId(transactionId);
+        transactionLog.setContent(scheduleId);
+        transactionLog.setStatus(TransactionStatusEnum.TRIED);
+        transactionLog.setType(TransactionTypeEnum.DELETE);
+        transactionLog.setTable(TransactionTableEnum.SCHEDULE_BAK);
+        TransactionLogDao.save(transactionLog);
     }
     /**
      * 接受leader批量同步任务入备库

@@ -11,10 +11,9 @@ import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
-import com.github.liuche51.easyTask.dao.TransactionDao;
+import com.github.liuche51.easyTask.dao.TransactionLogDao;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
-import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
 import com.github.liuche51.easyTask.zk.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
@@ -132,7 +131,7 @@ public class ClusterService {
             ScheduleBakDao.deleteAll();
             ScheduleSyncDao.deleteAll();
             //目前不清除删除类型的事务。因为这样系统重启后可以继续删除操作。最大限度保障从集群中删除
-            TransactionDao.deleteByTypes(new short[]{TransactionTypeEnum.SAVE,TransactionTypeEnum.UPDATE});
+            TransactionLogDao.deleteByTypes(new short[]{TransactionTypeEnum.SAVE,TransactionTypeEnum.UPDATE});
         } catch (Exception e) {
             log.error("deleteAllData exception!", e);
         }

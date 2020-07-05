@@ -68,10 +68,10 @@ public class DbInit {
                         ");";
                 SqliteHelper.executeUpdateForSync(sql3);
             }
-            boolean exist4 = TransactionDao.existTable();
+            boolean exist4 = TransactionLogDao.existTable();
             if (!exist4) {
                 //本地待运行的任务
-                String sql4 = "CREATE TABLE \"transaction\" (\n" +
+                String sql4 = "CREATE TABLE \"transaction_log\" (\n" +
                         "\"id\"  TEXT NOT NULL,\n" +
                         "\"content\"  TEXT,\n" +
                         "\"table\"  TEXT,\n" +

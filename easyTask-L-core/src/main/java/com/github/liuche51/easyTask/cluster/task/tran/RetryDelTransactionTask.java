@@ -5,8 +5,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.DeleteTaskTCC;
 import com.github.liuche51.easyTask.cluster.task.TimerTask;
-import com.github.liuche51.easyTask.dao.TransactionDao;
-import com.github.liuche51.easyTask.dto.Transaction;
+import com.github.liuche51.easyTask.dao.TransactionLogDao;
+import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTableEnum;
 import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
@@ -14,6 +14,7 @@ import com.github.liuche51.easyTask.util.DateUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,43 +26,47 @@ import java.util.stream.Collectors;
 public class RetryDelTransactionTask extends TimerTask {
     @Override
     public void run() {
-        List<Transaction> list = null;
+        List<TransactionLog> list = null;
         while (!isExit()) {
-            List<Transaction> scheduleList = null;
+            setLastRunTime(new Date());
+            List<TransactionLog> scheduleList = null;
             try {
-                list = TransactionDao.selectByStatusAndReTryCount(TransactionStatusEnum.TRIED, TransactionTypeEnum.DELETE, new Short("3"), 100);
-                log.info("RetryDelTransactionTask() load count="+list.size());
+                list = TransactionLogDao.selectByStatusAndReTryCount(TransactionStatusEnum.TRIED, TransactionTypeEnum.DELETE, new Short("3"), 100);
+                log.debug("RetryDelTransactionTask() load count=" + list.size());
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
                 if (scheduleList != null && scheduleList.size() > 0) {
-                    for (Transaction x : scheduleList) {
-                        //如果距离上次重试时间不足5分钟，则跳过重试
-                        if (x.getRetryTime() != null && x.getRetryTime() != "") {
-                            if (ZonedDateTime.now().minusMinutes(5)
-                                    .compareTo(DateUtils.parse(x.getRetryTime())) > 0) {
-                                continue;
-                            }
-                        }
+                    for (TransactionLog x : scheduleList) {
                         try {
-                            List<String> cancelFollowsHost = JSONObject.parseObject(x.getFollows(), new TypeReference<List<String>>() {});
+                            //如果距离上次重试时间不足5分钟，则跳过重试
+                            if (x.getRetryTime() != null && x.getRetryTime() != "") {
+                                if (ZonedDateTime.now().minusMinutes(5)
+                                        .compareTo(DateUtils.parse(x.getRetryTime())) > 0) {
+                                    continue;
+                                }
+                            }
+                            List<String> cancelFollowsHost = JSONObject.parseObject(x.getFollows(), new TypeReference<List<String>>() {
+                            });
                             List<Node> cancelFollows = new ArrayList<>(cancelFollowsHost.size());
                             if (cancelFollowsHost != null) {
                                 cancelFollowsHost.forEach(y -> {
                                     String[] hp = y.split(":");
                                     cancelFollows.add(new Node(hp[0], Integer.parseInt(hp[1])));
                                 });
+                                log.info("RetryDelTransactionTask()->tryDel():transactionId=" + x.getId() + " retryCount=" + x.getRetryCount() + ",retryTime=" + x.getRetryTime());
                                 DeleteTaskTCC.tryDel(x.getId(), x.getContent(), cancelFollows);
                             }
                         } catch (Exception e) {
                             log.error("RetryDelTransactionTask item exception!", e);
-                            TransactionDao.updateRetryInfoById(x.getId(), (short) (x.getRetryCount()+1),DateUtils.getCurrentDateTime());
+                            TransactionLogDao.updateRetryInfoById(x.getId(), (short) (x.getRetryCount() + 1), DateUtils.getCurrentDateTime());
                         }
-                    };
+                    }
+                    ;
                 }
             } catch (Exception e) {
                 log.error("RetryDelTransactionTask exception!", e);
             }
             try {
-                if (list == null || list.size() == 0)//防止频繁空转
+                if (new Date().getTime() - getLastRunTime().getTime() < 500)//防止频繁空转
                     Thread.sleep(500);
             } catch (InterruptedException e) {
                 log.error("", e);

@@ -5,7 +5,7 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
-import com.github.liuche51.easyTask.dao.TransactionDao;
+import com.github.liuche51.easyTask.dao.TransactionLogDao;
 import com.github.liuche51.easyTask.enume.ScheduleSyncStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 
@@ -30,7 +30,7 @@ public class ClearDataTask extends TimerTask {
                     sources.add(item.getValue().getAddress());
                 }
                 ScheduleBakDao.deleteBySources(sources.toArray(new String[sources.size()]));
-                TransactionDao.deleteByStatus(TransactionStatusEnum.FINISHED);
+                TransactionLogDao.deleteByStatus(TransactionStatusEnum.FINISHED);
                 ScheduleSyncDao.deleteByStatus(ScheduleSyncStatusEnum.DELETED);
             } catch (Exception e) {
                 log.error("clearScheduleBak()", e);

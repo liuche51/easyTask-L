@@ -1,6 +1,6 @@
 package com.github.liuche51.easyTask.dto;
 
-public class Transaction {
+public class TransactionLog {
     private String id;
     private String content;
     private String table;

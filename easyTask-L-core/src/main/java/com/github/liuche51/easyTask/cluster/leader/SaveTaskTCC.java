@@ -5,11 +5,11 @@ import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
-import com.github.liuche51.easyTask.dao.TransactionDao;
+import com.github.liuche51.easyTask.dao.TransactionLogDao;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleSync;
 import com.github.liuche51.easyTask.dto.Task;
-import com.github.liuche51.easyTask.dto.Transaction;
+import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.enume.*;
@@ -29,19 +29,19 @@ public class SaveTaskTCC {
     public static void trySave(Task task, List<Node> follows) throws Exception {
         List<String> cancelHost=follows.stream().map(Node::getAddress).collect(Collectors.toList());
         Schedule schedule = Schedule.valueOf(task);
-        Transaction transaction = new Transaction();
-        transaction.setId(schedule.getId());
-        transaction.setContent(JSONObject.toJSONString(schedule));
-        transaction.setTable(TransactionTableEnum.SCHEDULE);
-        transaction.setStatus(TransactionStatusEnum.TRIED);
-        transaction.setType(TransactionTypeEnum.SAVE);
-        transaction.setFollows(JSONObject.toJSONString(cancelHost));
-        TransactionDao.save(transaction);
+        TransactionLog transactionLog = new TransactionLog();
+        transactionLog.setId(schedule.getId());
+        transactionLog.setContent(JSONObject.toJSONString(schedule));
+        transactionLog.setTable(TransactionTableEnum.SCHEDULE);
+        transactionLog.setStatus(TransactionStatusEnum.TRIED);
+        transactionLog.setType(TransactionTypeEnum.SAVE);
+        transactionLog.setFollows(JSONObject.toJSONString(cancelHost));
+        TransactionLogDao.save(transactionLog);
         Iterator<Node> items = follows.iterator();
         while (items.hasNext()) {
             Node follow = items.next();
             ScheduleSync scheduleSync = new ScheduleSync();
-            scheduleSync.setTransactionId(transaction.getId());
+            scheduleSync.setTransactionId(transactionLog.getId());
             scheduleSync.setScheduleId(schedule.getId());
             scheduleSync.setFollow(follow.getAddress());
             scheduleSync.setStatus(ScheduleSyncStatusEnum.SYNCING);
@@ -80,7 +80,7 @@ public class SaveTaskTCC {
             } else
                 throw new Exception("sendSyncMsgWithCount() exception！");
         }
-        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
+        TransactionLogDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
     }
 
     /**
@@ -90,7 +90,7 @@ public class SaveTaskTCC {
      * @throws Exception
      */
     public static void cancel(String transactionId,List<Node> follows) throws Exception {
-        TransactionDao.updateStatusById(transactionId,TransactionStatusEnum.CANCEL);//自己优先标记需回滚
+        TransactionLogDao.updateStatusById(transactionId,TransactionStatusEnum.CANCEL);//自己优先标记需回滚
         retryCancel( transactionId, follows);
     }
     public static void retryCancel(String transactionId, List<Node> follows) throws Exception {

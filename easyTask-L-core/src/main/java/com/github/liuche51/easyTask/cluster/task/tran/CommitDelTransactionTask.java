@@ -1,20 +1,17 @@
 package com.github.liuche51.easyTask.cluster.task.tran;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.task.TimerTask;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
-import com.github.liuche51.easyTask.dao.TransactionDao;
-import com.github.liuche51.easyTask.dto.Schedule;
-import com.github.liuche51.easyTask.dto.ScheduleBak;
-import com.github.liuche51.easyTask.dto.ScheduleSync;
-import com.github.liuche51.easyTask.dto.Transaction;
+import com.github.liuche51.easyTask.dao.TransactionLogDao;
+import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.enume.ScheduleSyncStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTableEnum;
 import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,32 +22,33 @@ import java.util.stream.Collectors;
 public class CommitDelTransactionTask extends TimerTask {
     @Override
     public void run() {
-        List<Transaction> list = null;
+        List<TransactionLog> list = null;
         while (!isExit()) {
-            List<Transaction> scheduleList = null, scheduleBakList = null;
+            setLastRunTime(new Date());
+            List<TransactionLog> scheduleList = null, scheduleBakList = null;
             try {
-                list = TransactionDao.selectByStatusAndType(new short[]{TransactionStatusEnum.CONFIRM,TransactionStatusEnum.TRIED}, TransactionTypeEnum.DELETE,100);
+                list = TransactionLogDao.selectByStatusAndType(new short[]{TransactionStatusEnum.CONFIRM,TransactionStatusEnum.TRIED}, TransactionTypeEnum.DELETE,100);
                 //对于leader来说，只能处理被标记为CONFIRM的事务。TRIED表示还需要重试通知follow标记删除TRIED状态
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())&&TransactionStatusEnum.CONFIRM==x.getStatus()).collect(Collectors.toList());
                 //对于follow来说。只需要事务被标记为TRIED状态，就可以执行删除操作了
                 scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTable())).collect(Collectors.toList());
                 if (scheduleList != null&&scheduleList.size()>0) {
-                    String[] scheduleIds=scheduleList.stream().map(Transaction::getContent).toArray(String[]::new);
+                    String[] scheduleIds=scheduleList.stream().map(TransactionLog::getContent).toArray(String[]::new);
                     ScheduleDao.deleteByIds(scheduleIds);
-                    TransactionDao.updateStatusByIds(scheduleIds,TransactionStatusEnum.FINISHED);
+                    TransactionLogDao.updateStatusByIds(scheduleIds,TransactionStatusEnum.FINISHED);
                     ScheduleSyncDao.updateStatusByTransactionIds(scheduleIds, ScheduleSyncStatusEnum.DELETED);
                 }
                 if (scheduleBakList != null&&scheduleBakList.size()>0) {
-                    String[] scheduleBakIds=scheduleList.stream().map(Transaction::getContent).toArray(String[]::new);
+                    String[] scheduleBakIds=scheduleList.stream().map(TransactionLog::getContent).toArray(String[]::new);
                     ScheduleBakDao.deleteByIds(scheduleBakIds);
-                    TransactionDao.updateStatusByIds(scheduleBakIds,TransactionStatusEnum.FINISHED);
+                    TransactionLogDao.updateStatusByIds(scheduleBakIds,TransactionStatusEnum.FINISHED);
                 }
 
             } catch (Exception e) {
                 log.error("", e);
             }
             try {
-                if (list == null || list.size() == 0)//防止频繁空转
+                if (new Date().getTime()-getLastRunTime().getTime()<500)//防止频繁空转
                     Thread.sleep(500);
             } catch (InterruptedException e) {
                 log.error("", e);
