@@ -32,9 +32,9 @@ public class RetryCancelSaveTransactionTask extends TimerTask {
             List<TransactionLog> scheduleList = null, scheduleBakList = null;
             try {
                 list = TransactionLogDao.selectByStatusAndReTryCount(TransactionStatusEnum.CANCEL, TransactionTypeEnum.SAVE, new Short("3"), 100);
-                log.debug("RetryCancelSaveTransactionTask() load count=" + list.size());
-                scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
-                scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTable())).collect(Collectors.toList());
+                log.info("RetryCancelSaveTransactionTask() load count=" + list.size());
+                scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTableName())).collect(Collectors.toList());
+                scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTableName())).collect(Collectors.toList());
                 if (scheduleList != null && scheduleList.size() > 0) {
                     String[] scheduleTranIds = scheduleList.stream().map(TransactionLog::getId).toArray(String[]::new);
                     ScheduleDao.deleteByTransactionIds(scheduleTranIds);//先清掉自己已经提交的事务
@@ -60,6 +60,7 @@ public class RetryCancelSaveTransactionTask extends TimerTask {
                             TransactionLogDao.updateStatusById(x.getId(), TransactionStatusEnum.FINISHED);
                         } catch (Exception e) {
                             log.error("RetryCancelSaveTransactionTask() item exception!", e);
+                            TransactionLogDao.updateRetryInfoById(x.getId(), (short) (x.getRetryCount() + 1), DateUtils.getCurrentDateTime());
                         }
                     }
                 }

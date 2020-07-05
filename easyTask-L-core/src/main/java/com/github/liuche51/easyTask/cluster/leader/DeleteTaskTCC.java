@@ -29,7 +29,7 @@ public class DeleteTaskTCC {
         TransactionLog transactionLog = new TransactionLog();
         transactionLog.setId(transactionId);
         transactionLog.setContent(taskId);
-        transactionLog.setTable(TransactionTableEnum.SCHEDULE);
+        transactionLog.setTableName(TransactionTableEnum.SCHEDULE);
         transactionLog.setStatus(TransactionStatusEnum.TRIED);
         transactionLog.setType(TransactionTypeEnum.DELETE);
         transactionLog.setFollows(JSONObject.toJSONString(cancelHost));

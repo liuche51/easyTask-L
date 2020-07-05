@@ -32,8 +32,8 @@ public class TransactionLogDao {
         transactionLog.setModifyTime(DateUtils.getCurrentDateTime());
         transactionLog.setRetryCount(new Short("0"));
         transactionLog.setRetryTime(StringConstant.EMPTY);
-        String sql = "insert into transaction_log(id,content,table,type,status,follows,retry_time,retry_count,create_time,modify_time) values('"
-                + transactionLog.getId() + "','" + transactionLog.getContent() + "','" + transactionLog.getTable() + "','" + transactionLog.getType()
+        String sql = "insert into transaction_log(id,content,table_name,type,status,follows,retry_time,retry_count,create_time,modify_time) values('"
+                + transactionLog.getId() + "','" + transactionLog.getContent() + "','" + transactionLog.getTableName() + "','" + transactionLog.getType()
                 + "'," + transactionLog.getStatus() + ",'" + transactionLog.getFollows() + "','" + transactionLog.getRetryTime() + "',"
                 + transactionLog.getRetryCount() + ",'" + transactionLog.getCreateTime() + "','" + transactionLog.getModifyTime() + "');";
         SqliteHelper.executeUpdateForSync(sql);
@@ -107,7 +107,7 @@ public class TransactionLogDao {
     private static TransactionLog getTransaction(ResultSet resultSet) throws SQLException {
         String id = resultSet.getString("id");
         String content = resultSet.getString("content");
-        String table = resultSet.getString("table");
+        String tableName = resultSet.getString("table_name");
         short type = resultSet.getShort("type");
         short status = resultSet.getShort("status");
         String follows = resultSet.getString("follows");
@@ -117,7 +117,7 @@ public class TransactionLogDao {
         String createTime = resultSet.getString("create_time");
         TransactionLog transactionLog = new TransactionLog();
         transactionLog.setId(id);
-        transactionLog.setTable(table);
+        transactionLog.setTableName(tableName);
         transactionLog.setType(type);
         transactionLog.setStatus(status);
         transactionLog.setContent(content);

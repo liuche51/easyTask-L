@@ -26,13 +26,13 @@ public class SaveTaskTCC {
      * @param follows
      * @throws Exception
      */
-    public static void trySave(Task task, List<Node> follows) throws Exception {
+    public static void trySave(String transactionId,Task task, List<Node> follows) throws Exception {
         List<String> cancelHost=follows.stream().map(Node::getAddress).collect(Collectors.toList());
         Schedule schedule = Schedule.valueOf(task);
         TransactionLog transactionLog = new TransactionLog();
-        transactionLog.setId(schedule.getId());
+        transactionLog.setId(transactionId);
         transactionLog.setContent(JSONObject.toJSONString(schedule));
-        transactionLog.setTable(TransactionTableEnum.SCHEDULE);
+        transactionLog.setTableName(TransactionTableEnum.SCHEDULE);
         transactionLog.setStatus(TransactionStatusEnum.TRIED);
         transactionLog.setType(TransactionTypeEnum.SAVE);
         transactionLog.setFollows(JSONObject.toJSONString(cancelHost));
@@ -43,7 +43,7 @@ public class SaveTaskTCC {
             ScheduleSync scheduleSync = new ScheduleSync();
             scheduleSync.setTransactionId(transactionLog.getId());
             scheduleSync.setScheduleId(schedule.getId());
-            scheduleSync.setFollow(follow.getAddress());
+            scheduleSync.setFollows(follow.getAddress());
             scheduleSync.setStatus(ScheduleSyncStatusEnum.SYNCING);
             ScheduleSyncDao.save(scheduleSync);//记录同步状态表
             ScheduleDto.Schedule s = schedule.toScheduleDto();

@@ -29,9 +29,9 @@ public class CommitDelTransactionTask extends TimerTask {
             try {
                 list = TransactionLogDao.selectByStatusAndType(new short[]{TransactionStatusEnum.CONFIRM,TransactionStatusEnum.TRIED}, TransactionTypeEnum.DELETE,100);
                 //对于leader来说，只能处理被标记为CONFIRM的事务。TRIED表示还需要重试通知follow标记删除TRIED状态
-                scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())&&TransactionStatusEnum.CONFIRM==x.getStatus()).collect(Collectors.toList());
+                scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTableName())&&TransactionStatusEnum.CONFIRM==x.getStatus()).collect(Collectors.toList());
                 //对于follow来说。只需要事务被标记为TRIED状态，就可以执行删除操作了
-                scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTable())).collect(Collectors.toList());
+                scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTableName())).collect(Collectors.toList());
                 if (scheduleList != null&&scheduleList.size()>0) {
                     String[] scheduleIds=scheduleList.stream().map(TransactionLog::getContent).toArray(String[]::new);
                     ScheduleDao.deleteByIds(scheduleIds);

@@ -3,7 +3,7 @@ package com.github.liuche51.easyTask.dto;
 public class TransactionLog {
     private String id;
     private String content;
-    private String table;
+    private String tableName;
     private short type;
     private short status;
     private String follows;//重试事务所需的follow地址
@@ -28,12 +28,12 @@ public class TransactionLog {
         this.content = content;
     }
 
-    public String getTable() {
-        return table;
+    public String getTableName() {
+        return tableName;
     }
 
-    public void setTable(String table) {
-        this.table = table;
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     public short getType() {

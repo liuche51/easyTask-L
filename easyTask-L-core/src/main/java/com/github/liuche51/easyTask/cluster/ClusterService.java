@@ -88,11 +88,18 @@ public class ClusterService {
         }
         if (follows.size() != EasyTaskConfig.getInstance().getBackupCount())
             throw new Exception("save() exception！follows.size() not please try again");
+        String transactionId=Util.generateTransactionId();
         try {
-            SaveTaskTCC.trySave(task, follows);
+            SaveTaskTCC.trySave(transactionId,task, follows);
             SaveTaskTCC.confirm(task.getScheduleExt().getId(), task.getScheduleExt().getId(), follows);
         } catch (Exception e) {
-            SaveTaskTCC.cancel(task.getScheduleExt().getId(), follows);
+            log.error("saveTask():",e);
+            try {
+                SaveTaskTCC.cancel(task.getScheduleExt().getId(), follows);
+            }catch (Exception e1){
+                log.error("saveTask()->cancel():",e);
+                TransactionLogDao.updateRetryInfoById(transactionId, new Short("1"), DateUtils.getCurrentDateTime());
+            }
             throw new Exception("task submit failed!");
         }
     }

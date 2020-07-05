@@ -74,7 +74,7 @@ public class DbInit {
                 String sql4 = "CREATE TABLE \"transaction_log\" (\n" +
                         "\"id\"  TEXT NOT NULL,\n" +
                         "\"content\"  TEXT,\n" +
-                        "\"table\"  TEXT,\n" +
+                        "\"table_name\"  TEXT,\n" +
                         "\"type\"  INTEGER,\n" +
                         "\"status\"  INTEGER,\n" +
                         "\"follows\"  TEXT,\n" +

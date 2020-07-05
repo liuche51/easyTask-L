@@ -40,7 +40,7 @@ public class FollowService {
         transactionLog.setContent(JSONObject.toJSONString(bak));
         transactionLog.setStatus(TransactionStatusEnum.TRIED);
         transactionLog.setType(TransactionTypeEnum.SAVE);
-        transactionLog.setTable(TransactionTableEnum.SCHEDULE_BAK);
+        transactionLog.setTableName(TransactionTableEnum.SCHEDULE_BAK);
         TransactionLogDao.save(transactionLog);
     }
 
@@ -72,7 +72,7 @@ public class FollowService {
         transactionLog.setContent(scheduleId);
         transactionLog.setStatus(TransactionStatusEnum.TRIED);
         transactionLog.setType(TransactionTypeEnum.DELETE);
-        transactionLog.setTable(TransactionTableEnum.SCHEDULE_BAK);
+        transactionLog.setTableName(TransactionTableEnum.SCHEDULE_BAK);
         TransactionLogDao.save(transactionLog);
     }
     /**

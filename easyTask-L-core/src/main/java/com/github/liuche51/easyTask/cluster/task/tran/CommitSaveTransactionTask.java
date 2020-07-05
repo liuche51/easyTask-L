@@ -31,8 +31,8 @@ public class CommitSaveTransactionTask extends TimerTask {
             List<ScheduleBak> scheduleBakList1 = null;
             try {
                 list = TransactionLogDao.selectByStatusAndType(TransactionStatusEnum.CONFIRM, TransactionTypeEnum.SAVE,100);
-                scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
-                scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTable())).collect(Collectors.toList());
+                scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTableName())).collect(Collectors.toList());
+                scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTableName())).collect(Collectors.toList());
                 if (scheduleList != null&&scheduleList.size()>0) {
                     scheduleList.forEach(x->{
                         scheduleList1.add(JSONObject.parseObject(x.getContent(),Schedule.class));

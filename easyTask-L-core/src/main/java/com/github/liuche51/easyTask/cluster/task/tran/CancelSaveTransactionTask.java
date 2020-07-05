@@ -22,12 +22,13 @@ public class CancelSaveTransactionTask extends TimerTask {
     public void run() {
         List<TransactionLog> list = null;
         while (!isExit()) {
+            setLastRunTime(new Date());
             List<TransactionLog> scheduleList = null, scheduleBakList = null;
             try {
                 list = TransactionLogDao.selectByStatusAndType(TransactionStatusEnum.CANCEL, TransactionTypeEnum.SAVE,100);
-                log.debug("CancelSaveTransactionTask() load count="+list.size());
-                scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTable())).collect(Collectors.toList());
-                scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTable())).collect(Collectors.toList());
+                log.info("CancelSaveTransactionTask() load count="+list.size());
+                scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTableName())).collect(Collectors.toList());
+                scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTableName())).collect(Collectors.toList());
                 if (scheduleList != null&&scheduleList.size()>0) {
                     String[] scheduleIds=scheduleList.stream().map(TransactionLog::getContent).toArray(String[]::new);
                     ScheduleDao.deleteByIds(scheduleIds);
