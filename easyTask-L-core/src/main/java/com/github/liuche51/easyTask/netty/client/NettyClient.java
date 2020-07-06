@@ -145,8 +145,9 @@ public class NettyClient {
      * @param msg
      * @return
      */
-    public ChannelFuture sendASyncMsgWithoutPromise(Object msg) {
+    public ChannelFuture sendASyncMsgWithoutPromise(Object msg) throws ConnectionException {
         sendMsgPrintLog(msg);
+        if(clientChannel==null) throw new ConnectionException("sendASyncMsg->"+this.address+": object node has disconnected!");
         return clientChannel.writeAndFlush(msg);
     }
 

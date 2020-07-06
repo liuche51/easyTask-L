@@ -42,10 +42,6 @@ public class EasyTaskConfig {
      */
     private int sQLlitePoolSize = Runtime.getRuntime().availableProcessors() * 2;
     /**
-     * 前服务的名称。IP+端口号
-     */
-    private String zKServerName = "";
-    /**
      * 设置当前easyTask组件的集群服务端口号。默认2020
      */
     private int serverPort = 2020;

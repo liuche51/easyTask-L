@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import com.github.liuche51.easyTask.util.StringConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,6 +147,7 @@ class SqliteHelper {
      * @return
      */
     public static String getInConditionStr(String[] params){
+        if(params==null||params.length==0) return StringConstant.EMPTY;
         StringBuilder instr = new StringBuilder("('");
         for (int i = 0; i < params.length; i++) {
             if (i == params.length - 1)//最后一个

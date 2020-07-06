@@ -47,7 +47,7 @@ public class CommitSaveTransactionTask extends TimerTask {
                         scheduleBakList1.add(JSONObject.parseObject(x.getContent(),ScheduleBak.class));
                     });
                     ScheduleBakDao.saveBatch(scheduleBakList1);
-                    String[] scheduleBakIds=scheduleList.stream().map(TransactionLog::getId).toArray(String[]::new);
+                    String[] scheduleBakIds=scheduleBakList.stream().map(TransactionLog::getId).toArray(String[]::new);
                     TransactionLogDao.updateStatusByIds(scheduleBakIds,TransactionStatusEnum.FINISHED);
                 }
 
