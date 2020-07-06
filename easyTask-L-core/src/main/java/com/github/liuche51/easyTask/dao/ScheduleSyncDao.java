@@ -34,8 +34,8 @@ public class ScheduleSyncDao {
     public static void save(ScheduleSync scheduleSync) throws Exception {
         scheduleSync.setCreateTime(DateUtils.getCurrentDateTime());
         scheduleSync.setModifyTime(DateUtils.getCurrentDateTime());
-        String sql = "insert into schedule_sync(transaction_id,schedule_id,follows,status,create_time,modify_time) values('"
-                + scheduleSync.getTransactionId() + "','" + scheduleSync.getScheduleId() + "'," + "','" + scheduleSync.getFollows() + "'," + scheduleSync.getStatus()
+        String sql = "insert into schedule_sync(transaction_id,schedule_id,follow,status,create_time,modify_time) values('"
+                + scheduleSync.getTransactionId() + "','" + scheduleSync.getScheduleId() +  "','" + scheduleSync.getFollow() + "'," + scheduleSync.getStatus()
                 + ",'" + scheduleSync.getCreateTime() + "','" + scheduleSync.getCreateTime() + "');";
         SqliteHelper.executeUpdateForSync(sql);
     }
@@ -49,14 +49,14 @@ public class ScheduleSyncDao {
             while (resultSet.next()) {
                 String transactionId = resultSet.getString("transaction_id");
                 String scheduleId = resultSet.getString("schedule_id");
-                String follows = resultSet.getString("follows");
+                String follow1 = resultSet.getString("follow");
                 short status1 = resultSet.getShort("status");
                 String createTime = resultSet.getString("create_time");
                 String modifyTime = resultSet.getString("modify_time");
                 ScheduleSync scheduleSync = new ScheduleSync();
                 scheduleSync.setScheduleId(transactionId);
                 scheduleSync.setScheduleId(scheduleId);
-                scheduleSync.setFollows(follows);
+                scheduleSync.setFollows(follow1);
                 scheduleSync.setStatus(status1);
                 scheduleSync.setCreateTime(createTime);
                 scheduleSync.setModifyTime(modifyTime);

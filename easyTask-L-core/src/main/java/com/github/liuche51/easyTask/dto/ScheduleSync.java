@@ -7,7 +7,7 @@ import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 public class ScheduleSync {
     private String transactionId;
     private String scheduleId;
-    private String follows;
+    private String follow;
     private short status;
     private String createTime;
     private String modifyTime;
@@ -28,12 +28,12 @@ public class ScheduleSync {
         this.scheduleId = scheduleId;
     }
 
-    public String getFollows() {
-        return follows;
+    public String getFollow() {
+        return follow;
     }
 
     public void setFollows(String follows) {
-        this.follows = follows;
+        this.follow = follows;
     }
 
     public short getStatus() {

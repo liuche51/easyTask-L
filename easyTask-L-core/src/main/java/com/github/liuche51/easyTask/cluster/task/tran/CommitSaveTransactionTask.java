@@ -13,6 +13,7 @@ import com.github.liuche51.easyTask.enume.TransactionTableEnum;
 import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +28,8 @@ public class CommitSaveTransactionTask extends TimerTask {
         while (!isExit()) {
             setLastRunTime(new Date());
             List<TransactionLog> scheduleList = null, scheduleBakList = null;
-            List<Schedule> scheduleList1 = null;
-            List<ScheduleBak> scheduleBakList1 = null;
+            List<Schedule> scheduleList1 =new LinkedList<>();
+            List<ScheduleBak> scheduleBakList1 = new LinkedList<>();
             try {
                 list = TransactionLogDao.selectByStatusAndType(TransactionStatusEnum.CONFIRM, TransactionTypeEnum.SAVE,100);
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTableName())).collect(Collectors.toList());

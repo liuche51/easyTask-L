@@ -81,7 +81,8 @@ public class DbInit {
                         "\"retry_time\"  TEXT,\n" +
                         "\"retry_count\"  INTEGER,\n" +
                         "\"create_time\"  TEXT,\n" +
-                        "\"modify_time\"  TEXT\n" +
+                        "\"modify_time\"  TEXT,\n" +
+                        "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
                 SqliteHelper.executeUpdateForSync(sql4);
             }

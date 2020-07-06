@@ -1,3 +1,7 @@
+import com.alibaba.fastjson.JSONObject;
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.dao.TransactionLogDao;
+import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.util.DateUtils;
 import org.junit.Test;
 
@@ -9,28 +13,21 @@ import java.util.List;
 public class UnitTest {
     public static List<Thread> threadList=new LinkedList<>();
     @Test
-    public void test() throws InterruptedException {
-        Thread th1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                     if(Thread.currentThread().isInterrupted()){
-                         System.out.println("线程中断");
-                         break;
-                     }else {
-                         System.out.println("线程运行中");
+    public void test()  {
 
-                     }
-                }
-            }
-        });
-        th1.start();
-        threadList.add(th1);
-        Thread.sleep(5000);
-        threadList.forEach(x->{
-            x.interrupt();
-        });
-        Thread.sleep(5000);
+        TransactionLog log=new TransactionLog();
+        log.setTableName("dddd");
+        log.setId("qqqqq");
+        List<String> list=new LinkedList<>();
+        list.add("172.20.50.128:2022");
+        list.add("172.20.50.128:2022");
+        log.setFollows(JSONObject.toJSONString(list));
+        try {
+            EasyTaskConfig.getInstance().setTaskStorePath("C:\\db\\node1");
+            TransactionLogDao.save(log);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
