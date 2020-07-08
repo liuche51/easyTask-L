@@ -41,6 +41,10 @@ public class ScheduleBakDao {
     }
 
     public static void saveBatch(List<ScheduleBak> scheduleBaks) throws Exception {
+        scheduleBaks.forEach(x->{
+            x.setCreateTime(DateUtils.getCurrentDateTime());
+            x.setModifyTime(DateUtils.getCurrentDateTime());
+        });
         String sql = contactSaveSql(scheduleBaks);
         SqliteHelper.executeUpdateForSync(sql);
     }

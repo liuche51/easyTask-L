@@ -121,7 +121,8 @@ public class Schedule {
         ScheduleDto.Schedule.Builder builder=ScheduleDto.Schedule.newBuilder();
         builder.setId(this.id).setClassPath(this.classPath).setExecuteTime(this.executeTime)
                 .setTaskType(this.taskType).setPeriod(this.period).setUnit(this.unit)
-                .setParam(this.param).setSource(EasyTaskConfig.getInstance().getzKServerName());
+                .setParam(this.param).setSource(EasyTaskConfig.getInstance().getzKServerName())
+                .setTransactionId(this.transactionId);
         return builder.build();
     }
 }
