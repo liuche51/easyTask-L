@@ -1,7 +1,9 @@
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.dao.DbInit;
 import com.github.liuche51.easyTask.dao.TransactionLogDao;
 import com.github.liuche51.easyTask.dto.TransactionLog;
+import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.util.DateUtils;
 import org.junit.Test;
 
@@ -23,8 +25,9 @@ public class UnitTest {
         list.add("172.20.50.128:2022");
         log.setFollows(JSONObject.toJSONString(list));
         try {
-            EasyTaskConfig.getInstance().setTaskStorePath("C:\\db\\node1");
-            TransactionLogDao.save(log);
+            EasyTaskConfig.getInstance().setTaskStorePath("C:\\db\\node2");
+            DbInit.init();
+            TransactionLogDao.updateStatusById("T046fd352edc44f71b4ed623e70502446-1", TransactionStatusEnum.CONFIRM);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.core.Util;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
 import com.github.liuche51.easyTask.dao.TransactionLogDao;
 import com.github.liuche51.easyTask.dto.Schedule;
@@ -29,6 +30,7 @@ public class SaveTaskTCC {
     public static void trySave(String transactionId,Task task, List<Node> follows) throws Exception {
         List<String> cancelHost=follows.stream().map(Node::getAddress).collect(Collectors.toList());
         Schedule schedule = Schedule.valueOf(task);
+        schedule.setTransactionId(transactionId);
         TransactionLog transactionLog = new TransactionLog();
         transactionLog.setId(transactionId);
         transactionLog.setContent(JSONObject.toJSONString(schedule));
@@ -48,7 +50,7 @@ public class SaveTaskTCC {
             ScheduleSyncDao.save(scheduleSync);//记录同步状态表
             ScheduleDto.Schedule s = schedule.toScheduleDto();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(s.getId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
+            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
                     .setBodyBytes(s.toByteString());
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);
@@ -71,7 +73,7 @@ public class SaveTaskTCC {
         while (items.hasNext()) {
             Node follow = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(transactionId).setInterfaceName(NettyInterfaceEnum.TRAN_CONFIRMSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
+            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_CONFIRMSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
                     .setBody(transactionId);
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);
@@ -98,7 +100,7 @@ public class SaveTaskTCC {
         while (items.hasNext()) {
             Node follow = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(transactionId).setInterfaceName(NettyInterfaceEnum.TRAN_CANCELSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
+            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_CANCELSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
                     .setBody(transactionId);
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);

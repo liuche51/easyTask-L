@@ -8,6 +8,8 @@ message Schedule {
   required string unit = 6;
   optional  string param = 7;
   required string source = 8;
+  required string transactionId = 9;
+
 }
 message ScheduleList {
   repeated Schedule schedules = 1;

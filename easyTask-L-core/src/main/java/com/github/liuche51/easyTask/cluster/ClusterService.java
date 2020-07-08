@@ -91,11 +91,11 @@ public class ClusterService {
         String transactionId=Util.generateTransactionId();
         try {
             SaveTaskTCC.trySave(transactionId,task, follows);
-            SaveTaskTCC.confirm(task.getScheduleExt().getId(), task.getScheduleExt().getId(), follows);
+            SaveTaskTCC.confirm(transactionId, task.getScheduleExt().getId(), follows);
         } catch (Exception e) {
             log.error("saveTask():",e);
             try {
-                SaveTaskTCC.cancel(task.getScheduleExt().getId(), follows);
+                SaveTaskTCC.cancel(transactionId, follows);
             }catch (Exception e1){
                 log.error("saveTask()->cancel():",e);
                 TransactionLogDao.updateRetryInfoById(transactionId, new Short("1"), DateUtils.getCurrentDateTime());

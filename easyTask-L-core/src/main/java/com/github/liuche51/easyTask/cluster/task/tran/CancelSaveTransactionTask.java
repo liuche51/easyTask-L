@@ -26,7 +26,6 @@ public class CancelSaveTransactionTask extends TimerTask {
             List<TransactionLog> scheduleList = null, scheduleBakList = null;
             try {
                 list = TransactionLogDao.selectByStatusAndType(TransactionStatusEnum.CANCEL, TransactionTypeEnum.SAVE,100);
-                log.info("CancelSaveTransactionTask() load count="+list.size());
                 scheduleList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE.equals(x.getTableName())).collect(Collectors.toList());
                 scheduleBakList = list.stream().filter(x -> TransactionTableEnum.SCHEDULE_BAK.equals(x.getTableName())).collect(Collectors.toList());
                 if (scheduleList != null&&scheduleList.size()>0) {

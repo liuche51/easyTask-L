@@ -110,6 +110,7 @@ public class ScheduleBak {
         schedule.unit=dto.getUnit();
         schedule.param=dto.getParam();
         schedule.source=dto.getSource();
+        schedule.transactionId=dto.getTransactionId();
         return schedule;
     }
 }

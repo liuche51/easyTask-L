@@ -45,7 +45,6 @@ public class TransactionLogDao {
     public static void updateStatusByIds(String[] ids, short status) throws SQLException, ClassNotFoundException {
         String str=SqliteHelper.getInConditionStr(ids);
         String sql = "update transaction_log set status=" + status + ",modify_time='"+DateUtils.getCurrentDateTime()+"' where id in" + str+";";
-        System.out.println(sql);
         SqliteHelper.executeUpdateForSync(sql);
     }
     public static void updateRetryInfoById(String id,short retryCount,String retryTime) throws SQLException, ClassNotFoundException {

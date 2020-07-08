@@ -36,7 +36,7 @@ public class FollowService {
     public static void trySaveTask(ScheduleDto.Schedule schedule) throws Exception {
         ScheduleBak bak = ScheduleBak.valueOf(schedule);
         TransactionLog transactionLog =new TransactionLog();
-        transactionLog.setId(bak.getId());
+        transactionLog.setId(schedule.getTransactionId());
         transactionLog.setContent(JSONObject.toJSONString(bak));
         transactionLog.setStatus(TransactionStatusEnum.TRIED);
         transactionLog.setType(TransactionTypeEnum.SAVE);
