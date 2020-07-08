@@ -94,15 +94,23 @@ public class TransactionLogDao {
         }
         return list;
     }
-    public static void deleteByStatus(short status) throws SQLException, ClassNotFoundException {
-        String sql = "delete FROM transaction_log where status = " + status+";";
-        SqliteHelper.executeUpdateForSync(sql);
-    }
-
     public static void deleteByTypes(short[] types) throws SQLException, ClassNotFoundException {
         String instr=SqliteHelper.getInConditionStr(types);
         String sql = "delete FROM transaction_log where type in "+instr+";";
         SqliteHelper.executeUpdateForSync(sql);
+    }
+    public static boolean isExistById(String id) throws SQLException, ClassNotFoundException {
+        SqliteHelper helper = new SqliteHelper();
+        try {
+            ResultSet resultSet = helper.executeQuery("SELECT count(0) as count FROM transaction_log where id ='"+id+"';");
+            while (resultSet.next()) {
+                int count = resultSet.getInt("count");
+                if(count>0) return true;
+            }
+        } finally {
+            helper.destroyed();
+        }
+        return false;
     }
     private static TransactionLog getTransaction(ResultSet resultSet) throws SQLException {
         String id = resultSet.getString("id");

@@ -11,6 +11,7 @@ import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTableEnum;
 import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
 import com.github.liuche51.easyTask.util.DateUtils;
+import com.github.liuche51.easyTask.util.StringUtils;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -37,7 +38,8 @@ public class RetryDelTransactionTask extends TimerTask {
                     for (TransactionLog x : scheduleList) {
                         try {
                             //如果距离上次重试时间不足5分钟，则跳过重试
-                            if (x.getRetryTime() != null && x.getRetryTime() != "") {
+                            if (!StringUtils.isNullOrEmpty(x.getRetryTime())) {
+                                System.out.println("x.getRetryTime()="+x.getRetryTime());
                                 if (ZonedDateTime.now().minusMinutes(5)
                                         .compareTo(DateUtils.parse(x.getRetryTime())) > 0) {
                                     continue;

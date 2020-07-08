@@ -30,7 +30,7 @@ public class ClearDataTask extends TimerTask {
                     sources.add(item.getValue().getAddress());
                 }
                 ScheduleBakDao.deleteBySources(sources.toArray(new String[sources.size()]));
-                TransactionLogDao.deleteByStatus(TransactionStatusEnum.FINISHED);
+                //TransactionLogDao.deleteByStatus(TransactionStatusEnum.FINISHED);
                 ScheduleSyncDao.deleteByStatus(ScheduleSyncStatusEnum.DELETED);
             } catch (Exception e) {
                 log.error("clearScheduleBak()", e);

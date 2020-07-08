@@ -67,6 +67,8 @@ public class FollowService {
      * 接受leader同步删除任务
      */
     public static void tryDelTask(String transactionId,String scheduleId) throws Exception {
+        boolean hasExist=TransactionLogDao.isExistById(transactionId);//如果已经存在此删除事务，则不需要添加新的
+        if(hasExist) return;
         TransactionLog transactionLog =new TransactionLog();
         transactionLog.setId(transactionId);
         transactionLog.setContent(scheduleId);
