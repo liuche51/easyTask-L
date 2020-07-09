@@ -74,7 +74,7 @@ public class ClusterTest {
 
     private void initData(AnnularQueue annularQueue,String name) throws Exception {
         EasyTaskConfig config = EasyTaskConfig.getInstance();
-        config.setSQLlitePoolSize(5);
+        config.setSQLlitePoolSize(2);
         config.setBackupCount(2);
         //config.setDeleteZKTimeOunt(500);
         //config.setSelectLeaderZKNodeTimeOunt(500);

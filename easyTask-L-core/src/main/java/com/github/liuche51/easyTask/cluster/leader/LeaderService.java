@@ -30,28 +30,6 @@ public class LeaderService {
         VoteFollows.initSelectFollows();
     }
 
-
-    /**
-     * 同步删除任务至follow。
-     * 先将同步记录表中的状态更新为删除中，删除成功后再更新状态为已删除
-     * 后期需要考虑数据一致性的事务机制
-     *
-     * @param taskId
-     * @return
-     */
-    public static void deleteTaskToFollows(String taskId) throws Exception {
-        List<Node> follows = ClusterService.CURRENTNODE.getFollows();
-        if (follows != null) {
-            Iterator<Node> items = follows.iterator();//防止remove操作导致线程不安全异常
-            while (items.hasNext()) {
-                Node node = items.next();
-                ScheduleSyncDao.updateStatusByScheduleIdAndFollow(taskId, node.getAddress(), ScheduleSyncStatusEnum.DELETEING);
-                LeaderUtil.deleteTaskToFollow(taskId, node);
-                ScheduleSyncDao.updateStatusByScheduleIdAndFollow(taskId, node.getAddress(), ScheduleSyncStatusEnum.DELETED);
-            }
-        }
-    }
-
     /**
      * 将失效的leader的备份任务数据删除掉
      * @param oldLeaderAddress

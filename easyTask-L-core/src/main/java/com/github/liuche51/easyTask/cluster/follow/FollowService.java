@@ -66,6 +66,7 @@ public class FollowService {
     }
     /**
      * 接受leader同步删除任务
+     * 本地环境偶尔会出现多次重复瞬时调用现象。导致transactionId冲突了。目前认为是Netty重试造成的。暂不需要加锁处理，
      */
     public static void tryDelTask(String transactionId,String scheduleId) throws Exception {
         boolean hasExist=TransactionLogDao.isExistById(transactionId);//如果已经存在此删除事务，则不需要添加新的

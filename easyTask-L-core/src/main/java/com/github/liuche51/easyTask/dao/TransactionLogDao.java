@@ -99,6 +99,10 @@ public class TransactionLogDao {
         String sql = "delete FROM transaction_log where type in "+instr+";";
         SqliteHelper.executeUpdateForSync(sql);
     }
+    public static void deleteByStatus(short status) throws SQLException, ClassNotFoundException {
+        String sql = "delete FROM transaction_log where status = " + status+";";
+        SqliteHelper.executeUpdateForSync(sql);
+    }
     public static boolean isExistById(String id) throws SQLException, ClassNotFoundException {
         SqliteHelper helper = new SqliteHelper();
         try {
