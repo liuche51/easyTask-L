@@ -27,7 +27,7 @@ public class UnitTest {
         try {
             EasyTaskConfig.getInstance().setTaskStorePath("C:\\db\\node2");
             DbInit.init();
-            TransactionLogDao.isExistById("T4ce5cf5c9d0048bda40dd09a7a8f376b-44");
+            TransactionLogDao.isExistById("T4ce5cf5c9d0048bda40dd09a7a8f376b-446");
         } catch (Exception e) {
             e.printStackTrace();
         }

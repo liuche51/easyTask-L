@@ -35,13 +35,15 @@ public class CommitDelTransactionTask extends TimerTask {
                 if (scheduleList != null&&scheduleList.size()>0) {
                     String[] scheduleIds=scheduleList.stream().map(TransactionLog::getContent).toArray(String[]::new);
                     ScheduleDao.deleteByIds(scheduleIds);
-                    TransactionLogDao.updateStatusByIds(scheduleIds,TransactionStatusEnum.FINISHED);
-                    ScheduleSyncDao.updateStatusByTransactionIds(scheduleIds, ScheduleSyncStatusEnum.DELETED);
+                    String[] scheduleTranIds=scheduleList.stream().map(TransactionLog::getId).toArray(String[]::new);
+                    TransactionLogDao.updateStatusByIds(scheduleTranIds,TransactionStatusEnum.FINISHED);
+                    ScheduleSyncDao.updateStatusByTransactionIds(scheduleTranIds, ScheduleSyncStatusEnum.DELETED);
                 }
                 if (scheduleBakList != null&&scheduleBakList.size()>0) {
-                    String[] scheduleBakIds=scheduleList.stream().map(TransactionLog::getContent).toArray(String[]::new);
+                    String[] scheduleBakIds=scheduleBakList.stream().map(TransactionLog::getContent).toArray(String[]::new);
                     ScheduleBakDao.deleteByIds(scheduleBakIds);
-                    TransactionLogDao.updateStatusByIds(scheduleBakIds,TransactionStatusEnum.FINISHED);
+                    String[] scheduleBakTranIds=scheduleBakList.stream().map(TransactionLog::getId).toArray(String[]::new);
+                    TransactionLogDao.updateStatusByIds(scheduleBakTranIds,TransactionStatusEnum.FINISHED);
                 }
 
             } catch (Exception e) {

@@ -54,7 +54,7 @@ public class RetryDelTransactionTask extends TimerTask {
                                     cancelFollows.add(new Node(hp[0], Integer.parseInt(hp[1])));
                                 });
                                 log.info("RetryDelTransactionTask()->tryDel():transactionId=" + x.getId() + " retryCount=" + x.getRetryCount() + ",retryTime=" + x.getRetryTime());
-                                DeleteTaskTCC.tryDel(x.getId(), x.getContent(), cancelFollows);
+                                DeleteTaskTCC.retryDel(x.getId(), x.getContent(), cancelFollows);
                             }
                         } catch (Exception e) {
                             log.error("RetryDelTransactionTask item exception!", e);

@@ -34,14 +34,17 @@ public class DeleteTaskTCC {
         transactionLog.setType(TransactionTypeEnum.DELETE);
         transactionLog.setFollows(JSONObject.toJSONString(cancelHost));
         TransactionLogDao.save(transactionLog);
+        retryDel( transactionId, taskId,  follows);
+    }
+    public static void retryDel(String transactionId,String taskId, List<Node> follows) throws Exception {
         //需要将同步记录表原来的提交已同步记录修改为删除中，并更新其事务ID
-        ScheduleSyncDao.updateStatusAndTransactionIdByScheduleId(taskId,ScheduleSyncStatusEnum.DELETEING, transactionLog.getId());
+        ScheduleSyncDao.updateStatusAndTransactionIdByScheduleId(taskId,ScheduleSyncStatusEnum.DELETEING, transactionId);
         Iterator<Node> items = follows.iterator();
         while (items.hasNext()) {
             Node follow = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
             builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYDELTASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
-                    .setBody(transactionLog.getId()+","+taskId);
+                    .setBody(transactionId+","+taskId);
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);
             if(!ret){
@@ -51,7 +54,6 @@ public class DeleteTaskTCC {
         //删除操作，如果follow都被通知标记为TRIED了，就不走后面的第二阶段CONFIRM了，可以直接删除任务。只需要leader标记即可
         TransactionLogDao.updateStatusById(transactionId,TransactionStatusEnum.CONFIRM);
     }
-
     /**
      * 确认删除任务。第二阶段
      * 暂时不需要实现。因为对于删除操作来说是不可逆的，不需要回滚。只要第一阶段被标记为TRIED了就可以直接删除了

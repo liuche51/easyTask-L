@@ -14,6 +14,7 @@ import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTableEnum;
 import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
+import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,7 @@ public class FollowService {
     public static void tryDelTask(String transactionId,String scheduleId) throws Exception {
         boolean hasExist=TransactionLogDao.isExistById(transactionId);//如果已经存在此删除事务，则不需要添加新的
         if(hasExist) return;
+        System.out.println(DateUtils.getCurrentDateTime()+"  transactionId="+transactionId+" scheduleId="+scheduleId);
         TransactionLog transactionLog =new TransactionLog();
         transactionLog.setId(transactionId);
         transactionLog.setContent(scheduleId);
