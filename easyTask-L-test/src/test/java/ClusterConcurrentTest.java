@@ -17,8 +17,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * 集群测试。模拟三个节点的伪集群
  */
-public class ClusterTest {
-    private static Logger log = LoggerFactory.getLogger(ClusterTest.class);
+public class ClusterConcurrentTest {
+    private static Logger log = LoggerFactory.getLogger(ClusterConcurrentTest.class);
 
     @Test
     public void startNode1() {
@@ -108,17 +108,16 @@ public class ClusterTest {
             }
         };
         task2.setParam(param2);
-      /*  try {
+        try {
             annularQueue.submitAllowWait(task2);//单次提交测试
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
         //JUnit默认是非守护线程启动和Main方法不同。这里防止当前主线程退出导致子线程也退出了
         while (true) {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
             try {
-                annularQueue.submitAllowWait(task1);//多次提交测试
-                annularQueue.submitAllowWait(task2);
+                //annularQueue.submitAllowWait(task1);//多次提交测试
             } catch (Exception e) {
                 e.printStackTrace();
             }

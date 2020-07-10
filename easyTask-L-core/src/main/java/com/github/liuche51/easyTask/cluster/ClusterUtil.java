@@ -32,7 +32,6 @@ public class ClusterUtil {
                 return true;
             else
                 error = result.getMsg();
-            tryCount--;
         }catch (ConnectionException e){//正常的连接断开异常，不打印错误日志
             log.info("sendSyncMsgWithCount exception!"+e.getMessage());
         }

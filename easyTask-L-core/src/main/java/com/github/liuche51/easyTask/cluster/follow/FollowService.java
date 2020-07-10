@@ -18,6 +18,7 @@ import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sqlite.SQLiteException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -69,8 +70,6 @@ public class FollowService {
      * 本地环境偶尔会出现多次重复瞬时调用现象。导致transactionId冲突了。目前认为是Netty重试造成的。暂不需要加锁处理，
      */
     public static void tryDelTask(String transactionId,String scheduleId) throws Exception {
-        boolean hasExist=TransactionLogDao.isExistById(transactionId);//如果已经存在此删除事务，则不需要添加新的
-        if(hasExist) return;
         System.out.println(DateUtils.getCurrentDateTime()+"  transactionId="+transactionId+" scheduleId="+scheduleId);
         TransactionLog transactionLog =new TransactionLog();
         transactionLog.setId(transactionId);
@@ -78,7 +77,16 @@ public class FollowService {
         transactionLog.setStatus(TransactionStatusEnum.TRIED);
         transactionLog.setType(TransactionTypeEnum.DELETE);
         transactionLog.setTableName(TransactionTableEnum.SCHEDULE_BAK);
-        TransactionLogDao.save(transactionLog);
+        try {
+            TransactionLogDao.save(transactionLog);
+        }catch (SQLiteException e){
+            //如果遇到主键冲突异常，则略过。主要原因是Netty重试造成，不影响系统功能
+            if(e.getMessage()!=null&&e.getMessage().contains("SQLITE_CONSTRAINT_PRIMARYKEY")){
+                log.info("tryDelTask():transactionId="+transactionId+" scheduleId="+scheduleId);
+                log.error("normally! tryDelTask() exception."+e.getMessage());
+            }
+        }
+
     }
     /**
      * 接受leader批量同步任务入备库
