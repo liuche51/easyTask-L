@@ -109,6 +109,9 @@ public class DbInit {
                         ");";
                 SqliteHelper helper = new SqliteHelper(StringConstant.TRANSACTION_LOG);
                 helper.executeUpdate(sql4);
+                String indexsql = "CREATE INDEX index_status_type ON transaction_log (status,type);";
+                SqliteHelper helper2 = new SqliteHelper(StringConstant.TRANSACTION_LOG);
+                helper2.executeUpdate(indexsql);
             }
             hasInit = true;
             log.info("Sqlite DB 初始化完成");

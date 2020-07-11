@@ -3,6 +3,7 @@ package com.github.liuche51.easyTask.dao;
 import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
+import org.sqlite.SQLiteException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -65,6 +66,8 @@ public class TransactionLogDao {
                 TransactionLog transactionLog = getTransaction(resultSet);
                 list.add(transactionLog);
             }
+        }catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e);
         } finally {
             helper.destroyed();
         }
@@ -80,7 +83,9 @@ public class TransactionLogDao {
                 TransactionLog transactionLog = getTransaction(resultSet);
                 list.add(transactionLog);
             }
-        } finally {
+        } catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+        }finally {
             helper.destroyed();
         }
         return list;
@@ -94,6 +99,8 @@ public class TransactionLogDao {
                 TransactionLog transactionLog = getTransaction(resultSet);
                 list.add(transactionLog);
             }
+        }catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e);
         } finally {
             helper.destroyed();
         }
@@ -116,7 +123,10 @@ public class TransactionLogDao {
                 int count = resultSet.getInt("count");
                 if(count>0) return true;
             }
-        } finally {
+        }catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+        }
+        finally {
             helper.destroyed();
         }
         return false;

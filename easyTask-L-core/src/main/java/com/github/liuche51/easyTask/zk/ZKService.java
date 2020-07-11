@@ -93,7 +93,7 @@ public class ZKService {
             return JSONObject.parseObject(bytes, ZKNode.class);
         } catch (Exception e) {
             //节点不存在了，属于正常情况。
-            log.error("getDataByPath exception! is normally,"+e.getMessage());
+            log.error("normally exception!getDataByPath():"+e.getMessage());
         }
         return null;
     }

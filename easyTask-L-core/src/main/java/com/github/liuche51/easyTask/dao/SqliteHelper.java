@@ -10,6 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.github.liuche51.easyTask.util.StringConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sqlite.SQLiteException;
 
 /**
  * sqlite帮助类，直接创建该类示例，并调用相应的借口即可对sqlite数据库进行操作
@@ -136,5 +137,17 @@ class SqliteHelper {
                 instr.append(params[i]).append(",");
         }
         return instr.toString();
+    }
+
+    /**
+     * 数据库被锁异常日志记录处理
+     * 写因为查询语句执行时，同时存在写锁，导致数据库被锁的异常。属于正常可接受的错误
+     * @param e
+     */
+    public static void writeDatabaseLockedExceptionLog(SQLiteException e) throws SQLiteException {
+        if(e.getMessage()!=null&&e.getMessage().contains("SQLITE_BUSY"))
+            logger.error("normally exception!"+e.getMessage());
+        else
+            throw e;
     }
 }

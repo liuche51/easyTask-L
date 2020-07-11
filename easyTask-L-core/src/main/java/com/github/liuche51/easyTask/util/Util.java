@@ -5,6 +5,7 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.zk.ZKHost;
 import com.github.liuche51.easyTask.util.StringConstant;
+import org.sqlite.SQLiteException;
 
 import java.io.File;
 import java.io.IOException;

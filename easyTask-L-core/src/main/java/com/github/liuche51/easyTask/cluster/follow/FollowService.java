@@ -85,7 +85,7 @@ public class FollowService {
             //如果遇到主键冲突异常，则略过。主要原因是Netty重试造成，不影响系统功能
             if(e.getMessage()!=null&&e.getMessage().contains("SQLITE_CONSTRAINT_PRIMARYKEY")){
                 log.info("tryDelTask():transactionId="+transactionId+" scheduleId="+scheduleId);
-                log.error("normally! tryDelTask() exception."+e.getMessage());
+                log.error("normally exception!! tryDelTask():"+e.getMessage());
             }
         }
 

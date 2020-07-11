@@ -10,6 +10,7 @@ import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sqlite.SQLiteException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,6 +64,8 @@ public class ScheduleDao {
                 Schedule schedule = getSchedule(resultSet);
                 list.add(schedule);
             }
+        }catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e);
         } finally {
             helper.destroyed();
         }
@@ -79,6 +82,8 @@ public class ScheduleDao {
                 Schedule schedule = getSchedule(resultSet);
                 list.add(schedule);
             }
+        }catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e);
         } finally {
             helper.destroyed();
         }
