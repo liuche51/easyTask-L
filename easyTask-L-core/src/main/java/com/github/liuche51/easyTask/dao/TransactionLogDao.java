@@ -8,10 +8,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TransactionLogDao {
+    /**访问的db名称*/
+    private static final String dbName= StringConstant.TRANSACTION_LOG;
+    /**可重入锁*/
+    private static ReentrantLock lock=new ReentrantLock();
     public static boolean existTable() throws SQLException, ClassNotFoundException {
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM sqlite_master where type='table' and name='transaction_log';");
             while (resultSet.next()) {
@@ -36,24 +41,24 @@ public class TransactionLogDao {
                 + transactionLog.getId() + "','" + transactionLog.getContent() + "','" + transactionLog.getTableName() + "','" + transactionLog.getType()
                 + "'," + transactionLog.getStatus() + ",'" + transactionLog.getFollows() + "','" + transactionLog.getRetryTime() + "',"
                 + transactionLog.getRetryCount() + ",'" + transactionLog.getCreateTime() + "','" + transactionLog.getModifyTime() + "');";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void updateStatusById(String id, short status) throws SQLException, ClassNotFoundException {
         String sql = "update transaction_log set status=" + status + ",modify_time='"+DateUtils.getCurrentDateTime()+"' where id='" + id+"';";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void updateStatusByIds(String[] ids, short status) throws SQLException, ClassNotFoundException {
         String str=SqliteHelper.getInConditionStr(ids);
         String sql = "update transaction_log set status=" + status + ",modify_time='"+DateUtils.getCurrentDateTime()+"' where id in" + str+";";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void updateRetryInfoById(String id,short retryCount,String retryTime) throws SQLException, ClassNotFoundException {
         String sql = "update transaction_log set retry_count=" + retryCount + ",modify_time='"+retryTime+"',modify_time='"+DateUtils.getCurrentDateTime()+"' where id='" + id+"';";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static List<TransactionLog> selectByStatusAndType(short status, short type, int count) throws SQLException, ClassNotFoundException {
         List<TransactionLog> list = new LinkedList<>();
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             ResultSet resultSet = helper.executeQuery("SELECT * FROM transaction_log where status = " + status + " and type="+type+" limit " + count + ";");
             while (resultSet.next()) {
@@ -67,7 +72,7 @@ public class TransactionLogDao {
     }
     public static List<TransactionLog> selectByStatusAndType(short[] status, short type, int count) throws SQLException, ClassNotFoundException {
         List<TransactionLog> list = new LinkedList<>();
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             String instr = SqliteHelper.getInConditionStr(status);
             ResultSet resultSet = helper.executeQuery("SELECT * FROM transaction_log where status in " + instr + " and type="+type+" limit " + count + ";");
@@ -82,7 +87,7 @@ public class TransactionLogDao {
     }
     public static List<TransactionLog> selectByStatusAndReTryCount(short status, short type, short lessThanCancelReTryCount, int count) throws SQLException, ClassNotFoundException {
         List<TransactionLog> list = new LinkedList<>();
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             ResultSet resultSet = helper.executeQuery("SELECT * FROM transaction_log where status = " + status + " and type="+type+" and retry_count<"+lessThanCancelReTryCount+" limit " + count + ";");
             while (resultSet.next()) {
@@ -97,14 +102,14 @@ public class TransactionLogDao {
     public static void deleteByTypes(short[] types) throws SQLException, ClassNotFoundException {
         String instr=SqliteHelper.getInConditionStr(types);
         String sql = "delete FROM transaction_log where type in "+instr+";";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void deleteByStatus(short status) throws SQLException, ClassNotFoundException {
         String sql = "delete FROM transaction_log where status = " + status+";";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static boolean isExistById(String id) throws SQLException, ClassNotFoundException {
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             ResultSet resultSet = helper.executeQuery("SELECT count(0) as count FROM transaction_log where id ='"+id+"';");
             while (resultSet.next()) {

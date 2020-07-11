@@ -7,6 +7,7 @@ import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.core.TaskType;
 import com.github.liuche51.easyTask.core.TimeUnit;
 import com.github.liuche51.easyTask.util.DateUtils;
+import com.github.liuche51.easyTask.util.StringConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +18,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ScheduleDao {
+    /**访问的db名称*/
+    private static final String dbName= StringConstant.SCHEDULE;
+    /**可重入锁*/
+    private static ReentrantLock lock=new ReentrantLock();
     public static boolean existTable() throws SQLException, ClassNotFoundException {
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM sqlite_master where type='table' and name='schedule';");
             while (resultSet.next()) {
@@ -38,19 +44,19 @@ public class ScheduleDao {
         if (!DbInit.hasInit)
             DbInit.init();
         String sql = contactSaveSql(Arrays.asList(schedule));
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
 
     public static void saveBatch(List<Schedule> schedules) throws Exception {
         if (!DbInit.hasInit)
             DbInit.init();
         String sql = contactSaveSql(schedules);
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
 
     public static List<Schedule> selectAll() throws SQLException, ClassNotFoundException {
         List<Schedule> list = new LinkedList<>();
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule;");
             while (resultSet.next()) {
@@ -65,7 +71,7 @@ public class ScheduleDao {
 
     public static List<Schedule> selectByIds(String[] ids) throws SQLException, ClassNotFoundException {
         List<Schedule> list = new LinkedList<>();
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             String instr = SqliteHelper.getInConditionStr(ids);
             ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule where id in " + instr + ";");
@@ -81,20 +87,20 @@ public class ScheduleDao {
     public static void deleteByIds(String[] ids) throws SQLException, ClassNotFoundException {
         String instr=SqliteHelper.getInConditionStr(ids);
         String sql = "delete FROM schedule where id in" + instr + ";";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void deleteByTransactionIds(String[] ids) throws SQLException, ClassNotFoundException {
         String instr=SqliteHelper.getInConditionStr(ids);
         String sql = "delete FROM schedule where transaction_id in" + instr + ";";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void deleteAll() throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule;";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
 
     public static int getAllCount() throws SQLException, ClassNotFoundException {
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM schedule;");
             while (resultSet.next()) {

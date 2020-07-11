@@ -1,8 +1,14 @@
 package com.github.liuche51.easyTask.dao;
 
 import com.github.liuche51.easyTask.core.AnnularQueue;
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.util.StringConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DbInit {
     private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
@@ -17,7 +23,11 @@ public class DbInit {
         if (hasInit)
             return true;
         try {
-            SQLlitePool.getInstance().init();
+            //创建db存储文件夹
+            File file = new File(EasyTaskConfig.getInstance().getTaskStorePath());
+            if (!file.exists()) {
+                file.mkdirs();
+            }
             boolean exist = ScheduleDao.existTable();
             if (!exist) {
                 //本地待运行的任务
@@ -35,9 +45,11 @@ public class DbInit {
                         "\"source\"  TEXT,\n" +
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
-                SqliteHelper.executeUpdateForSync(sql);
-                String indexsq="CREATE UNIQUE INDEX index_transactionId ON schedule (transaction_id);";
-                SqliteHelper.executeUpdateForSync(indexsq);
+                SqliteHelper helper = new SqliteHelper(StringConstant.SCHEDULE);
+                helper.executeUpdate(sql);
+                String indexsq = "CREATE UNIQUE INDEX index_transactionId ON schedule (transaction_id);";
+                SqliteHelper helper2 = new SqliteHelper(StringConstant.SCHEDULE);
+                helper2.executeUpdate(indexsq);
             }
             boolean exist2 = ScheduleBakDao.existTable();
             if (!exist2) {
@@ -56,9 +68,11 @@ public class DbInit {
                         "\"source\"  TEXT,\n" +
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
-                SqliteHelper.executeUpdateForSync(sql2);
-                String indexsql="CREATE UNIQUE INDEX index_transactionId ON schedule_bak (transaction_id);";
-                SqliteHelper.executeUpdateForSync(indexsql);
+                SqliteHelper helper = new SqliteHelper(StringConstant.SCHEDULE_BAK);
+                helper.executeUpdate(sql2);
+                String indexsql = "CREATE UNIQUE INDEX index_transactionId ON schedule_bak (transaction_id);";
+                SqliteHelper helper2 = new SqliteHelper(StringConstant.SCHEDULE_BAK);
+                helper2.executeUpdate(indexsql);
             }
             boolean exist3 = ScheduleSyncDao.existTable();
             if (!exist3) {
@@ -71,9 +85,11 @@ public class DbInit {
                         "\"create_time\"  TEXT,\n" +
                         "\"modify_time\"  TEXT\n" +
                         ");";
-                SqliteHelper.executeUpdateForSync(sql3);
-                String indexsql="CREATE INDEX index_scheduleId ON schedule_sync (schedule_id);";
-                SqliteHelper.executeUpdateForSync(indexsql);
+                SqliteHelper helper = new SqliteHelper(StringConstant.SCHEDULE_SYNC);
+                helper.executeUpdate(sql3);
+                String indexsql = "CREATE INDEX index_scheduleId ON schedule_sync (schedule_id);";
+                SqliteHelper helper2 = new SqliteHelper(StringConstant.SCHEDULE_SYNC);
+                helper2.executeUpdate(indexsql);
             }
             boolean exist4 = TransactionLogDao.existTable();
             if (!exist4) {
@@ -91,13 +107,14 @@ public class DbInit {
                         "\"modify_time\"  TEXT,\n" +
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
-                SqliteHelper.executeUpdateForSync(sql4);
+                SqliteHelper helper = new SqliteHelper(StringConstant.TRANSACTION_LOG);
+                helper.executeUpdate(sql4);
             }
             hasInit = true;
-            log.debug("Sqlite 初始化完成。线程:{}", Thread.currentThread().getId());
+            log.info("Sqlite DB 初始化完成");
             return true;
         } catch (Exception e) {
-            log.error("easyTask.db init fail.", e);
+            log.error("easyTask db init fail.", e);
             return false;
         }
     }

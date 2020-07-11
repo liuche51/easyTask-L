@@ -105,11 +105,7 @@ public class EasyTaskConfig {
     public void setTaskStorePath(String path) throws Exception {
         if (AnnularQueue.isRunning)
             throw new Exception("please before AnnularQueue started set");
-        this.taskStorePath = path + "\\easyTask.db";
-        File file = new File(path);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+        this.taskStorePath = path;
     }
 
     public int getsQLlitePoolSize() {

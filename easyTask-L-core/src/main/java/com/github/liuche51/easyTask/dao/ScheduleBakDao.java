@@ -4,6 +4,7 @@ import com.github.liuche51.easyTask.core.*;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.util.DateUtils;
+import com.github.liuche51.easyTask.util.StringConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +15,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ScheduleBakDao {
+    /**访问的db名称*/
+    private static final String dbName= StringConstant.SCHEDULE_BAK;
+    /**可重入锁*/
+    private static ReentrantLock lock=new ReentrantLock();
     public static boolean existTable() throws SQLException, ClassNotFoundException {
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             ResultSet resultSet = helper.executeQuery("SELECT COUNT(*) FROM sqlite_master where type='table' and name='schedule_bak';");
             while (resultSet.next()) {
@@ -37,7 +43,7 @@ public class ScheduleBakDao {
         scheduleBak.setCreateTime(DateUtils.getCurrentDateTime());
         scheduleBak.setModifyTime(DateUtils.getCurrentDateTime());
         String sql = contactSaveSql(Arrays.asList(scheduleBak));
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
 
     public static void saveBatch(List<ScheduleBak> scheduleBaks) throws Exception {
@@ -46,36 +52,36 @@ public class ScheduleBakDao {
             x.setModifyTime(DateUtils.getCurrentDateTime());
         });
         String sql = contactSaveSql(scheduleBaks);
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void delete(String id) throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule_bak where id='" + id + "';";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void deleteByIds(String[] ids) throws SQLException, ClassNotFoundException {
         String instr=SqliteHelper.getInConditionStr(ids);
         String sql = "delete FROM schedule_bak where id in" + instr + ";";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void deleteAll() throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule_bak;";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
 
     public static void deleteBySource(String source) throws SQLException, ClassNotFoundException {
         String sql = "delete FROM schedule_bak where source='" + source + "';";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
 
     public static void deleteBySources(String[] sources) throws SQLException, ClassNotFoundException {
         if (sources == null || sources.length == 0) return;
         String conditionStr = SqliteHelper.getInConditionStr(sources);
         String sql = "delete FROM schedule_bak where source not in" + conditionStr + ";";
-        SqliteHelper.executeUpdateForSync(sql);
+        SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static List<ScheduleBak> getBySourceWithCount(String source, int count) throws SQLException, ClassNotFoundException {
         List<ScheduleBak> list = new LinkedList<>();
-        SqliteHelper helper = new SqliteHelper();
+        SqliteHelper helper = new SqliteHelper(dbName);
         try {
             ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where source='" + source + "' limit " + count + ";");
             while (resultSet.next()) {

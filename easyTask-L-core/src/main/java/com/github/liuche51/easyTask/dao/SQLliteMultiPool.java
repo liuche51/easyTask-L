@@ -1,6 +1,7 @@
 package com.github.liuche51.easyTask.dao;
 
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.util.StringConstant;
 import com.github.liuche51.easyTask.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,23 +40,23 @@ class SQLliteMultiPool {
      * 初始化连接池
      */
     private SQLliteMultiPool() {
-        pools.put("schedule", new ConcurrentLinkedQueue<Connection>());
-        pools.put("schedule_bak", new ConcurrentLinkedQueue<Connection>());
-        pools.put("schedule_sync", new ConcurrentLinkedQueue<Connection>());
-        pools.put("transaction_log", new ConcurrentLinkedQueue<Connection>());
+        pools.put(StringConstant.SCHEDULE, new ConcurrentLinkedQueue<Connection>());
+        pools.put(StringConstant.SCHEDULE_BAK, new ConcurrentLinkedQueue<Connection>());
+        pools.put(StringConstant.SCHEDULE_SYNC, new ConcurrentLinkedQueue<Connection>());
+        pools.put(StringConstant.TRANSACTION_LOG, new ConcurrentLinkedQueue<Connection>());
         for (int i = 0; i < EasyTaskConfig.getInstance().getsQLlitePoolSize(); i++) {
-            Connection con1 = createConnection("schedule.db");
-            Connection con2 = createConnection("schedule_bak.db");
-            Connection con3 = createConnection("schedule_sync.db");
-            Connection con4 = createConnection("transaction_log.db");
+            Connection con1 = createConnection(StringConstant.SCHEDULE);
+            Connection con2 = createConnection(StringConstant.SCHEDULE_BAK);
+            Connection con3 = createConnection(StringConstant.SCHEDULE_SYNC);
+            Connection con4 = createConnection(StringConstant.TRANSACTION_LOG);
             if (con1 != null)
-                pools.get("schedule").add(con1);
+                pools.get(StringConstant.SCHEDULE).add(con1);
             if (con2 != null)
-                pools.get("schedule_bak").add(con2);
+                pools.get(StringConstant.SCHEDULE_BAK).add(con2);
             if (con3 != null)
-                pools.get("schedule_sync").add(con3);
+                pools.get(StringConstant.SCHEDULE_SYNC).add(con3);
             if (con4 != null)
-                pools.get("transaction_log").add(con4);
+                pools.get(StringConstant.TRANSACTION_LOG).add(con4);
         }
     }
     /**

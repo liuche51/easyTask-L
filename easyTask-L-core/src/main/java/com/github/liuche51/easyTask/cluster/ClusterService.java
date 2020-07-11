@@ -88,7 +88,7 @@ public class ClusterService {
             follows.add(items.next());
         }
         if (follows.size() != EasyTaskConfig.getInstance().getBackupCount())
-            throw new Exception("save() exception！follows.size() not please try again");
+            throw new Exception("save() exception！follows.size() not equals backupCount. please try again");
         String transactionId=Util.generateTransactionId();
         try {
             SaveTaskTCC.trySave(transactionId,task, follows);
