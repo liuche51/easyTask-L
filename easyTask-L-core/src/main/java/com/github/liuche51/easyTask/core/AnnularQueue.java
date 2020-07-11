@@ -139,7 +139,10 @@ public class AnnularQueue {
                     List<Task> willremove = new LinkedList<>();
                     for (Map.Entry<String, Task> entry : schedules.entrySet()) {
                         Task s = entry.getValue();
-                        if (System.currentTimeMillis() >= s.getEndTimestamp()) {
+                        long differ=s.getEndTimestamp()-System.currentTimeMillis();
+                        //允许有一秒时间差内就可以执行，原因是计算分片时也存在一秒内的精度问题。
+                        // 如果不这样做，会导致任务需要再等待一分钟才会执行的问题。
+                        if (differ<1000) {
                             Runnable proxy = (Runnable) new ProxyFactory(s).getProxyInstance();
                             workers.submit(proxy);
                             willremove.add(s);
