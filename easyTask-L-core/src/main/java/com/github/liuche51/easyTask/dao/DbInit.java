@@ -36,6 +36,8 @@ public class DbInit {
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
                 SqliteHelper.executeUpdateForSync(sql);
+                String indexsq="CREATE UNIQUE INDEX index_transactionId ON schedule (transaction_id);";
+                SqliteHelper.executeUpdateForSync(indexsq);
             }
             boolean exist2 = ScheduleBakDao.existTable();
             if (!exist2) {
@@ -55,6 +57,8 @@ public class DbInit {
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
                 SqliteHelper.executeUpdateForSync(sql2);
+                String indexsql="CREATE UNIQUE INDEX index_transactionId ON schedule_bak (transaction_id);";
+                SqliteHelper.executeUpdateForSync(indexsql);
             }
             boolean exist3 = ScheduleSyncDao.existTable();
             if (!exist3) {
@@ -68,6 +72,8 @@ public class DbInit {
                         "\"modify_time\"  TEXT\n" +
                         ");";
                 SqliteHelper.executeUpdateForSync(sql3);
+                String indexsql="CREATE INDEX index_scheduleId ON schedule_sync (schedule_id);";
+                SqliteHelper.executeUpdateForSync(indexsql);
             }
             boolean exist4 = TransactionLogDao.existTable();
             if (!exist4) {
