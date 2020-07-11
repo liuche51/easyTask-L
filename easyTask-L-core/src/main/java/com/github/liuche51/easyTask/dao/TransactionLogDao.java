@@ -67,7 +67,7 @@ public class TransactionLogDao {
                 list.add(transactionLog);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"TransactionLogDao->selectByStatusAndType");
         } finally {
             helper.destroyed();
         }
@@ -84,7 +84,7 @@ public class TransactionLogDao {
                 list.add(transactionLog);
             }
         } catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"TransactionLogDao->selectByStatusAndType");
         }finally {
             helper.destroyed();
         }
@@ -100,7 +100,7 @@ public class TransactionLogDao {
                 list.add(transactionLog);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"TransactionLogDao->selectByStatusAndReTryCount");
         } finally {
             helper.destroyed();
         }
@@ -124,7 +124,7 @@ public class TransactionLogDao {
                 if(count>0) return true;
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"TransactionLogDao->isExistById");
         }
         finally {
             helper.destroyed();

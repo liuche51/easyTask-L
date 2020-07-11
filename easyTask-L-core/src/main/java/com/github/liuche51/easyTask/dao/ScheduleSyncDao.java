@@ -70,7 +70,7 @@ public class ScheduleSyncDao {
                 list.add(scheduleSync);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleSyncDao->selectByFollowAndStatusWithCount");
         } finally {
             helper.destroyed();
         }

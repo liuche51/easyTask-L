@@ -144,9 +144,9 @@ class SqliteHelper {
      * 写因为查询语句执行时，同时存在写锁，导致数据库被锁的异常。属于正常可接受的错误
      * @param e
      */
-    public static void writeDatabaseLockedExceptionLog(SQLiteException e) throws SQLiteException {
+    public static void writeDatabaseLockedExceptionLog(SQLiteException e,String methond) throws SQLiteException {
         if(e.getMessage()!=null&&e.getMessage().contains("SQLITE_BUSY"))
-            logger.error("normally exception!"+e.getMessage());
+            logger.error("normally exception!"+methond+":"+e.getMessage());
         else
             throw e;
     }

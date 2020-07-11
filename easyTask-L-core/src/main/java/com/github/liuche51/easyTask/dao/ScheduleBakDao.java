@@ -1,18 +1,12 @@
 package com.github.liuche51.easyTask.dao;
 
-import com.github.liuche51.easyTask.core.*;
-import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,7 +102,7 @@ public class ScheduleBakDao {
                 list.add(schedulebak);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleBakDao->getBySourceWithCount");
         } finally {
             helper.destroyed();
         }

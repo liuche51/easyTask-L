@@ -65,7 +65,7 @@ public class ScheduleDao {
                 list.add(schedule);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleDao->selectAll");
         } finally {
             helper.destroyed();
         }
@@ -83,7 +83,7 @@ public class ScheduleDao {
                 list.add(schedule);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e);
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleDao->selectByIds");
         } finally {
             helper.destroyed();
         }
