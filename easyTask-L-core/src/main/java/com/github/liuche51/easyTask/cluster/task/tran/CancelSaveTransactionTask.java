@@ -34,7 +34,7 @@ public class CancelSaveTransactionTask extends TimerTask {
                     TransactionLogDao.updateStatusByIds(scheduleIds,TransactionStatusEnum.FINISHED);
                 }
                 if (scheduleBakList != null&&scheduleBakList.size()>0) {
-                    String[] scheduleBakIds=scheduleList.stream().map(TransactionLog::getContent).toArray(String[]::new);
+                    String[] scheduleBakIds=scheduleBakList.stream().map(TransactionLog::getContent).toArray(String[]::new);
                     ScheduleBakDao.deleteByIds(scheduleBakIds);
                     TransactionLogDao.updateStatusByIds(scheduleBakIds,TransactionStatusEnum.FINISHED);
                 }

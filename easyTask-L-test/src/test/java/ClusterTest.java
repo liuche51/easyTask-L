@@ -122,11 +122,12 @@ public class ClusterTest {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //printinfo();
+            printinfo();
         }
     }
 
     private void printinfo() {
-        log.info("集群节点信息：" + ClusterMonitor.getCurrentNodeInfo());
+        //log.info("集群节点信息：" + ClusterMonitor.getCurrentNodeInfo());
+        log.info("数据库连接池信息：" + ClusterMonitor.getSqlitePoolInfo());
     }
 }

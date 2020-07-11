@@ -19,12 +19,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * 多连接池
  * 单例模式
  */
-class SQLliteMultiPool {
+public class SQLliteMultiPool {
     final static Logger logger = LoggerFactory.getLogger(SqliteHelper.class);
     private static final String driver = "org.sqlite.JDBC";
     private Map<String, ConcurrentLinkedQueue<Connection>> pools = new HashMap<>();
     private static SQLliteMultiPool singleton = null;
 
+    public Map<String, ConcurrentLinkedQueue<Connection>> getPools() {
+        return pools;
+    }
     public static SQLliteMultiPool getInstance() {
         if (singleton == null) {
             synchronized (SQLliteMultiPool.class) {
