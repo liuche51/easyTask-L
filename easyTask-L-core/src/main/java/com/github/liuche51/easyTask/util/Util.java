@@ -1,8 +1,10 @@
-package com.github.liuche51.easyTask.core;
+package com.github.liuche51.easyTask.util;
 
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.zk.ZKHost;
+import com.github.liuche51.easyTask.util.StringConstant;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,5 +125,19 @@ public class Util {
             ret.put(x.getHost() + x.getPort(), node);
         });
         return ret;
+    }
+
+    /**
+     * 获取任务来源的拼接字符串
+     * @param oldSource
+     * @return
+     */
+    public static String getSource(String oldSource){
+        String source=StringConstant.EMPTY;
+        if(oldSource==null||oldSource== StringConstant.EMPTY)
+            source= EasyTaskConfig.getInstance().getzKServerName();
+        else
+            source=EasyTaskConfig.getInstance().getzKServerName()+"<-"+oldSource;
+        return source;
     }
 }

@@ -3,7 +3,7 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderUtil;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import com.github.liuche51.easyTask.core.Util;
+import com.github.liuche51.easyTask.util.Util;
 import org.junit.Test;
 
 import java.util.LinkedList;

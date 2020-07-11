@@ -4,6 +4,7 @@ public class TaskExt {
     private String id;
     private String taskClassPath;
     private volatile String oldId;
+    private String source;
     public String getId() {
         return id;
     }
@@ -22,5 +23,13 @@ public class TaskExt {
 
     public void setOldId(String oldId) {
         this.oldId = oldId;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

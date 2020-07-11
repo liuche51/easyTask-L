@@ -21,6 +21,7 @@ public class Schedule {
     private String transactionId;
     private String createTime;
     private String modifyTime;
+    private String source;
 
     public String getId() {
         return id;
@@ -101,6 +102,15 @@ public class Schedule {
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     public static Schedule valueOf(Task task){
         Schedule schedule=new Schedule();
         schedule.id=task.getScheduleExt().getId();
@@ -110,6 +120,7 @@ public class Schedule {
         schedule.period=task.getPeriod();
         schedule.unit=task.getUnit() == null ? "" : task.getUnit().name();
         schedule.param= JSONObject.toJSONString(task.getParam());
+        schedule.setSource(task.getScheduleExt().getSource());
         return schedule;
     }
 

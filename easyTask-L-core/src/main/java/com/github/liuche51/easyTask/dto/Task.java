@@ -119,6 +119,7 @@ public class Task {
         Task task = new Task();
         task.getScheduleExt().setId(scheduleBak.getId());
         task.getScheduleExt().setTaskClassPath(scheduleBak.getClassPath());
+        task.getScheduleExt().setSource(scheduleBak.getSource());
         task.setEndTimestamp(scheduleBak.getExecuteTime());
         task.setParam(JSONObject.parseObject(scheduleBak.getParam(),Map.class));
         if ("PERIOD".equals(scheduleBak.getTaskType()))

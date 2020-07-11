@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import com.github.liuche51.easyTask.core.Util;
+import com.github.liuche51.easyTask.util.Util;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
 import com.github.liuche51.easyTask.dao.TransactionLogDao;
 import com.github.liuche51.easyTask.dto.Schedule;
@@ -15,6 +15,7 @@ import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.enume.*;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ public class SaveTaskTCC {
         List<String> cancelHost=follows.stream().map(Node::getAddress).collect(Collectors.toList());
         Schedule schedule = Schedule.valueOf(task);
         schedule.setTransactionId(transactionId);
+        schedule.setSource(Util.getSource(schedule.getSource()));
         TransactionLog transactionLog = new TransactionLog();
         transactionLog.setId(transactionId);
         transactionLog.setContent(JSONObject.toJSONString(schedule));

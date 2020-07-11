@@ -7,6 +7,7 @@ import com.github.liuche51.easyTask.dao.DbInit;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.Task;
+import com.github.liuche51.easyTask.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,13 +197,13 @@ public class AnnularQueue {
     }
     /**
      * 新leader将旧leader的备份数据重新提交给自己
-     *任务ID是新的
+     *任务ID保持不变
      * @param task
      * @return
      * @throws Exception
      */
     public String submitForInner(Task task) throws Exception {
-        task.getScheduleExt().setId(Util.generateUniqueId());
+        task.getScheduleExt().setId(task.getScheduleExt().getId());
         if (task.getTaskType().equals(TaskType.PERIOD)) {
                 task.setEndTimestamp(Task.getTimeStampByTimeUnit(task.getPeriod(), task.getUnit()));
         }
@@ -264,15 +265,24 @@ public class AnnularQueue {
     /**
      * 将任务添加到时间分片中去。
      *
-     * @param schedule
+     * @param task
      * @return
      */
-    private int AddSchedule(Task schedule) {
-        ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(schedule.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
+    private int AddSchedule(Task task) {
+        ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(task.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
         int second = time.getSecond();
         Slice slice = slices[second];
         ConcurrentSkipListMap<String, Task> list2 = slice.getList();
-        list2.put(schedule.getEndTimestamp() + "-" + Util.GREACE.getAndIncrement(), schedule);
+        list2.put(task.getEndTimestamp() + "-" + Util.GREACE.getAndIncrement(), task);
         return second;
+    }
+
+    /**
+     * 清空所有任务
+     */
+    public void clearTask(){
+        for (Slice s:slices){
+            s.getList().clear();
+        }
     }
 }

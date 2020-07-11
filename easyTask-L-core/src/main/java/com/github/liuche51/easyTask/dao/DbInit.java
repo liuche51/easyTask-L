@@ -32,6 +32,7 @@ public class DbInit {
                         "\"transaction_id\"  TEXT,\n" +
                         "\"create_time\"  TEXT,\n" +
                         "\"modify_time\"  TEXT,\n" +
+                        "\"source\"  TEXT,\n" +
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
                 SqliteHelper.executeUpdateForSync(sql);
@@ -47,10 +48,10 @@ public class DbInit {
                         "\"period\"  INTEGER,\n" +
                         "\"unit\"  TEXT,\n" +
                         "\"param\"  TEXT,\n" +
-                        "\"source\"  TEXT,\n" +
                         "\"transaction_id\"  TEXT,\n" +
                         "\"create_time\"  TEXT,\n" +
                         "\"modify_time\"  TEXT,\n" +
+                        "\"source\"  TEXT,\n" +
                         "PRIMARY KEY (\"id\" ASC)\n" +
                         ");";
                 SqliteHelper.executeUpdateForSync(sql2);

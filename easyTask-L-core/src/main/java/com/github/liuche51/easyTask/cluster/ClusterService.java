@@ -6,8 +6,9 @@ import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.cluster.leader.SaveTaskTCC;
 import com.github.liuche51.easyTask.cluster.task.*;
 import com.github.liuche51.easyTask.cluster.task.tran.*;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import com.github.liuche51.easyTask.core.Util;
+import com.github.liuche51.easyTask.util.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
@@ -134,6 +135,7 @@ public class ClusterService {
      */
     public static void deleteAllData() {
         try {
+            AnnularQueue.getInstance().clearTask();
             ScheduleDao.deleteAll();
             ScheduleBakDao.deleteAll();
             ScheduleSyncDao.deleteAll();

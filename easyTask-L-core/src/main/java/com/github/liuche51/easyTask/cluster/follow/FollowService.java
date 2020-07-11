@@ -15,6 +15,7 @@ import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
 import com.github.liuche51.easyTask.enume.TransactionTableEnum;
 import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
 import com.github.liuche51.easyTask.util.DateUtils;
+import com.github.liuche51.easyTask.util.StringConstant;
 import com.github.liuche51.easyTask.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class FollowService {
         transactionLog.setStatus(TransactionStatusEnum.TRIED);
         transactionLog.setType(TransactionTypeEnum.SAVE);
         transactionLog.setTableName(TransactionTableEnum.SCHEDULE_BAK);
+        transactionLog.setFollows(StringConstant.EMPTY);
         TransactionLogDao.save(transactionLog);
     }
 

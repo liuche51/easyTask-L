@@ -117,6 +117,7 @@ public class ScheduleDao {
         String transactionId = resultSet.getString("transaction_id");
         String createTime = resultSet.getString("create_time");
         String modifyTime = resultSet.getString("modify_time");
+        String source = resultSet.getString("source");
         Schedule schedule = new Schedule();
         schedule.setId(id);
         schedule.setClassPath(classPath);
@@ -128,11 +129,12 @@ public class ScheduleDao {
         schedule.setTransactionId(transactionId);
         schedule.setCreateTime(createTime);
         schedule.setModifyTime(modifyTime);
+        schedule.setSource(source);
         return schedule;
     }
 
     private static String contactSaveSql(List<Schedule> schedules) {
-        StringBuilder sql1 = new StringBuilder("insert into schedule(id,class_path,execute_time,task_type,period,unit,param,transaction_id,create_time,modify_time) values");
+        StringBuilder sql1 = new StringBuilder("insert into schedule(id,class_path,execute_time,task_type,period,unit,param,transaction_id,create_time,modify_time,source) values");
         for (Schedule schedule : schedules) {
             schedule.setCreateTime(DateUtils.getCurrentDateTime());
             schedule.setModifyTime(DateUtils.getCurrentDateTime());
@@ -146,7 +148,8 @@ public class ScheduleDao {
             sql1.append(schedule.getParam()).append("','");
             sql1.append(schedule.getTransactionId()).append("','");
             sql1.append(schedule.getCreateTime()).append("','");
-            sql1.append(schedule.getModifyTime()).append("')").append(',');
+            sql1.append(schedule.getModifyTime()).append("','");
+            sql1.append(schedule.getSource()).append("')").append(',');
         }
         String sql = sql1.substring(0, sql1.length() - 1);//去掉最后一个逗号
         return sql.concat(";");

@@ -3,7 +3,7 @@ package com.github.liuche51.easyTask.cluster.task;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import com.github.liuche51.easyTask.core.Util;
+import com.github.liuche51.easyTask.util.Util;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.zk.ZKService;
