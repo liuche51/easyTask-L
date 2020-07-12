@@ -184,10 +184,9 @@ public class AnnularQueue {
         task.getScheduleExt().setId(Util.generateUniqueId());
         String path = task.getClass().getName();
         task.getScheduleExt().setTaskClassPath(path);
-        //以下三行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
+        //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
         ClusterService.saveTask(task);
-        beforeAddSlice(task);
-        AddSlice(task);
+        submitAddSlice(task);
         ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(task.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
         log.debug("已添加类型:{}任务:{}，所属分片:{} 预计执行时间:{} 线程ID:{}", task.getTaskType().name(), task.getScheduleExt().getId(), time.getSecond(), time.toLocalTime(), Thread.currentThread().getId());
         return task.getScheduleExt().getId();
@@ -206,10 +205,9 @@ public class AnnularQueue {
         if (task.getTaskType().equals(TaskType.PERIOD)) {
             task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
         }
-        //以下三行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
+        //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
         ClusterService.saveTask(task);
-        beforeAddSlice(task);
-        AddSlice(task);
+        submitAddSlice(task);
         return task.getScheduleExt().getId();
     }
 
@@ -249,8 +247,7 @@ public class AnnularQueue {
                     schedule1.setUnit(task.getUnit());
                     schedule1.getScheduleExt().setTaskClassPath(task.getScheduleExt().getTaskClassPath());
                     schedule1.setParam(task.getParam());
-                    beforeAddSlice(schedule1);
-                    AddSlice(schedule1);
+                    recoverAddSlice(schedule1);
                 } catch (Exception e) {
                     log.error("schedule:{} recover fail.", schedule.getId());
                 }
@@ -260,31 +257,31 @@ public class AnnularQueue {
             log.error("easyTask recover fail.", e);
         }
     }
-
     /**
      * 将任务添加到时间分片中去。
      *
      * @param task
      * @return
      */
-    private int AddSlice(Task task) {
+    private int AddSlice(Task task) throws Exception {
         ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(task.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
         int second = time.getSecond();
         Slice slice = slices[second];
         ConcurrentSkipListMap<String, Task> list2 = slice.getList();
         list2.put(task.getEndTimestamp() + "-" + Util.GREACE.getAndIncrement(), task);
+        log.debug("已添加类型:{}任务:{}，所属分片:{} 预计执行时间:{} 线程ID:{}", task.getTaskType().name(), task.getScheduleExt().getId(), time.getSecond(), time.toLocalTime(), Thread.currentThread().getId());
         return second;
     }
 
     /**
-     * 提交或恢复任务，在添加到时间轮分片前需要做的一些逻辑判断
-     *
+     * 提交任务到时间轮分片
+     * 提交到分片前需要做的一些逻辑判断
      * @param task
      * @throws Exception
      */
-    private void beforeAddSlice(Task task) throws Exception {
-        //立即执行的任务，第一次不走时间分片，直接提交执行
-        if (task.isImmediateExecute()) {
+    private void submitAddSlice(Task task) throws Exception {
+        //立即执行的任务，第一次不走时间分片，直接提交执行。一次性和周期性任务都通过EndTimestamp判断是否需要立即执行
+        if (System.currentTimeMillis()+1000l>=task.getEndTimestamp()) {
             log.debug("立即执行类工作任务:{}已提交代理执行", task.getScheduleExt().getId());
             Runnable proxy = (Runnable) new ProxyFactory(task).getProxyInstance();
             workers.submit(proxy);
@@ -297,6 +294,27 @@ public class AnnularQueue {
         if (task.getTaskType().equals(TaskType.PERIOD)) {
             task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
         }
+        AddSlice(task);
+    }
+    /**
+     * 恢复任务到时间轮分片
+     * 提交到分片前需要做的一些逻辑判断
+     * @param task
+     * @throws Exception
+     */
+    private void recoverAddSlice(Task task) throws Exception {
+        //立即执行的任务，第一次不走时间分片，直接提交执行。周期任务恢复时没有立即执行一说
+        if (task.getTaskType().equals(TaskType.ONECE)&&System.currentTimeMillis()>=task.getEndTimestamp()) {
+            log.debug("恢复一次性工作任务:{}，因为执行时间已过期，需立即提交代理执行", task.getScheduleExt().getId());
+            Runnable proxy = (Runnable) new ProxyFactory(task).getProxyInstance();
+            workers.submit(proxy);
+            return;
+        }
+        //周期任务，在这里计算下一次执行时间
+        else if (task.getTaskType().equals(TaskType.PERIOD)) {
+            task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
+        }
+        AddSlice(task);
     }
 
     /**
