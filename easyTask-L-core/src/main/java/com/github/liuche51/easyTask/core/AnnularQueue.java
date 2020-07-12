@@ -95,7 +95,7 @@ public class AnnularQueue {
             this.workers = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     }
 
-    public void start(){
+    public void start() {
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -136,23 +136,22 @@ public class AnnularQueue {
             dispatchs.submit(new Runnable() {
                 public void run() {
                     ConcurrentSkipListMap<String, Task> schedules = slice.getList();
-                    List<Task> willremove = new LinkedList<>();
+                    List<Task> periodSchedules = new LinkedList<>();
                     for (Map.Entry<String, Task> entry : schedules.entrySet()) {
                         Task s = entry.getValue();
-                        long differ=s.getEndTimestamp()-System.currentTimeMillis();
-                        //允许有一秒时间差内就可以执行，原因是计算分片时也存在一秒内的精度问题。
-                        // 如果不这样做，会导致任务需要再等待一分钟才会执行的问题。
-                        if (differ<1000) {
+                        //因为计算时有一秒钟内的精度问题，所以判断时当前时间需多补上一秒。这样才不会导致某些任务无法得到及时的执行
+                        if (System.currentTimeMillis() + 1000l >= s.getEndTimestamp()) {
                             Runnable proxy = (Runnable) new ProxyFactory(s).getProxyInstance();
                             workers.submit(proxy);
-                            willremove.add(s);
+                            if (TaskType.PERIOD.equals(s.getTaskType()))//周期任务需要重新提交新任务
+                                periodSchedules.add(s);
                             schedules.remove(entry.getKey());
                             log.debug("工作任务:{} 已提交分片:{}", s.getScheduleExt().getId(), second);
                         }
                         //因为列表是已经按截止执行时间排好序的，可以节省后面元素的过期判断
                         else break;
                     }
-                    submitNewPeriodSchedule(willremove);
+                    submitNewPeriodSchedule(periodSchedules);
                 }
             });
         }
@@ -183,24 +182,21 @@ public class AnnularQueue {
     public String submit(Task task) throws Exception {
         if (!isRunning) throw new Exception("the easyTask has not started,please wait a moment!");
         task.getScheduleExt().setId(Util.generateUniqueId());
-        if (task.getTaskType().equals(TaskType.PERIOD)) {
-            if (task.isImmediateExecute())
-                task.setEndTimestamp(ZonedDateTime.now().toInstant().toEpochMilli());
-            else
-                task.setEndTimestamp(Task.getTimeStampByTimeUnit(task.getPeriod(), task.getUnit()));
-        }
         String path = task.getClass().getName();
         task.getScheduleExt().setTaskClassPath(path);
-        //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
+        //以下三行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
         ClusterService.saveTask(task);
-        AddSchedule(task);
+        beforeAddSlice(task);
+        AddSlice(task);
         ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(task.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
         log.debug("已添加类型:{}任务:{}，所属分片:{} 预计执行时间:{} 线程ID:{}", task.getTaskType().name(), task.getScheduleExt().getId(), time.getSecond(), time.toLocalTime(), Thread.currentThread().getId());
         return task.getScheduleExt().getId();
     }
+
     /**
      * 新leader将旧leader的备份数据重新提交给自己
-     *任务ID保持不变
+     * 任务ID保持不变
+     *
      * @param task
      * @return
      * @throws Exception
@@ -208,13 +204,15 @@ public class AnnularQueue {
     public String submitForInner(Task task) throws Exception {
         task.getScheduleExt().setId(task.getScheduleExt().getId());
         if (task.getTaskType().equals(TaskType.PERIOD)) {
-                task.setEndTimestamp(Task.getTimeStampByTimeUnit(task.getPeriod(), task.getUnit()));
+            task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
         }
-        //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
+        //以下三行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
         ClusterService.saveTask(task);
-        AddSchedule(task);
+        beforeAddSlice(task);
+        AddSlice(task);
         return task.getScheduleExt().getId();
     }
+
     /**
      * 批量创建新周期任务
      *
@@ -222,12 +220,9 @@ public class AnnularQueue {
      */
     public void submitNewPeriodSchedule(List<Task> list) {
         for (Task schedule : list) {
-            if (!TaskType.PERIOD.equals(schedule.getTaskType()))//周期任务需要重新提交新任务
-                continue;
             try {
-                schedule.setEndTimestamp(Task.getTimeStampByTimeUnit(schedule.getPeriod(), schedule.getUnit()));
-                AddSchedule(schedule);
-                int slice = AddSchedule(schedule);
+                schedule.setEndTimestamp(Task.getNextExcuteTimeStamp(schedule.getPeriod(), schedule.getUnit()));
+                int slice = AddSlice(schedule);
                 log.debug("已重新提交周期任务:{}，所属分片:{}，线程ID:{}", schedule.getScheduleExt().getId(), slice, Thread.currentThread().getId());
             } catch (Exception e) {
                 log.error("submitNewPeriodSchedule exception！", e);
@@ -254,14 +249,15 @@ public class AnnularQueue {
                     schedule1.setUnit(task.getUnit());
                     schedule1.getScheduleExt().setTaskClassPath(task.getScheduleExt().getTaskClassPath());
                     schedule1.setParam(task.getParam());
-                    AddSchedule(schedule1);
+                    beforeAddSlice(schedule1);
+                    AddSlice(schedule1);
                 } catch (Exception e) {
                     log.error("schedule:{} recover fail.", schedule.getId());
                 }
             }
             log.debug("easyTask recover success! count:{}", list.size());
         } catch (Exception e) {
-            log.error("easyTask recover fail.",e);
+            log.error("easyTask recover fail.", e);
         }
     }
 
@@ -271,7 +267,7 @@ public class AnnularQueue {
      * @param task
      * @return
      */
-    private int AddSchedule(Task task) {
+    private int AddSlice(Task task) {
         ZonedDateTime time = ZonedDateTime.ofInstant(new Timestamp(task.getEndTimestamp()).toInstant(), ZoneId.systemDefault());
         int second = time.getSecond();
         Slice slice = slices[second];
@@ -281,10 +277,33 @@ public class AnnularQueue {
     }
 
     /**
+     * 提交或恢复任务，在添加到时间轮分片前需要做的一些逻辑判断
+     *
+     * @param task
+     * @throws Exception
+     */
+    private void beforeAddSlice(Task task) throws Exception {
+        //立即执行的任务，第一次不走时间分片，直接提交执行
+        if (task.isImmediateExecute()) {
+            log.debug("立即执行类工作任务:{}已提交代理执行", task.getScheduleExt().getId());
+            Runnable proxy = (Runnable) new ProxyFactory(task).getProxyInstance();
+            workers.submit(proxy);
+            //如果是一次性任务，则不用继续提交到时间分片中了
+            if (task.getTaskType().equals(TaskType.ONECE)) {
+                return;
+            }
+        }
+        //周期任务，在这里计算下一次执行时间
+        if (task.getTaskType().equals(TaskType.PERIOD)) {
+            task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
+        }
+    }
+
+    /**
      * 清空所有任务
      */
-    public void clearTask(){
-        for (Slice s:slices){
+    public void clearTask() {
+        for (Slice s : slices) {
             s.getList().clear();
         }
     }

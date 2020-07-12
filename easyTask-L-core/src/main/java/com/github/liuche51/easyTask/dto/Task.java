@@ -85,7 +85,7 @@ public class Task {
      * @return
      * @throws Exception
      */
-    public static long getTimeStampByTimeUnit(long period,TimeUnit unit) throws Exception {
+    public static long getNextExcuteTimeStamp(long period,TimeUnit unit) throws Exception {
         if(period==0)
             throw new Exception("period can not zero");
         switch (unit)
