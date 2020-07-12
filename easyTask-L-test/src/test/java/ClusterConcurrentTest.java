@@ -96,7 +96,7 @@ public class ClusterConcurrentTest {
         task1.setParam(param);
         CusTask1 task2 = new CusTask1();
         task2.setPeriod(30);
-        task2.setImmediateExecute(true);
+        task2.setEndTimestamp(ZonedDateTime.now().plusSeconds(10).toInstant().toEpochMilli());
         task2.setTaskType(TaskType.PERIOD);
         task2.setUnit(TimeUnit.SECONDS);
         Map<String, String> param2 = new HashMap<String, String>() {

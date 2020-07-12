@@ -16,10 +16,6 @@ public class Task {
      */
     private long endTimestamp;
     private TaskType taskType=TaskType.ONECE;
-    /**
-     * 是否立即执行一次
-     */
-    private boolean immediateExecute=false;
     private long period;
     private TimeUnit unit;
     private Runnable run;
@@ -44,13 +40,6 @@ public class Task {
     }
     public long getPeriod() {
         return period;
-    }
-    public boolean isImmediateExecute() {
-        return immediateExecute;
-    }
-
-    public void setImmediateExecute(boolean immediateExecute) {
-        this.immediateExecute = immediateExecute;
     }
     public void setPeriod(long period) {
         this.period = period;
