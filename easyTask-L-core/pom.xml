@@ -11,10 +11,10 @@
     <artifactId>easyTask-L-core</artifactId>
     <!--发版至Maven时开启 发版参数：mvn clean deploy -P release-->
     <!-- <groupId>com.github.liuche51</groupId>
-     <artifactId>easyTask-L</artifactId>-->
+     <artifactId>easyTask-L</artifactId>
     <version>1.0.0</version>
     <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
+    <description>${project.artifactId}</description>-->
     <url>https://github.com/liuche51</url>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -48,20 +48,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.26</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.26</version>
-            <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
         <dependency>
@@ -85,6 +71,19 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.68</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.26</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
