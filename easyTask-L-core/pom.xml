@@ -10,7 +10,7 @@
     </parent>
     <artifactId>easyTask-L-core</artifactId>
     <!--发版至Maven时开启 发版参数：mvn clean deploy -P release-->
-    <!-- <groupId>com.github.liuche51</groupId>
+   <!--  <groupId>com.github.liuche51</groupId>
      <artifactId>easyTask-L</artifactId>
     <version>1.0.0</version>
     <name>${project.artifactId}</name>
@@ -164,6 +164,10 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                               <!-- 忽略 警告: @param 没有说明-->
+                                <configuration>
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
