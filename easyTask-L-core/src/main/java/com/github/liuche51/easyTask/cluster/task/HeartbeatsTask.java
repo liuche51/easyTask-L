@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.cluster.task;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
@@ -23,7 +24,7 @@ public class HeartbeatsTask extends TimerTask{
                         @Override
                         public void run() {
                             try {
-                                log.info("restart cluster initCurrentNode()");
+                                log.info("restart cluster initCurrentNode()  ZKNode="+ JSONObject.toJSONString(node));
                                 ClusterService.initCurrentNode();
                                 log.info("finished restarted cluster");
                             }catch (Exception e){

@@ -4,6 +4,7 @@ import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.cluster.leader.DeleteTaskTCC;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.cluster.leader.SaveTaskTCC;
+import com.github.liuche51.easyTask.cluster.leader.VoteFollows;
 import com.github.liuche51.easyTask.cluster.task.*;
 import com.github.liuche51.easyTask.cluster.task.tran.*;
 import com.github.liuche51.easyTask.core.AnnularQueue;
@@ -81,6 +82,8 @@ public class ClusterService {
      * @throws Exception
      */
     public static void saveTask(Task task) throws Exception {
+        if (VoteFollows.isSelecting())
+            throw new Exception("normally exception!save():cluster is voting,please wait a moment.");
         //防止多线程下，follow元素操作竞争问题。确保参与提交的follow不受集群选举影响
         List<Node> follows = new ArrayList<>(CURRENTNODE.getFollows().size());
         Iterator<Node> items = CURRENTNODE.getFollows().iterator();
@@ -88,7 +91,7 @@ public class ClusterService {
             follows.add(items.next());
         }
         if (follows.size() != EasyTaskConfig.getInstance().getBackupCount())
-            throw new Exception("save() exception！follows.size()!=backupCount,maybe voting new follow. please try again");
+            throw new Exception("save() exception！follows.size()!=backupCount");
         String transactionId=Util.generateTransactionId();
         try {
             SaveTaskTCC.trySave(transactionId,task, follows);

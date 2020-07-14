@@ -25,7 +25,7 @@ public class ClusterTest {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
         EasyTaskConfig config = EasyTaskConfig.getInstance();
         try {
-            config.setTaskStorePath("C:\\db\\node1");
+            config.setTaskStorePath("C:/db/node1");
             config.setServerPort(2021);
             initData(annularQueue,"Node1");
         } catch (Exception e) {
@@ -38,7 +38,7 @@ public class ClusterTest {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
         EasyTaskConfig config = EasyTaskConfig.getInstance();
         try {
-            config.setTaskStorePath("C:\\db\\node2");
+            config.setTaskStorePath("C:/db/node2");
             config.setServerPort(2022);
             initData(annularQueue,"Node2");
         } catch (Exception e) {
@@ -51,7 +51,7 @@ public class ClusterTest {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
         EasyTaskConfig config = EasyTaskConfig.getInstance();
         try {
-            config.setTaskStorePath("C:\\db\\node3");
+            config.setTaskStorePath("C:/db/node3");
             config.setServerPort(2023);
             initData(annularQueue,"Node3");
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class ClusterTest {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
         EasyTaskConfig config = EasyTaskConfig.getInstance();
         try {
-            config.setTaskStorePath("C:\\db\\node4");
+            config.setTaskStorePath("C:/db/node4");
             config.setServerPort(2024);
             initData(annularQueue,"Node4");
         } catch (Exception e) {
@@ -117,12 +117,12 @@ public class ClusterTest {
         while (true) {
             Thread.sleep(1000);
             try {
-                annularQueue.submitAllowWait(task1);//多次提交测试
-                annularQueue.submitAllowWait(task2);
+                //annularQueue.submitAllowWait(task1);//多次提交测试
+                //annularQueue.submitAllowWait(task2);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            printinfo();
+           // printinfo();
         }
     }
 

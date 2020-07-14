@@ -25,6 +25,11 @@ public class VoteFollows {
     private static final Logger log = LoggerFactory.getLogger(VoteFollows.class);
     private static volatile boolean selecting = false;//选举状态。多线程控制
     private static ReentrantLock lock = new ReentrantLock();//选举互斥锁
+
+    public static boolean isSelecting() {
+        return selecting;
+    }
+
     /**
      * 节点启动初始化选举follows。
      *不存在多线程情况，不需要考虑
@@ -57,6 +62,7 @@ public class VoteFollows {
             lock.lock();
             if (ClusterService.CURRENTNODE.getFollows().contains(oldFollow)){
                 if(items!=null)  items.remove();//如果使用以下List集合方法移除，会导致下次items.next()方法报错
+                log.info("leader remove follow {0}",oldFollow.getAddress());
             }else
                ClusterService.CURRENTNODE.getFollows().remove(oldFollow);//移除失效的follow
             //多线程下，如果follows已经选好，则让客户端重新提交任务。以后可以优化为获取选举后的follow
@@ -108,7 +114,7 @@ public class VoteFollows {
         }
         if (availableFollows.size() < count-ClusterService.CURRENTNODE.getFollows().size())//如果可选备库节点数量不足，则等待1s，然后重新选。注意：等待会阻塞整个服务可用性
         {
-            log.info("availableFollows is not enough! only has " + availableFollows.size());
+            log.info("availableFollows is not enough! only has {0},current own {}", availableFollows.size(),ClusterService.CURRENTNODE.getFollows().size());
             Thread.sleep(1000);
             return getAvailableFollows(exclude);
         } else
