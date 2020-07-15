@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <!--如需发版至maven请去掉parent节点-->
+    <!--如需发版至maven请去掉parent节点。-->
     <parent>
         <artifactId>easyTask-L</artifactId>
         <groupId>com.github.liuche51</groupId>
