@@ -11,6 +11,7 @@
     <modules>
         <module>easyTask-L-core</module>
         <module>easyTask-L-test</module>
+        <module>easyTask-L-demo</module>
     </modules>
 
 
