@@ -36,8 +36,8 @@ public class NewLeaderSyncBakDataTask extends OnceTask {
                     break;
                 }
                 baks.forEach(x -> {
-                    Task task = Task.valueOf(x);
                     try {
+                        Task task = Task.valueOf(x);
                         AnnularQueue.getInstance().submitForInner(task);//模拟客户端重新提交任务
                         ScheduleBakDao.delete(x.getId());
                     } catch (Exception e) {

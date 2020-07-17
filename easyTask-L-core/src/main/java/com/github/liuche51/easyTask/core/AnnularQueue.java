@@ -160,16 +160,15 @@ public class AnnularQueue {
     /**
      * 客户端提交任务。允许线程等待，直到easyTask组件启动完成
      *
-     * @param schedule
+     * @param task
      * @return
      * @throws Exception
      */
-    public String submitAllowWait(Task schedule) throws Exception {
-        while (true) {
-            if (!isRunning) Thread.sleep(1000);//如果未启动则休眠1s
-            else return submit(schedule);
+    public String submitAllowWait(Task task) throws Exception {
+        while (!isRunning) {
+            Thread.sleep(1000l);//如果未启动则休眠1s
         }
-
+        return this.submit(task);
     }
 
     /**
