@@ -41,7 +41,9 @@ public class Task {
     public long getPeriod() {
         return period;
     }
-    public void setPeriod(long period) {
+    public void setPeriod(long period) throws Exception {
+        if(period<=0)
+            throw new Exception("period cannot less than 0！");
         this.period = period;
     }
 
@@ -75,8 +77,6 @@ public class Task {
      * @throws Exception
      */
     public static long getNextExcuteTimeStamp(long period,TimeUnit unit) throws Exception {
-        if(period==0)
-            throw new Exception("period can not zero");
         switch (unit)
         {
             case DAYS:
@@ -90,7 +90,7 @@ public class Task {
                 default:throw new Exception("unSupport TimeUnit type");
         }
     }
-    public static Task valueOf(Schedule schedule){
+    public static Task valueOf(Schedule schedule) throws Exception {
         Task task = new Task();
         task.getScheduleExt().setId(schedule.getId());
         task.getScheduleExt().setTaskClassPath(schedule.getClassPath());
@@ -104,7 +104,7 @@ public class Task {
         task.setUnit(getTimeUnit(schedule.getUnit()));
         return task;
     }
-    public static Task valueOf(ScheduleBak scheduleBak){
+    public static Task valueOf(ScheduleBak scheduleBak) throws Exception {
         Task task = new Task();
         task.getScheduleExt().setId(scheduleBak.getId());
         task.getScheduleExt().setTaskClassPath(scheduleBak.getClassPath());
