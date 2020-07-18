@@ -4,8 +4,6 @@ package com.github.liuche51.easyTask.core;
 import com.github.liuche51.easyTask.netty.server.NettyServer;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.dao.DbInit;
-import com.github.liuche51.easyTask.dao.ScheduleDao;
-import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.util.Util;
 import org.slf4j.Logger;
@@ -120,7 +118,6 @@ public class AnnularQueue {
         DbInit.init();
         NettyServer.getInstance().run();//启动组件的Netty服务端口
         ClusterService.initCurrentNode();
-        recover();
         setDefaultThreadPool();
         isRunning = true;
         int lastSecond = 0;
@@ -224,36 +221,6 @@ public class AnnularQueue {
             }
         }
     }
-
-    /**
-     * 恢复中断后的系统任务
-     */
-    private void recover() {
-        try {
-            List<Schedule> list = ScheduleDao.selectAll();
-            for (Schedule schedule : list) {
-                try {
-                    Task task = Task.valueOf(schedule);
-                    Class c = Class.forName(task.getScheduleExt().getTaskClassPath());
-                    Object o = c.newInstance();
-                    Task schedule1 = (Task) o;//强转后设置id，o对象值也会变，所以强转后的task也是对象的引用而已
-                    schedule1.getScheduleExt().setId(task.getScheduleExt().getId());
-                    schedule1.setEndTimestamp(task.getEndTimestamp());
-                    schedule1.setPeriod(task.getPeriod());
-                    schedule1.setTaskType(task.getTaskType());
-                    schedule1.setUnit(task.getUnit());
-                    schedule1.getScheduleExt().setTaskClassPath(task.getScheduleExt().getTaskClassPath());
-                    schedule1.setParam(task.getParam());
-                    recoverAddSlice(schedule1);
-                } catch (Exception e) {
-                    log.error("schedule:{} recover fail.", schedule.getId());
-                }
-            }
-            log.debug("easyTask recover success! count:{}", list.size());
-        } catch (Exception e) {
-            log.error("easyTask recover fail.", e);
-        }
-    }
     /**
      * 将任务添加到时间分片中去。
      *
@@ -289,26 +256,6 @@ public class AnnularQueue {
         }
         //周期任务，在这里计算下一次执行时间
         if (task.getTaskType().equals(TaskType.PERIOD)) {
-            task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
-        }
-        AddSlice(task);
-    }
-    /**
-     * 恢复任务到时间轮分片
-     * 提交到分片前需要做的一些逻辑判断
-     * @param task
-     * @throws Exception
-     */
-    private void recoverAddSlice(Task task) throws Exception {
-        //立即执行的任务，第一次不走时间分片，直接提交执行。周期任务恢复时没有立即执行一说
-        if (task.getTaskType().equals(TaskType.ONECE)&&System.currentTimeMillis()>=task.getEndTimestamp()) {
-            log.debug("恢复一次性工作任务:{}，因为执行时间已过期，需立即提交代理执行", task.getScheduleExt().getId());
-            Runnable proxy = (Runnable) new ProxyFactory(task).getProxyInstance();
-            workers.submit(proxy);
-            return;
-        }
-        //周期任务，在这里计算下一次执行时间
-        else if (task.getTaskType().equals(TaskType.PERIOD)) {
             task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
         }
         AddSlice(task);
