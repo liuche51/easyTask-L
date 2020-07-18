@@ -1,4 +1,4 @@
-import com.github.liuche51.easyTask.cluster.ClusterMonitor;
+import com.github.liuche51.easyTask.monitor.ClusterMonitor;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.TaskType;
@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 集群测试。模拟三个节点的伪集群

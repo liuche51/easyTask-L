@@ -1,4 +1,4 @@
-import com.github.liuche51.easyTask.cluster.ClusterMonitor;
+import com.github.liuche51.easyTask.monitor.ClusterMonitor;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.core.TaskType;

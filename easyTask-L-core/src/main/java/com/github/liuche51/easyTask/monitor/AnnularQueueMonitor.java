@@ -1,5 +1,7 @@
-package com.github.liuche51.easyTask.core;
+package com.github.liuche51.easyTask.monitor;
 
+import com.github.liuche51.easyTask.core.AnnularQueue;
+import com.github.liuche51.easyTask.core.Slice;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
 
 import java.util.concurrent.ExecutorService;
@@ -8,7 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * get some useful performance data
  */
-public class Monitor {
+public class AnnularQueueMonitor {
     /**
      * @return
      */
@@ -39,7 +41,7 @@ public class Monitor {
      * @return
      */
     public static int getDispatchsPoolWaiteToExecuteScheduleCount() {
-        ExecutorService dispatchs = AnnularQueue.getInstance().getDispatchs();
+        ExecutorService dispatchs = AnnularQueue.getInstance().getConfig().getDispatchs();
         if (dispatchs == null)
             return 0;
         return ((ThreadPoolExecutor) dispatchs).getQueue().size();
@@ -49,7 +51,7 @@ public class Monitor {
      * @return
      */
     public static int getWorkersPoolWaiteToExecuteScheduleCount() {
-        ExecutorService worker = AnnularQueue.getInstance().getWorkers();
+        ExecutorService worker = AnnularQueue.getInstance().getConfig().getWorkers();
         if (worker == null)
             return 0;
         return ((ThreadPoolExecutor) worker).getQueue().size();
@@ -58,7 +60,7 @@ public class Monitor {
      * @return
      */
     public static long getDispatchsPoolExecutedScheduleCount() {
-        ExecutorService dispatchs = AnnularQueue.getInstance().getWorkers();
+        ExecutorService dispatchs = AnnularQueue.getInstance().getConfig().getWorkers();
         if (dispatchs == null)
             return 0;
         return ((ThreadPoolExecutor) dispatchs).getCompletedTaskCount();
@@ -67,7 +69,7 @@ public class Monitor {
      * @return
      */
     public static long getWorkersPoolExecutedScheduleCount() {
-        ExecutorService worker = AnnularQueue.getInstance().getWorkers();
+        ExecutorService worker = AnnularQueue.getInstance().getConfig().getWorkers();
         if (worker == null)
             return 0;
         return ((ThreadPoolExecutor) worker).getCompletedTaskCount();

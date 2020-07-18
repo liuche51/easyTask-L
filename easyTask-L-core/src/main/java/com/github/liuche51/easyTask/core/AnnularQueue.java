@@ -29,7 +29,7 @@ public class AnnularQueue {
     }
 
     private Slice[] slices = new Slice[60];
-    Slice[] getSlices() {
+    public Slice[] getSlices() {
         return slices;
     }
     public static AnnularQueue getInstance() {
