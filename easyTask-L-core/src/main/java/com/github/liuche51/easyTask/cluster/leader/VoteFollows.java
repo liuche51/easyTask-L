@@ -126,7 +126,7 @@ public class VoteFollows {
         }
         if (availableFollows.size() < count - ClusterService.CURRENTNODE.getFollows().size())//如果可选备库节点数量不足，则等待1s，然后重新选。注意：等待会阻塞整个服务可用性
         {
-            log.info("availableFollows is not enough! only has {0},current own {}", availableFollows.size(), ClusterService.CURRENTNODE.getFollows().size());
+            log.info("availableFollows is not enough! only has {},current own {}", availableFollows.size(), ClusterService.CURRENTNODE.getFollows().size());
             Thread.sleep(1000);
             return getAvailableFollows(exclude);
         } else

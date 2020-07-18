@@ -78,11 +78,11 @@ public class ClusterConcurrentTest {
         config.setBackupCount(2);
         //config.setDeleteZKTimeOunt(500);
         //config.setSelectLeaderZKNodeTimeOunt(500);
-        annularQueue.setDispatchThreadPool(new ThreadPoolExecutor(4, 4, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
+        config.setDispatchs(new ThreadPoolExecutor(4, 4, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>()));
-        annularQueue.setWorkerThreadPool(new ThreadPoolExecutor(4, 8, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
+        config.setWorkers(new ThreadPoolExecutor(4, 8, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>()));
-        annularQueue.start();
+        annularQueue.start(config);
         CusTask1 task1 = new CusTask1();
         task1.setEndTimestamp(ZonedDateTime.now().plusSeconds(10).toInstant().toEpochMilli());//10秒后执行
         Map<String, String> param = new HashMap<String, String>() {
