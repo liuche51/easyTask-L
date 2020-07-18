@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.core;
 
+import com.github.liuche51.easyTask.util.StringUtils;
 import com.github.liuche51.easyTask.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class EasyTaskConfig {
     private static final Logger log = LoggerFactory.getLogger(EasyTaskConfig.class);
+    /**
+     * zk地址。如:127.0.0.1:2181
+     */
+    private String zkAddress;
     /**
      * 任务备份数量，默认2。最大2，超过部分无效
      */
@@ -34,11 +39,6 @@ public class EasyTaskConfig {
      */
     private int timeOut = 3;
     /**
-     * 是否开启为集群模式。方便单机测试使用。
-     * 单机环境，需要服务端口设置为不同。指定的db文件夹也不要相同。IP相同没问题
-     */
-    private boolean enablePseudoCluster = false;
-    /**
      * ZK节点信息更新超过60s就判断为失效节点，任何其他节点可删除掉
      */
     private int loseTimeOut = 60;
@@ -59,9 +59,26 @@ public class EasyTaskConfig {
      */
     private int clearScheduleBakTime = 36500000;
     /**
-     * 集群总线程池
+     * 集群公用程池
      */
     private ExecutorService clusterPool = null;
+
+    /**
+     * 环形队列任务调度线程池
+     */
+    private ExecutorService dispatchs =  Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    /**
+     * 环形队列工作任务线程池
+     */
+    private ExecutorService workers =  Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+
+    public String getZkAddress() {
+        return zkAddress;
+    }
+
+    public void setZkAddress(String zkAddress) {
+        this.zkAddress = zkAddress;
+    }
 
     public int getBackupCount() {
         return backupCount;
@@ -132,19 +149,9 @@ public class EasyTaskConfig {
     public void setTimeOut(int timeOut) {
         this.timeOut = timeOut;
     }
-
-    public boolean isEnablePseudoCluster() {
-        return enablePseudoCluster;
-    }
-
-    public void setEnablePseudoCluster(boolean enablePseudoCluster) {
-        this.enablePseudoCluster = enablePseudoCluster;
-    }
-
     public int getLoseTimeOut() {
         return loseTimeOut;
     }
-
     public void setLoseTimeOut(int loseTimeOut) {
         this.loseTimeOut = loseTimeOut;
     }
@@ -195,5 +202,37 @@ public class EasyTaskConfig {
      */
     public void setClusterPool(ThreadPoolExecutor clusterPool) throws Exception {
         this.clusterPool = clusterPool;
+    }
+
+    public ExecutorService getDispatchs() {
+        return dispatchs;
+    }
+
+    public void setDispatchs(ExecutorService dispatchs) {
+        if(dispatchs!=null)
+            dispatchs.shutdown();//优雅关闭默认线程池
+        this.dispatchs = dispatchs;
+    }
+
+    public ExecutorService getWorkers() {
+        return workers;
+    }
+
+    public void setWorkers(ExecutorService workers) {
+        if(workers!=null)
+            workers.shutdown();//优雅关闭默认线程池
+        this.workers = workers;
+    }
+
+    /**
+     * 必填项验证
+     * @param config
+     * @throws Exception
+     */
+    public static void validateNecessary(EasyTaskConfig config) throws Exception {
+        if(StringUtils.isNullOrEmpty(config.zkAddress))
+            throw new Exception("zkAddress is necessary!");
+        if(StringUtils.isNullOrEmpty(config.taskStorePath))
+            throw new Exception("taskStorePath is necessary!");
     }
 }

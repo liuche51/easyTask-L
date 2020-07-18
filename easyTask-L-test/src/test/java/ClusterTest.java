@@ -23,11 +23,11 @@ public class ClusterTest {
     @Test
     public void startNode1() {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
-        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
+        EasyTaskConfig config =new EasyTaskConfig();
         try {
             config.setTaskStorePath("C:/db/node1");
             config.setServerPort(2021);
-            initData(annularQueue,"Node1");
+            initData(annularQueue,config,"Node1");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -36,11 +36,11 @@ public class ClusterTest {
     @Test
     public void startNode2() {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
-        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
+        EasyTaskConfig config = new EasyTaskConfig();
         try {
             config.setTaskStorePath("C:/db/node2");
             config.setServerPort(2022);
-            initData(annularQueue,"Node2");
+            initData(annularQueue,config,"Node2");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,11 +49,11 @@ public class ClusterTest {
     @Test
     public void startNode3() {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
-        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
+        EasyTaskConfig config = new EasyTaskConfig();
         try {
             config.setTaskStorePath("C:/db/node3");
             config.setServerPort(2023);
-            initData(annularQueue,"Node3");
+            initData(annularQueue,config,"Node3");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,22 +62,22 @@ public class ClusterTest {
     @Test
     public void startNode4() {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
-        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
+        EasyTaskConfig config =new EasyTaskConfig();
         try {
             config.setTaskStorePath("C:/db/node4");
             config.setServerPort(2024);
-            initData(annularQueue,"Node4");
+            initData(annularQueue,config,"Node4");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void initData(AnnularQueue annularQueue,String name) throws Exception {
-        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
-        config.setSQLlitePoolSize(2);
+    private void initData(AnnularQueue annularQueue,EasyTaskConfig config,String name) throws Exception {
+        config.setSQLlitePoolSize(5);
         config.setBackupCount(2);
         //config.setDeleteZKTimeOunt(500);
         //config.setSelectLeaderZKNodeTimeOunt(500);
+        annularQueue.setConfig(config);
         annularQueue.setDispatchThreadPool(new ThreadPoolExecutor(4, 4, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>()));
         annularQueue.setWorkerThreadPool(new ThreadPoolExecutor(4, 8, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,

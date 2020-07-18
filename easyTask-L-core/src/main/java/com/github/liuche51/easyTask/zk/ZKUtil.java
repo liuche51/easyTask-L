@@ -1,4 +1,5 @@
 package com.github.liuche51.easyTask.zk;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -11,12 +12,8 @@ public class ZKUtil {
     private static Logger log = LoggerFactory.getLogger(ZKUtil.class);
     //会话超时时间
     private static  int SESSION_TIMEOUT = 30 * 1000;
-
     //连接超时时间
     private static int CONNECTION_TIMEOUT = 3 * 1000;
-
-    //ZooKeeper服务地址
-    private static final String CONNECT_ADDR = "127.0.0.1:2181";
 
     //创建连接实例
     private static CuratorFramework client = null;
@@ -27,7 +24,7 @@ public class ZKUtil {
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 10);
         //2 通过工厂创建连接
          client = CuratorFrameworkFactory.builder()
-                .connectString(CONNECT_ADDR).connectionTimeoutMs(CONNECTION_TIMEOUT)
+                .connectString(AnnularQueue.getInstance().getConfig().getZkAddress()).connectionTimeoutMs(CONNECTION_TIMEOUT)
                 .sessionTimeoutMs(SESSION_TIMEOUT)
                 .retryPolicy(retryPolicy)
                 .namespace("easyTask-L")//命名空间
