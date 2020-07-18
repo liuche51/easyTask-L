@@ -28,10 +28,6 @@ public class AnnularQueue {
         return config;
     }
 
-    public void setConfig(EasyTaskConfig config) {
-        this.config = config;
-    }
-
     private Slice[] slices = new Slice[60];
     Slice[] getSlices() {
         return slices;
@@ -52,10 +48,11 @@ public class AnnularQueue {
             slices[i] = new Slice();
         }
     }
-    public void start() throws Exception {
-        if(this.config==null)
+    public void start(EasyTaskConfig config) throws Exception {
+        if(config==null)
             throw new Exception("config is null,please set a EasyTaskConfig!");
-        EasyTaskConfig.validateNecessary(this.config);
+        EasyTaskConfig.validateNecessary(config);
+        this.config=config;
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
