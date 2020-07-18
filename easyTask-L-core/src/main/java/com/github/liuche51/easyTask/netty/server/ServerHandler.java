@@ -2,6 +2,7 @@ package com.github.liuche51.easyTask.netty.server;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.DBMonitor;
 import com.github.liuche51.easyTask.dto.proto.ResultDto;
@@ -40,8 +41,8 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
         ResultDto.Result.Builder result = ResultDto.Result.newBuilder();
         result.setResult(StringConstant.TRUE);
         builder.setInterfaceName(StringConstant.TRUE);
-        builder.setSource(EasyTaskConfig.getInstance().getzKServerName());
         try {
+            builder.setSource(AnnularQueue.getInstance().getConfig().getAddress());
             Dto.Frame frame = (Dto.Frame) msg;
             builder.setIdentity(frame.getIdentity());
             switch (frame.getInterfaceName()) {

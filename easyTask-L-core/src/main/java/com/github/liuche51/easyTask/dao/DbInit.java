@@ -24,7 +24,7 @@ public class DbInit {
             return true;
         try {
             //创建db存储文件夹
-            File file = new File(EasyTaskConfig.getInstance().getTaskStorePath());
+            File file = new File(AnnularQueue.getInstance().getConfig().getTaskStorePath());
             if (!file.exists()) {
                 file.mkdirs();
             }

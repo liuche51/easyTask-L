@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.util;
 
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 
 import java.text.ParseException;
@@ -28,7 +29,7 @@ public class DateUtils {
      * @return
      */
     public static boolean isGreaterThanDeadTime(String dateTime){
-        if(ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getDeadTimeOut())
+        if(ZonedDateTime.now().minusSeconds(AnnularQueue.getInstance().getConfig().getDeadTimeOut())
                 .compareTo(DateUtils.parse(dateTime)) > 0)
             return true;
         else return false;
@@ -40,7 +41,7 @@ public class DateUtils {
      * @return
      */
     public static boolean isGreaterThanLoseTime(String dateTime){
-        if(ZonedDateTime.now().minusSeconds(EasyTaskConfig.getInstance().getLoseTimeOut())
+        if(ZonedDateTime.now().minusSeconds(AnnularQueue.getInstance().getConfig().getLoseTimeOut())
                 .compareTo(DateUtils.parse(dateTime)) > 0)
             return true;
         else return false;

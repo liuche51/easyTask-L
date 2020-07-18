@@ -3,6 +3,7 @@ package com.github.liuche51.easyTask.cluster.leader;
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.util.Util;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
@@ -52,7 +53,7 @@ public class SaveTaskTCC {
             ScheduleSyncDao.save(scheduleSync);//记录同步状态表
             ScheduleDto.Schedule s = schedule.toScheduleDto();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
+            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYSAVETASK).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                     .setBodyBytes(s.toByteString());
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);
@@ -75,7 +76,7 @@ public class SaveTaskTCC {
         while (items.hasNext()) {
             Node follow = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_CONFIRMSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
+            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_CONFIRMSAVETASK).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                     .setBody(transactionId);
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);
@@ -102,7 +103,7 @@ public class SaveTaskTCC {
         while (items.hasNext()) {
             Node follow = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_CANCELSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
+            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_CANCELSAVETASK).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                     .setBody(transactionId);
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);

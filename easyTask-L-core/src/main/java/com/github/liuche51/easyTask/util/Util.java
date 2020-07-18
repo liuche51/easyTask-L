@@ -2,6 +2,7 @@ package com.github.liuche51.easyTask.util;
 
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.zk.ZKHost;
 import com.github.liuche51.easyTask.util.StringConstant;
@@ -133,12 +134,12 @@ public class Util {
      * @param oldSource
      * @return
      */
-    public static String getSource(String oldSource){
+    public static String getSource(String oldSource) throws UnknownHostException {
         String source=StringConstant.EMPTY;
         if(oldSource==null||oldSource== StringConstant.EMPTY)
-            source= EasyTaskConfig.getInstance().getzKServerName();
+            source= AnnularQueue.getInstance().getConfig().getAddress();
         else
-            source=EasyTaskConfig.getInstance().getzKServerName()+"<-"+oldSource;
+            source=AnnularQueue.getInstance().getConfig().getAddress()+"<-"+oldSource;
         return source;
     }
 }

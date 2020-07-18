@@ -2,6 +2,7 @@ package com.github.liuche51.easyTask.cluster.task;
 
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
@@ -36,7 +37,7 @@ public class ClearDataTask extends TimerTask {
                 log.error("clearScheduleBak()", e);
             }
             try {
-                Thread.sleep(EasyTaskConfig.getInstance().getClearScheduleBakTime());
+                Thread.sleep(AnnularQueue.getInstance().getConfig().getClearScheduleBakTime());
             } catch (InterruptedException e) {
                 log.error("clearScheduleBak()", e);
             }

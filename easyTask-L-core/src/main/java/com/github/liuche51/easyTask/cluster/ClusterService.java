@@ -55,7 +55,7 @@ public class ClusterService {
     public static boolean initCurrentNode() throws Exception {
         clearThreadTask();
         deleteAllData();
-        CURRENTNODE = new Node(Util.getLocalIP(), EasyTaskConfig.getInstance().getServerPort());
+        CURRENTNODE = new Node(Util.getLocalIP(), AnnularQueue.getInstance().getConfig().getServerPort());
         ZKNode node = new ZKNode(CURRENTNODE.getHost(), CURRENTNODE.getPort());
         node.setCreateTime(DateUtils.getCurrentDateTime());
         node.setLastHeartbeat(DateUtils.getCurrentDateTime());
@@ -90,7 +90,7 @@ public class ClusterService {
         while (items.hasNext()) {
             follows.add(items.next());
         }
-        if (follows.size() != EasyTaskConfig.getInstance().getBackupCount())
+        if (follows.size() != AnnularQueue.getInstance().getConfig().getBackupCount())
             throw new Exception("save() exception！follows.size()!=backupCount");
         String transactionId=Util.generateTransactionId();
         try {

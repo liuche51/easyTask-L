@@ -1,6 +1,7 @@
 package com.github.liuche51.easyTask.cluster;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.enume.NodeSyncDataStatusEnum;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
@@ -20,7 +21,7 @@ import java.util.Map;
 public class Node implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(Node.class);
     private String host = "";
-    private int port = EasyTaskConfig.getInstance().getServerPort();
+    private int port = AnnularQueue.getInstance().getConfig().getServerPort();
     /**
      * 数据一致性状态。
      */

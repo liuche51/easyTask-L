@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.dto.zk;
 
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 
 import java.util.LinkedList;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class ZKNode {
     private String host;
-    private int port= EasyTaskConfig.getInstance().getServerPort();
+    private int port= AnnularQueue.getInstance().getConfig().getServerPort();
     /**
      * 最近一次心跳时间
      */

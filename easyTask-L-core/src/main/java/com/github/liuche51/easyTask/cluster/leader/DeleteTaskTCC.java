@@ -3,6 +3,7 @@ package com.github.liuche51.easyTask.cluster.leader;
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.util.Util;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
@@ -43,7 +44,7 @@ public class DeleteTaskTCC {
         while (items.hasNext()) {
             Node follow = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYDELTASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
+            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYDELTASK).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                     .setBody(transactionId+","+taskId);
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);
@@ -66,7 +67,7 @@ public class DeleteTaskTCC {
         while (items.hasNext()) {
             Node follow = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_CONFIRMDELTASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
+            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.TRAN_CONFIRMDELTASK).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                     .setBody(transactionId);
             NettyClient client = follow.getClientWithCount(1);
             boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), 1);

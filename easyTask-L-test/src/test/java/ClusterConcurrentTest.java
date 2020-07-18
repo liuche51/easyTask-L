@@ -23,7 +23,7 @@ public class ClusterConcurrentTest {
     @Test
     public void startNode1() {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
-        EasyTaskConfig config = EasyTaskConfig.getInstance();
+        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
         try {
             config.setTaskStorePath("C:\\db\\node1");
             config.setServerPort(2021);
@@ -36,7 +36,7 @@ public class ClusterConcurrentTest {
     @Test
     public void startNode2() {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
-        EasyTaskConfig config = EasyTaskConfig.getInstance();
+        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
         try {
             config.setTaskStorePath("C:\\db\\node2");
             config.setServerPort(2022);
@@ -49,7 +49,7 @@ public class ClusterConcurrentTest {
     @Test
     public void startNode3() {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
-        EasyTaskConfig config = EasyTaskConfig.getInstance();
+        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
         try {
             config.setTaskStorePath("C:\\db\\node3");
             config.setServerPort(2023);
@@ -62,7 +62,7 @@ public class ClusterConcurrentTest {
     @Test
     public void startNode4() {
         AnnularQueue annularQueue = AnnularQueue.getInstance();
-        EasyTaskConfig config = EasyTaskConfig.getInstance();
+        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
         try {
             config.setTaskStorePath("C:\\db\\node4");
             config.setServerPort(2024);
@@ -73,7 +73,7 @@ public class ClusterConcurrentTest {
     }
 
     private void initData(AnnularQueue annularQueue,String name) throws Exception {
-        EasyTaskConfig config = EasyTaskConfig.getInstance();
+        EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
         config.setSQLlitePoolSize(2);
         config.setBackupCount(2);
         //config.setDeleteZKTimeOunt(500);

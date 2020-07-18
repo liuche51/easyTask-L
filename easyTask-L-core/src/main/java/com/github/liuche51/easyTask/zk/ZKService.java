@@ -1,13 +1,14 @@
 package com.github.liuche51.easyTask.zk;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.UnknownHostException;
 import java.util.List;
 
 public class ZKService {
@@ -20,7 +21,7 @@ public class ZKService {
      */
     public static void register(ZKNode data) {
         try {
-            String path = "/" + EasyTaskConfig.getInstance().getzKServerName();
+            String path = "/" + AnnularQueue.getInstance().getConfig().getAddress();
             //检查是否存在节点
             Stat stat1 = ZKUtil.getClient().checkExists().forPath(path);
             if (stat1 != null) {
@@ -50,8 +51,8 @@ public class ZKService {
      *
      * @return
      */
-    public static List<String> getChildrenByCurrentNode() {
-        String path = "/" + EasyTaskConfig.getInstance().getzKServerName();
+    public static List<String> getChildrenByCurrentNode() throws UnknownHostException {
+        String path = "/" + AnnularQueue.getInstance().getConfig().getAddress();
         return getChildrenByPath(path);
     }
 
@@ -76,8 +77,8 @@ public class ZKService {
      *
      * @return
      */
-    public static ZKNode getDataByCurrentNode() {
-        String path = "/" + EasyTaskConfig.getInstance().getzKServerName();
+    public static ZKNode getDataByCurrentNode() throws UnknownHostException {
+        String path = "/" + AnnularQueue.getInstance().getConfig().getAddress();
         return getDataByPath(path);
     }
 
@@ -104,8 +105,8 @@ public class ZKService {
      * @param data
      * @return
      */
-    public static boolean setDataByCurrentNode(ZKNode data) {
-        String path = "/" + EasyTaskConfig.getInstance().getzKServerName();
+    public static boolean setDataByCurrentNode(ZKNode data) throws UnknownHostException {
+        String path = "/" + AnnularQueue.getInstance().getConfig().getAddress();
         return setDataByPath(path, data);
     }
 

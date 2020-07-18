@@ -13,6 +13,7 @@ import org.apache.zookeeper.server.quorum.Leader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class VoteLeader {
      * @param node
      * @param oldLeaderAddress
      */
-    public static void selectNewLeader(ZKNode node,String oldLeaderAddress){
+    public static void selectNewLeader(ZKNode node,String oldLeaderAddress) throws UnknownHostException {
         List<ZKHost> follows = node.getFollows();
         List<ZKHost> syncFollows=follows.stream().filter(x-> NodeSyncDataStatusEnum.SYNC==x.getDataStatus()).collect(Collectors.toList());
         ZKHost newLeader = null;
@@ -47,7 +48,7 @@ public class VoteLeader {
             }
         }
         //自己就是新leader
-        if(newLeader!=null&&newLeader.getAddress().equals(EasyTaskConfig.getInstance().getzKServerName())){
+        if(newLeader!=null&&newLeader.getAddress().equals(AnnularQueue.getInstance().getConfig().getAddress())){
             log.info("selectNewLeader():start to submit new task to leader by simulate client");
             LeaderService.submitNewTaskByOldLeader(oldLeaderAddress);
         }else {

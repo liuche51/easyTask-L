@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.netty.server;
 
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -39,7 +40,7 @@ public class NettyServer {
 	 * 启动服务
 	 */
 	public ChannelFuture run() {
-		InetSocketAddress address = new InetSocketAddress(EasyTaskConfig.getInstance().getServerPort());
+		InetSocketAddress address = new InetSocketAddress(AnnularQueue.getInstance().getConfig().getServerPort());
 		ChannelFuture f = null;
 		try {
 			ServerBootstrap b = new ServerBootstrap();

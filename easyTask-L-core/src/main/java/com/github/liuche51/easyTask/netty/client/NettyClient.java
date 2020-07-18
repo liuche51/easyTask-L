@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.netty.client;
 
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.util.exception.ConnectionException;
@@ -106,7 +107,7 @@ public class NettyClient {
         ChannelPromise promise = clientChannel.newPromise();
         handler.setPromise(promise);
         clientChannel.writeAndFlush(msg);
-        promise.await(EasyTaskConfig.getInstance().getTimeOut(), TimeUnit.SECONDS);//等待固定的时间，超时就认为失败，需要重发
+        promise.await(AnnularQueue.getInstance().getConfig().getTimeOut(), TimeUnit.SECONDS);//等待固定的时间，超时就认为失败，需要重发
         return handler.getResponse();
     }
 

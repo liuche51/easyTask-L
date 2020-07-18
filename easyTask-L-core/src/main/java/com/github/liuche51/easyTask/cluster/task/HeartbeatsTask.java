@@ -3,6 +3,7 @@ package com.github.liuche51.easyTask.cluster.task;
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.util.Util;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
@@ -49,7 +50,7 @@ public class HeartbeatsTask extends TimerTask{
                 log.error("",e);
             }
             try {
-                Thread.sleep(EasyTaskConfig.getInstance().getHeartBeat());
+                Thread.sleep(AnnularQueue.getInstance().getConfig().getHeartBeat());
             } catch (InterruptedException e) {
                 log.error("",e);
             }

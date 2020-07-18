@@ -4,6 +4,7 @@ import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.cluster.leader.VoteFollows;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.util.DateUtils;
@@ -63,7 +64,7 @@ public class CheckFollowsAliveTask extends TimerTask {
                 log.error("heartBeatToFollow()", e);
             }
             try {
-                Thread.sleep(EasyTaskConfig.getInstance().getHeartBeat());
+                Thread.sleep(AnnularQueue.getInstance().getConfig().getHeartBeat());
             } catch (InterruptedException e) {
                 log.error("heartBeatToFollow()", e);
             }

@@ -1,8 +1,11 @@
 package com.github.liuche51.easyTask.dto;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
+
+import java.net.UnknownHostException;
 
 public class Schedule {
     private String id;
@@ -128,11 +131,11 @@ public class Schedule {
      * 转换为protocol buffer对象
      * @return
      */
-    public ScheduleDto.Schedule toScheduleDto(){
+    public ScheduleDto.Schedule toScheduleDto() throws UnknownHostException {
         ScheduleDto.Schedule.Builder builder=ScheduleDto.Schedule.newBuilder();
         builder.setId(this.id).setClassPath(this.classPath).setExecuteTime(this.executeTime)
                 .setTaskType(this.taskType).setPeriod(this.period).setUnit(this.unit)
-                .setParam(this.param).setSource(EasyTaskConfig.getInstance().getzKServerName())
+                .setParam(this.param).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                 .setTransactionId(this.transactionId);
         return builder.build();
     }

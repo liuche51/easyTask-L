@@ -1,4 +1,5 @@
 import com.alibaba.fastjson.JSONObject;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.DbInit;
 import com.github.liuche51.easyTask.dao.TransactionLogDao;
@@ -25,7 +26,7 @@ public class UnitTest {
         list.add("172.20.50.128:2022");
         log.setFollows(JSONObject.toJSONString(list));
         try {
-            EasyTaskConfig.getInstance().setTaskStorePath("C:\\db\\node2");
+            AnnularQueue.getInstance().getConfig().setTaskStorePath("C:\\db\\node2");
             DbInit.init();
             TransactionLogDao.isExistById("T4ce5cf5c9d0048bda40dd09a7a8f376b-446");
         } catch (Exception e) {

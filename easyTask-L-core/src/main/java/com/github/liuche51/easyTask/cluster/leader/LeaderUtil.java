@@ -1,9 +1,9 @@
 package com.github.liuche51.easyTask.cluster.leader;
 
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
 import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * leader类
@@ -30,7 +29,7 @@ public class LeaderUtil {
      * @return
      */
     public static boolean notifyFollowsLeaderPosition(List<Node> follows, int tryCount) {
-        EasyTaskConfig.getInstance().getClusterPool().submit(new Runnable() {
+        AnnularQueue.getInstance().getConfig().getClusterPool().submit(new Runnable() {
             @Override
             public void run() {
                 if (follows != null) {
@@ -53,8 +52,8 @@ public class LeaderUtil {
         final boolean[] ret = {false};
         try {
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setInterfaceName(NettyInterfaceEnum.SYNC_LEADER_POSITION).setSource(EasyTaskConfig.getInstance().getzKServerName())
-                    .setBody(EasyTaskConfig.getInstance().getzKServerName());
+            builder.setInterfaceName(NettyInterfaceEnum.SYNC_LEADER_POSITION).setSource(AnnularQueue.getInstance().getConfig().getAddress())
+                    .setBody(AnnularQueue.getInstance().getConfig().getAddress());
             ChannelFuture future = follow.getClient().sendASyncMsgWithoutPromise(builder.build());
             tryCount--;
             future.addListener(new GenericFutureListener<Future<? super Void>>() {
@@ -90,15 +89,15 @@ public class LeaderUtil {
             builder0.addSchedules(s);
         }
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP_BATCH).setSource(EasyTaskConfig.getInstance().getzKServerName())
+        builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP_BATCH).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                 .setBodyBytes(builder0.build().toByteString());
-        NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
+        NettyClient client = follow.getClientWithCount(AnnularQueue.getInstance().getConfig().getTryCount());
        /* if (client == null) {
             log.info("client == null,so start to syncDataToFollowBatch.");
             Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return syncDataToFollowBatch(schedules, newFollow);
         }*/
-        boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
+        boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), AnnularQueue.getInstance().getConfig().getTryCount());
       /*  if (!ret) {
             log.info("sendSyncMsgWithCount return false,so start to syncDataToFollowBatch.");
             Node newFollow = VoteFollows.selectNewFollow(follow,null);
@@ -116,15 +115,15 @@ public class LeaderUtil {
      */
     public static boolean deleteTaskToFollow(String taskId, Node follow) throws Exception {
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(taskId).setInterfaceName(NettyInterfaceEnum.DELETE_SCHEDULEBACKUP).setSource(EasyTaskConfig.getInstance().getzKServerName())
+        builder.setIdentity(taskId).setInterfaceName(NettyInterfaceEnum.DELETE_SCHEDULEBACKUP).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                 .setBody(taskId);
-        NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
+        NettyClient client = follow.getClientWithCount(AnnularQueue.getInstance().getConfig().getTryCount());
       /*  if (client == null) {
             log.info("client == null,so start to selectNewFollow.");
             Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return deleteTaskToFollow(taskId, newFollow);
         }*/
-        boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
+        boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), AnnularQueue.getInstance().getConfig().getTryCount());
       /*  if (!ret) {
             log.info("sendSyncMsgWithCount return false,so start to selectNewFollow.");
             Node newFollow = VoteFollows.selectNewFollow(follow,null);

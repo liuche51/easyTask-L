@@ -21,7 +21,17 @@ import java.util.concurrent.*;
 public class AnnularQueue {
     private static Logger log = LoggerFactory.getLogger(AnnularQueue.class);
     private static AnnularQueue singleton = null;
+    private EasyTaskConfig config=null;
     public static boolean isRunning = false;//防止所线程运行环形队列
+
+    public EasyTaskConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(EasyTaskConfig config) {
+        this.config = config;
+    }
+
     /**
      * 任务调度线程池
      */
@@ -93,15 +103,18 @@ public class AnnularQueue {
             this.workers = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     }
 
-    public void start() {
+    public void start() throws Exception {
+        if(this.config==null)
+            throw new Exception("config is null,please set a EasyTaskConfig!");
         Thread th1 = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     runQueue();
                 } catch (Exception e) {
-                    isRunning = false;
                     log.error("AnnularQueue start fail.", e);
+                }finally {
+                    isRunning = false;
                 }
             }
         });

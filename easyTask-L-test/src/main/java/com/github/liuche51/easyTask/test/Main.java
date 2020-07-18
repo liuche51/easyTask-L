@@ -25,7 +25,7 @@ public class Main {
             // 使用properties对象加载输入流
             properties.load(in);
             AnnularQueue annularQueue = AnnularQueue.getInstance();
-            EasyTaskConfig config = EasyTaskConfig.getInstance();
+            EasyTaskConfig config = AnnularQueue.getInstance().getConfig();
             String path = properties.getProperty("taskStorePath");
             String serverPort = properties.getProperty("serverPort");
             String name = properties.getProperty("name");
