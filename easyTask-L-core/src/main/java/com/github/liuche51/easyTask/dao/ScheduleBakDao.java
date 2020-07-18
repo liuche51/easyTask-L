@@ -80,25 +80,7 @@ public class ScheduleBakDao {
         try {
             ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where source='" + source + "' limit " + count + ";");
             while (resultSet.next()) {
-                String id = resultSet.getString("id");
-                String classPath = resultSet.getString("class_path");
-                Long executeTime = resultSet.getLong("execute_time");
-                String taskType = resultSet.getString("task_type");
-                Long period = resultSet.getLong("period");
-                String unit = resultSet.getString("unit");
-                String param = resultSet.getString("param");
-                String source1 = resultSet.getString("source");
-                String createTime = resultSet.getString("create_time");
-                ScheduleBak schedulebak = new ScheduleBak();
-                schedulebak.setId(id);
-                schedulebak.setClassPath(classPath);
-                schedulebak.setExecuteTime(executeTime);
-                schedulebak.setTaskType(taskType);
-                schedulebak.setPeriod(period);
-                schedulebak.setUnit(unit);
-                schedulebak.setParam(param);
-                schedulebak.setSource(source1);
-                schedulebak.setCreateTime(createTime);
+                ScheduleBak schedulebak = getScheduleBak(resultSet);
                 list.add(schedulebak);
             }
         }catch (SQLiteException e){
@@ -108,6 +90,45 @@ public class ScheduleBakDao {
         }
         return list;
     }
+    public static List<ScheduleBak> selectByTransactionId(String tranId) throws SQLException, ClassNotFoundException {
+        List<ScheduleBak> list = new LinkedList<>();
+        SqliteHelper helper = new SqliteHelper(dbName);
+        try {
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where transaction_id='" + tranId +"';");
+            while (resultSet.next()) {
+                ScheduleBak schedulebak = getScheduleBak(resultSet);
+                list.add(schedulebak);
+            }
+        }catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleBakDao->getByTransactionId");
+        } finally {
+            helper.destroyed();
+        }
+        return list;
+    }
+    private static ScheduleBak getScheduleBak(ResultSet resultSet) throws SQLException {
+        String id = resultSet.getString("id");
+        String classPath = resultSet.getString("class_path");
+        Long executeTime = resultSet.getLong("execute_time");
+        String taskType = resultSet.getString("task_type");
+        Long period = resultSet.getLong("period");
+        String unit = resultSet.getString("unit");
+        String param = resultSet.getString("param");
+        String source1 = resultSet.getString("source");
+        String createTime = resultSet.getString("create_time");
+        ScheduleBak schedulebak = new ScheduleBak();
+        schedulebak.setId(id);
+        schedulebak.setClassPath(classPath);
+        schedulebak.setExecuteTime(executeTime);
+        schedulebak.setTaskType(taskType);
+        schedulebak.setPeriod(period);
+        schedulebak.setUnit(unit);
+        schedulebak.setParam(param);
+        schedulebak.setSource(source1);
+        schedulebak.setCreateTime(createTime);
+        return schedulebak;
+    }
+
     private static String contactSaveSql(List<ScheduleBak> scheduleBaks) {
         StringBuilder sql1 = new StringBuilder("insert into schedule_bak(id,class_path,execute_time,task_type,period,unit,param,source,transaction_id,create_time,modify_time) values");
         for (ScheduleBak scheduleBak : scheduleBaks) {

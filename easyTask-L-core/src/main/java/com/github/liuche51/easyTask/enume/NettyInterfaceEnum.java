@@ -37,4 +37,8 @@ public class NettyInterfaceEnum {
      * 同步leader位置信息接口
      */
     public static final String SYNC_LEADER_POSITION="SyncLeaderPosition";
+    /**
+     * 获取数据库表信息接口
+     */
+    public static final String GET_DBINFO_BY_TRANSACTIONID="GetDBInfoByTransactionId";
 }

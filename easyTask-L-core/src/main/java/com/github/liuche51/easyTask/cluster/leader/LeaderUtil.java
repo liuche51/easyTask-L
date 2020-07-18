@@ -8,6 +8,7 @@ import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.enume.NettyInterfaceEnum;
+import com.github.liuche51.easyTask.util.Util;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
@@ -73,24 +74,6 @@ public class LeaderUtil {
         return notifyFollowLeaderPosition(follow, tryCount);
     }
     /**
-     * 同步任务数据到follow
-     *暂时不支持失败进入选新follow流程。代码注释掉
-     * 目前仅在leader心跳follow是否存活那边进行选新follow流程
-     * @param schedule
-     * @param follow
-     * @return
-     * @throws InterruptedException
-     */
-    public static boolean sendTryTaskToFollow(Schedule schedule, Node follow) throws Exception {
-        ScheduleDto.Schedule s = schedule.toScheduleDto();
-        Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(s.getId()).setInterfaceName(NettyInterfaceEnum.TRAN_TRYSAVETASK).setSource(EasyTaskConfig.getInstance().getzKServerName())
-                .setBodyBytes(s.toByteString());
-        NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
-        boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), EasyTaskConfig.getInstance().getTryCount());
-        return true;
-    }
-    /**
      * 同步任务数据到follow，批量方式
      *用于将数据同步给新follow
      *暂时不支持失败进入选新follow流程。代码注释掉
@@ -107,7 +90,7 @@ public class LeaderUtil {
             builder0.addSchedules(s);
         }
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(UUID.randomUUID().toString()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP_BATCH).setSource(EasyTaskConfig.getInstance().getzKServerName())
+        builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP_BATCH).setSource(EasyTaskConfig.getInstance().getzKServerName())
                 .setBodyBytes(builder0.build().toByteString());
         NettyClient client = follow.getClientWithCount(EasyTaskConfig.getInstance().getTryCount());
        /* if (client == null) {

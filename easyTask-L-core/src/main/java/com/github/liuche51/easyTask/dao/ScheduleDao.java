@@ -89,6 +89,22 @@ public class ScheduleDao {
         }
         return list;
     }
+    public static List<Schedule> selectByTransactionId(String tranId) throws SQLException, ClassNotFoundException {
+        List<Schedule> list = new LinkedList<>();
+        SqliteHelper helper = new SqliteHelper(dbName);
+        try {
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule where transaction_id = '" + tranId + "';");
+            while (resultSet.next()) {
+                Schedule schedule = getSchedule(resultSet);
+                list.add(schedule);
+            }
+        }catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleDao->selectByTransactionId");
+        } finally {
+            helper.destroyed();
+        }
+        return list;
+    }
     public static void deleteByIds(String[] ids) throws SQLException, ClassNotFoundException {
         String instr=SqliteHelper.getInConditionStr(ids);
         String sql = "delete FROM schedule where id in" + instr + ";";

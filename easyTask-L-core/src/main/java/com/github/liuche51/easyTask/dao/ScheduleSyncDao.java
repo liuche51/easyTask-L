@@ -54,19 +54,7 @@ public class ScheduleSyncDao {
             ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_sync where follow='" + follow +
                     "' and status=" + status + " limit " + count + ";");
             while (resultSet.next()) {
-                String transactionId = resultSet.getString("transaction_id");
-                String scheduleId = resultSet.getString("schedule_id");
-                String follow1 = resultSet.getString("follow");
-                short status1 = resultSet.getShort("status");
-                String createTime = resultSet.getString("create_time");
-                String modifyTime = resultSet.getString("modify_time");
-                ScheduleSync scheduleSync = new ScheduleSync();
-                scheduleSync.setScheduleId(transactionId);
-                scheduleSync.setScheduleId(scheduleId);
-                scheduleSync.setFollows(follow1);
-                scheduleSync.setStatus(status1);
-                scheduleSync.setCreateTime(createTime);
-                scheduleSync.setModifyTime(modifyTime);
+                ScheduleSync scheduleSync = getScheduleSync(resultSet);
                 list.add(scheduleSync);
             }
         }catch (SQLiteException e){
@@ -75,6 +63,38 @@ public class ScheduleSyncDao {
             helper.destroyed();
         }
         return list;
+    }
+    public static List<ScheduleSync> selectByTransactionId(String tranId) throws SQLException, ClassNotFoundException {
+        List<ScheduleSync> list = new ArrayList<>(2);
+        SqliteHelper helper = new SqliteHelper(dbName);
+        try {
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_sync where transaction_id='" + tranId + "';");
+            while (resultSet.next()) {
+                ScheduleSync scheduleSync = getScheduleSync(resultSet);
+                list.add(scheduleSync);
+            }
+        }catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleSyncDao->selectByTransactionId");
+        } finally {
+            helper.destroyed();
+        }
+        return list;
+    }
+    private static ScheduleSync getScheduleSync(ResultSet resultSet) throws SQLException {
+        String transactionId = resultSet.getString("transaction_id");
+        String scheduleId = resultSet.getString("schedule_id");
+        String follow1 = resultSet.getString("follow");
+        short status1 = resultSet.getShort("status");
+        String createTime = resultSet.getString("create_time");
+        String modifyTime = resultSet.getString("modify_time");
+        ScheduleSync scheduleSync = new ScheduleSync();
+        scheduleSync.setScheduleId(transactionId);
+        scheduleSync.setScheduleId(scheduleId);
+        scheduleSync.setFollows(follow1);
+        scheduleSync.setStatus(status1);
+        scheduleSync.setCreateTime(createTime);
+        scheduleSync.setModifyTime(modifyTime);
+        return scheduleSync;
     }
 
     public static void updateFollowAndStatusByFollow(String oldFollow, String newFollow, short status) throws SQLException, ClassNotFoundException {

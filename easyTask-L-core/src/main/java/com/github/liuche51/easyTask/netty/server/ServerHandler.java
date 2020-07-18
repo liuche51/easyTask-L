@@ -1,7 +1,9 @@
 package com.github.liuche51.easyTask.netty.server;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.follow.FollowService;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.dao.DBMonitor;
 import com.github.liuche51.easyTask.dto.proto.ResultDto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.dto.proto.Dto;
@@ -13,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -74,6 +78,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
                 case NettyInterfaceEnum.DELETE_SCHEDULEBACKUP:
                     String taskId = frame.getBody();
                     FollowService.deleteScheduleBak(taskId);
+                    break;
+                case NettyInterfaceEnum.GET_DBINFO_BY_TRANSACTIONID:
+                    String tranId = frame.getBody();
+                    Map<String, List> map=DBMonitor.getInfoByTransactionId(tranId);
+                    result.setBody(JSONObject.toJSONString(map));
                     break;
                 default:
                     throw new Exception("unknown interface method");

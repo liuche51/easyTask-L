@@ -38,6 +38,21 @@ public final class ResultDto {
      */
     com.google.protobuf.ByteString
         getMsgBytes();
+
+    // optional string body = 3;
+    /**
+     * <code>optional string body = 3;</code>
+     */
+    boolean hasBody();
+    /**
+     * <code>optional string body = 3;</code>
+     */
+    String getBody();
+    /**
+     * <code>optional string body = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getBodyBytes();
   }
   /**
    * Protobuf type {@code Result}
@@ -98,6 +113,11 @@ public final class ResultDto {
             case 18: {
               bitField0_ |= 0x00000002;
               msg_ = input.readBytes();
+              break;
+            }
+            case 26: {
+              bitField0_ |= 0x00000004;
+              body_ = input.readBytes();
               break;
             }
           }
@@ -226,9 +246,53 @@ public final class ResultDto {
       }
     }
 
+    // optional string body = 3;
+    public static final int BODY_FIELD_NUMBER = 3;
+    private Object body_;
+    /**
+     * <code>optional string body = 3;</code>
+     */
+    public boolean hasBody() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional string body = 3;</code>
+     */
+    public String getBody() {
+      Object ref = body_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          body_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string body = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getBodyBytes() {
+      Object ref = body_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        body_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private void initFields() {
       result_ = "";
       msg_ = "";
+      body_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -252,6 +316,9 @@ public final class ResultDto {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBytes(2, getMsgBytes());
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBytes(3, getBodyBytes());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -268,6 +335,10 @@ public final class ResultDto {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(2, getMsgBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, getBodyBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -389,6 +460,8 @@ public final class ResultDto {
         bitField0_ = (bitField0_ & ~0x00000001);
         msg_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
+        body_ = "";
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -425,6 +498,10 @@ public final class ResultDto {
           to_bitField0_ |= 0x00000002;
         }
         result.msg_ = msg_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.body_ = body_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -449,6 +526,11 @@ public final class ResultDto {
         if (other.hasMsg()) {
           bitField0_ |= 0x00000002;
           msg_ = other.msg_;
+          onChanged();
+        }
+        if (other.hasBody()) {
+          bitField0_ |= 0x00000004;
+          body_ = other.body_;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -630,6 +712,80 @@ public final class ResultDto {
         return this;
       }
 
+      // optional string body = 3;
+      private Object body_ = "";
+      /**
+       * <code>optional string body = 3;</code>
+       */
+      public boolean hasBody() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional string body = 3;</code>
+       */
+      public String getBody() {
+        Object ref = body_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          body_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>optional string body = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getBodyBytes() {
+        Object ref = body_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          body_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string body = 3;</code>
+       */
+      public Builder setBody(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        body_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string body = 3;</code>
+       */
+      public Builder clearBody() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        body_ = getDefaultInstance().getBody();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string body = 3;</code>
+       */
+      public Builder setBodyBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        body_ = value;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:Result)
     }
 
@@ -655,8 +811,9 @@ public final class ResultDto {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\017ResultDto.proto\"%\n\006Result\022\016\n\006result\030\001 " +
-      "\002(\t\022\013\n\003msg\030\002 \001(\tB\013B\tResultDto"
+      "\n\017ResultDto.proto\"3\n\006Result\022\016\n\006result\030\001 " +
+      "\002(\t\022\013\n\003msg\030\002 \001(\t\022\014\n\004body\030\003 \001(\tB\013B\tResult" +
+      "Dto"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -668,7 +825,7 @@ public final class ResultDto {
           internal_static_Result_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Result_descriptor,
-              new String[] { "Result", "Msg", });
+              new String[] { "Result", "Msg", "Body", });
           return null;
         }
       };

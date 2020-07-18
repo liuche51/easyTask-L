@@ -106,6 +106,22 @@ public class TransactionLogDao {
         }
         return list;
     }
+    public static List<TransactionLog> selectByTransactionId(String tranId) throws SQLException {
+        List<TransactionLog> list = new LinkedList<>();
+        SqliteHelper helper = new SqliteHelper(dbName);
+        try {
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM transaction_log where id = '" + tranId + "';");
+            while (resultSet.next()) {
+                TransactionLog transactionLog = getTransaction(resultSet);
+                list.add(transactionLog);
+            }
+        }catch (SQLiteException e){
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"TransactionLogDao->selectByTransactionId");
+        } finally {
+            helper.destroyed();
+        }
+        return list;
+    }
     public static void deleteByTypes(short[] types) throws SQLException, ClassNotFoundException {
         String instr=SqliteHelper.getInConditionStr(types);
         String sql = "delete FROM transaction_log where type in "+instr+";";
