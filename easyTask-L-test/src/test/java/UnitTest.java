@@ -34,11 +34,7 @@ public class UnitTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            Map<String, Map<String, List>> map= ClusterMonitor.getDBTraceInfoByTransactionId("T1ea0ae78efea4217a99d2a39213c2cab-1");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
 }

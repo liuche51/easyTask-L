@@ -12,9 +12,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class AnnularQueueMonitor {
     /**
+     * 获取环形队列中待执行的任务数
      * @return
      */
-    public static int getScheduleInAnnularQueueCount() {
+    public static int getTaskInAnnularQueueCount() {
         Slice[] slices = AnnularQueue.getInstance().getSlices();
         int count = 0;
         for (Slice slice : slices) {
@@ -24,23 +25,10 @@ public class AnnularQueueMonitor {
     }
 
     /**
-     * get all has persistent Schedule count
-     *
+     * 获取分派线程池中待执行的任务数
      * @return
      */
-    public static int getDBScheduleCount() {
-        try {
-            return ScheduleDao.getAllCount();
-        } catch (Exception e) {
-            return 0;
-        }
-
-    }
-
-    /**
-     * @return
-     */
-    public static int getDispatchsPoolWaiteToExecuteScheduleCount() {
+    public static int getDispatchsPoolWaiteToExecuteTaskCount() {
         ExecutorService dispatchs = AnnularQueue.getInstance().getConfig().getDispatchs();
         if (dispatchs == null)
             return 0;
@@ -48,9 +36,10 @@ public class AnnularQueueMonitor {
     }
 
     /**
+     * 获取工作线程池中待执行的任务数
      * @return
      */
-    public static int getWorkersPoolWaiteToExecuteScheduleCount() {
+    public static int getWorkersPoolWaiteToExecuteTaskCount() {
         ExecutorService worker = AnnularQueue.getInstance().getConfig().getWorkers();
         if (worker == null)
             return 0;
@@ -59,7 +48,7 @@ public class AnnularQueueMonitor {
     /**
      * @return
      */
-    public static long getDispatchsPoolExecutedScheduleCount() {
+    public static long getDispatchsPoolExecutedTaskCount() {
         ExecutorService dispatchs = AnnularQueue.getInstance().getConfig().getWorkers();
         if (dispatchs == null)
             return 0;
@@ -68,7 +57,7 @@ public class AnnularQueueMonitor {
     /**
      * @return
      */
-    public static long getWorkersPoolExecutedScheduleCount() {
+    public static long getWorkersPoolExecutedTaskCount() {
         ExecutorService worker = AnnularQueue.getInstance().getConfig().getWorkers();
         if (worker == null)
             return 0;

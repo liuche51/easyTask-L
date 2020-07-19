@@ -40,7 +40,7 @@ public class ClusterMonitor {
         return str.toString();
     }
 
-    public static Map<String, Map<String, List>> getDBTraceInfoByTransactionId(String taskId) throws Exception {
+    public static Map<String, Map<String, List>> getDBTraceInfoByTaskId(String taskId) throws Exception {
         Map<String, Map<String, List>> map = new HashMap<>(3);
         Map<String, List> leaderInfo = DBMonitor.getInfoByTaskId(taskId);
         map.put(AnnularQueue.getInstance().getConfig().getAddress(), leaderInfo);
