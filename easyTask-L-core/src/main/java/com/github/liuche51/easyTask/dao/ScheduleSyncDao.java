@@ -88,7 +88,7 @@ public class ScheduleSyncDao {
         String createTime = resultSet.getString("create_time");
         String modifyTime = resultSet.getString("modify_time");
         ScheduleSync scheduleSync = new ScheduleSync();
-        scheduleSync.setScheduleId(transactionId);
+        scheduleSync.setTransactionId(transactionId);
         scheduleSync.setScheduleId(scheduleId);
         scheduleSync.setFollows(follow1);
         scheduleSync.setStatus(status1);
