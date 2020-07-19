@@ -66,11 +66,11 @@ public class EasyTaskConfig {
     /**
      * 环形队列任务调度线程池
      */
-    private ExecutorService dispatchs =  Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private ExecutorService dispatchs =  null;
     /**
      * 环形队列工作任务线程池
      */
-    private ExecutorService workers =  Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+    private ExecutorService workers =  null;
 
     public String getZkAddress() {
         return zkAddress;
@@ -209,8 +209,6 @@ public class EasyTaskConfig {
     }
 
     public void setDispatchs(ExecutorService dispatchs) {
-        if(dispatchs!=null)
-            dispatchs.shutdown();//优雅关闭默认线程池
         this.dispatchs = dispatchs;
     }
 
@@ -219,8 +217,6 @@ public class EasyTaskConfig {
     }
 
     public void setWorkers(ExecutorService workers) {
-        if(workers!=null)
-            workers.shutdown();//优雅关闭默认线程池
         this.workers = workers;
     }
 
@@ -234,5 +230,9 @@ public class EasyTaskConfig {
             throw new Exception("zkAddress is necessary!");
         if(StringUtils.isNullOrEmpty(config.taskStorePath))
             throw new Exception("taskStorePath is necessary!");
+        if(config.dispatchs==null)
+            config.dispatchs=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        if(config.workers==null)
+            config.workers=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     }
 }

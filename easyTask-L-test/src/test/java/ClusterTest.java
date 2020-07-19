@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 集群测试。模拟三个节点的伪集群
@@ -71,14 +73,14 @@ public class ClusterTest {
     }
 
     private void initData(AnnularQueue annularQueue,EasyTaskConfig config,String name) throws Exception {
-        //config.setSQLlitePoolSize(5);
+        config.setSQLlitePoolSize(5);
         config.setZkAddress("127.0.0.1:2181");
         //config.setDeleteZKTimeOunt(500);
         //config.setSelectLeaderZKNodeTimeOunt(500);
-      /*  config.setDispatchs(new ThreadPoolExecutor(4, 4, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
+        config.setDispatchs(new ThreadPoolExecutor(6, 6, 10000, java.util.concurrent.TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>()));
-        config.setWorkers(new ThreadPoolExecutor(4, 8, 1000, java.util.concurrent.TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>()));*/
+        config.setWorkers(new ThreadPoolExecutor(12, 12, 10000, java.util.concurrent.TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>()));
         annularQueue.start(config);
         CusTask1 task1 = new CusTask1();
         task1.setEndTimestamp(ZonedDateTime.now().plusSeconds(10).toInstant().toEpochMilli());//10秒后执行
