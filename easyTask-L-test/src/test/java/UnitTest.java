@@ -19,18 +19,11 @@ public class UnitTest {
     public static List<Thread> threadList=new LinkedList<>();
     @Test
     public void test()  {
-
-        TransactionLog log=new TransactionLog();
-        log.setTableName("dddd");
-        log.setId("qqqqq");
-        List<String> list=new LinkedList<>();
-        list.add("172.20.50.128:2022");
-        list.add("172.20.50.128:2022");
-        log.setFollows(JSONObject.toJSONString(list));
         try {
-            AnnularQueue.getInstance().getConfig().setTaskStorePath("C:\\db\\node2");
-            DbInit.init();
-            TransactionLogDao.isExistById("T4ce5cf5c9d0048bda40dd09a7a8f376b-446");
+            EasyTaskConfig config=new EasyTaskConfig();
+            config.setTaskStorePath("C:/db/node1");
+            //AnnularQueue.getInstance().setConfig(config);
+           ClusterMonitor.getDBTraceInfoByTaskId("229d631f1d264a8a922d0c4c5f752b45-19");
         } catch (Exception e) {
             e.printStackTrace();
         }
