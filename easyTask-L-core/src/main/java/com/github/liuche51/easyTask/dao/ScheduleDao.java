@@ -89,17 +89,17 @@ public class ScheduleDao {
         }
         return list;
     }
-    public static List<Schedule> selectByTransactionId(String tranId) throws SQLException, ClassNotFoundException {
+    public static List<Schedule> selectByTaskId(String taskId) throws SQLException, ClassNotFoundException {
         List<Schedule> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper(dbName);
         try {
-            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule where transaction_id = '" + tranId + "';");
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule where id = '" + taskId + "';");
             while (resultSet.next()) {
                 Schedule schedule = getSchedule(resultSet);
                 list.add(schedule);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleDao->selectByTransactionId");
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleDao->selectByTaskId");
         } finally {
             helper.destroyed();
         }

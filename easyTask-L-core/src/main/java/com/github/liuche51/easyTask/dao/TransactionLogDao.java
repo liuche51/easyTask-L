@@ -106,17 +106,17 @@ public class TransactionLogDao {
         }
         return list;
     }
-    public static List<TransactionLog> selectByTransactionId(String tranId) throws SQLException {
+    public static List<TransactionLog> selectByTaskId(String taskId) throws SQLException {
         List<TransactionLog> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper(dbName);
         try {
-            ResultSet resultSet = helper.executeQuery("SELECT * FROM transaction_log where id = '" + tranId + "';");
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM transaction_log where content like '%" + taskId + "%';");
             while (resultSet.next()) {
                 TransactionLog transactionLog = getTransaction(resultSet);
                 list.add(transactionLog);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e,"TransactionLogDao->selectByTransactionId");
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"TransactionLogDao->selectByTaskId");
         } finally {
             helper.destroyed();
         }

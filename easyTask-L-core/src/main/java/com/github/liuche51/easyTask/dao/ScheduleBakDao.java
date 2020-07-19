@@ -90,17 +90,17 @@ public class ScheduleBakDao {
         }
         return list;
     }
-    public static List<ScheduleBak> selectByTransactionId(String tranId) throws SQLException, ClassNotFoundException {
+    public static List<ScheduleBak> selectByTaskId(String taskId) throws SQLException, ClassNotFoundException {
         List<ScheduleBak> list = new LinkedList<>();
         SqliteHelper helper = new SqliteHelper(dbName);
         try {
-            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where transaction_id='" + tranId +"';");
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_bak where id='" + taskId +"';");
             while (resultSet.next()) {
                 ScheduleBak schedulebak = getScheduleBak(resultSet);
                 list.add(schedulebak);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleBakDao->getByTransactionId");
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleBakDao->selectByTaskId");
         } finally {
             helper.destroyed();
         }

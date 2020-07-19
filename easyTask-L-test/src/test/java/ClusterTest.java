@@ -106,7 +106,7 @@ public class ClusterTest {
         };
         task2.setParam(param2);
         try {
-            annularQueue.submitAllowWait(task1);//单次提交测试
+            annularQueue.submitAllowWait(task2);//单次提交测试
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -64,17 +64,17 @@ public class ScheduleSyncDao {
         }
         return list;
     }
-    public static List<ScheduleSync> selectByTransactionId(String tranId) throws SQLException, ClassNotFoundException {
+    public static List<ScheduleSync> selectByTaskId(String taskId) throws SQLException, ClassNotFoundException {
         List<ScheduleSync> list = new ArrayList<>(2);
         SqliteHelper helper = new SqliteHelper(dbName);
         try {
-            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_sync where transaction_id='" + tranId + "';");
+            ResultSet resultSet = helper.executeQuery("SELECT * FROM schedule_sync where schedule_id='" + taskId + "';");
             while (resultSet.next()) {
                 ScheduleSync scheduleSync = getScheduleSync(resultSet);
                 list.add(scheduleSync);
             }
         }catch (SQLiteException e){
-            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleSyncDao->selectByTransactionId");
+            SqliteHelper.writeDatabaseLockedExceptionLog(e,"ScheduleSyncDao->selectByTaskId");
         } finally {
             helper.destroyed();
         }

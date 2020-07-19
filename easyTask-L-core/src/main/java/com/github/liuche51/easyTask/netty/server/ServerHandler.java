@@ -79,9 +79,9 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
                     String taskId = frame.getBody();
                     FollowService.deleteScheduleBak(taskId);
                     break;
-                case NettyInterfaceEnum.GET_DBINFO_BY_TRANSACTIONID:
+                case NettyInterfaceEnum.GET_DBINFO_BY_TASKID:
                     String tranId = frame.getBody();
-                    Map<String, List> map=DBMonitor.getInfoByTransactionId(tranId);
+                    Map<String, List> map=DBMonitor.getInfoByTaskId(tranId);
                     result.setBody(JSONObject.toJSONString(map));
                     break;
                 default:

@@ -40,16 +40,16 @@ public class ClusterMonitor {
         return str.toString();
     }
 
-    public static Map<String, Map<String, List>> getDBTraceInfoByTransactionId(String tranId) throws Exception {
+    public static Map<String, Map<String, List>> getDBTraceInfoByTransactionId(String taskId) throws Exception {
         Map<String, Map<String, List>> map = new HashMap<>(3);
-        Map<String, List> leaderInfo = DBMonitor.getInfoByTransactionId(tranId);
+        Map<String, List> leaderInfo = DBMonitor.getInfoByTaskId(taskId);
         map.put(AnnularQueue.getInstance().getConfig().getAddress(), leaderInfo);
         Iterator<Node> items = ClusterService.CURRENTNODE.getFollows().iterator();
         while (items.hasNext()) {
             Node item = items.next();
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.GET_DBINFO_BY_TRANSACTIONID).setSource(AnnularQueue.getInstance().getConfig().getAddress())
-                    .setBody(tranId);
+            builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.GET_DBINFO_BY_TASKID).setSource(AnnularQueue.getInstance().getConfig().getAddress())
+                    .setBody(taskId);
             NettyClient client = item.getClientWithCount(AnnularQueue.getInstance().getConfig().getTryCount());
             Object ret = client.sendSyncMsg(builder.build());
             Dto.Frame frame = (Dto.Frame) ret;

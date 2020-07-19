@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 public class DBMonitor {
-    public static Map<String,List> getInfoByTransactionId(String tranId) throws Exception {
+    public static Map<String,List> getInfoByTaskId(String taskId) throws Exception {
         Map<String,List> map=new HashMap<>(3);
-        List<TransactionLog> tranlogs= TransactionLogDao.selectByTransactionId(tranId);
-        List<Schedule> schedules= ScheduleDao.selectByTransactionId(tranId);
-        List<ScheduleSync> scheduleSyncs= ScheduleSyncDao.selectByTransactionId(tranId);
-        List<ScheduleBak> scheduleBaks= ScheduleBakDao.selectByTransactionId(tranId);
+        List<TransactionLog> tranlogs= TransactionLogDao.selectByTaskId(taskId);
+        List<Schedule> schedules= ScheduleDao.selectByTaskId(taskId);
+        List<ScheduleSync> scheduleSyncs= ScheduleSyncDao.selectByTaskId(taskId);
+        List<ScheduleBak> scheduleBaks= ScheduleBakDao.selectByTaskId(taskId);
         map.put(StringConstant.TRANSACTION_LOG,tranlogs);
         map.put(StringConstant.SCHEDULE,schedules);
         map.put(StringConstant.SCHEDULE_SYNC,scheduleSyncs);
