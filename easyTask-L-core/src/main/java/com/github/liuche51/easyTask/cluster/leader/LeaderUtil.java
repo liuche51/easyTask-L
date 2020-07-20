@@ -103,32 +103,6 @@ public class LeaderUtil {
             Node newFollow = VoteFollows.selectNewFollow(follow,null);
             return syncDataToFollowBatch(schedules, newFollow);
         }*/
-        return true;
-    }
-
-    /**
-     * 同步删除任务至follow。
-     *暂时不支持失败进入选新follow流程。代码注释掉
-     * 目前仅在leader心跳follow是否存活那边进行选新follow流程
-     * @param taskId
-     * @return
-     */
-    public static boolean deleteTaskToFollow(String taskId, Node follow) throws Exception {
-        Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(taskId).setInterfaceName(NettyInterfaceEnum.DELETE_SCHEDULEBACKUP).setSource(AnnularQueue.getInstance().getConfig().getAddress())
-                .setBody(taskId);
-        NettyClient client = follow.getClientWithCount(AnnularQueue.getInstance().getConfig().getTryCount());
-      /*  if (client == null) {
-            log.info("client == null,so start to selectNewFollow.");
-            Node newFollow = VoteFollows.selectNewFollow(follow,null);
-            return deleteTaskToFollow(taskId, newFollow);
-        }*/
-        boolean ret = ClusterUtil.sendSyncMsgWithCount(client, builder.build(), AnnularQueue.getInstance().getConfig().getTryCount());
-      /*  if (!ret) {
-            log.info("sendSyncMsgWithCount return false,so start to selectNewFollow.");
-            Node newFollow = VoteFollows.selectNewFollow(follow,null);
-            return deleteTaskToFollow(taskId, newFollow);
-        }*/
-        return true;
+        return ret;
     }
 }
