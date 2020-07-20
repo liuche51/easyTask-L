@@ -62,10 +62,10 @@ public class SyncDataToNewFollowTask extends OnceTask {
         } catch (VotingException e) {
             //同步数据异常，进入选举新follow。但此时刚好有其他地方触发正在选举中。当前新follow可能又失效了。
             //此时就没必要继续同步数据给当前新follow了。终止同步线程
-            log.info("normally exception error.can ignore.{}", e.getMessage());
+            log.error("normally exception error.can ignore."+e.getMessage());
         } catch (VotedException e) {
             //原因同上VotingException
-            log.info("normally exception error.can ignore.{}", e.getMessage());
+            log.error("normally exception error.can ignore."+e.getMessage());
         } catch (Exception e) {
             log.error("syncDataToNewFollow()", e);
         }

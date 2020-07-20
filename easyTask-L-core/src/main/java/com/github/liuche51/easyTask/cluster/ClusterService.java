@@ -17,6 +17,7 @@ import com.github.liuche51.easyTask.dao.TransactionLogDao;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.enume.TransactionTypeEnum;
+import com.github.liuche51.easyTask.util.exception.VotingException;
 import com.github.liuche51.easyTask.zk.ZKService;
 import com.github.liuche51.easyTask.util.DateUtils;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class ClusterService {
      */
     public static void saveTask(Task task) throws Exception {
         if (VoteFollows.isSelecting())
-            throw new Exception("normally exception!save():cluster is voting,please wait a moment.");
+            throw new VotingException("normally exception!save():cluster is voting,please wait a moment.");
         //防止多线程下，follow元素操作竞争问题。确保参与提交的follow不受集群选举影响
         List<Node> follows = new ArrayList<>(CURRENTNODE.getFollows().size());
         Iterator<Node> items = CURRENTNODE.getFollows().iterator();

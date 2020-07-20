@@ -52,14 +52,14 @@ public class CheckFollowsAliveTask extends TimerTask {
                 }
             } catch (ConcurrentModificationException e) {
                 //多线程并发导致items.next()异常，但是没啥太大影响(影响后续元素迭代)。可以直接忽略
-                log.info("normally exception error.can ignore.{}", e.getMessage());
+                log.error("normally exception error.can ignore."+e.getMessage());
             } catch (VotingException e) {
                 //异常导致选新follow。但此时刚好有其他地方触发正在选举中。
                 //心跳这里就没必要继续触发选新follow了
-                log.info("normally exception error.can ignore.{}", e.getMessage());
+                log.error("normally exception error.can ignore."+e.getMessage());
             } catch (VotedException e) {
                 //原因同上VotingException
-                log.info("normally exception error.can ignore.{}", e.getMessage());
+                log.error("normally exception error.can ignore."+e.getMessage());
             } catch (Exception e) {
                 log.error("heartBeatToFollow()", e);
             }

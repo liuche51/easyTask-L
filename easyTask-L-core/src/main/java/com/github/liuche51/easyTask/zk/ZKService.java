@@ -22,7 +22,7 @@ public class ZKService {
     public static void register(ZKNode data) {
         try {
             String path = "/" + AnnularQueue.getInstance().getConfig().getAddress();
-            //检查是否存在节点
+            //检查是否存在节点。如果连不上zk，这里就会卡主线程，进入循环重试连接。直到连接成功
             Stat stat1 = ZKUtil.getClient().checkExists().forPath(path);
             if (stat1 != null) {
                 ZKUtil.getClient().setData().forPath(path, JSONObject.toJSONString(data).getBytes());//重新覆盖注册信息

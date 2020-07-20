@@ -60,19 +60,19 @@ public class VoteFollows {
      * @return
      */
     public static Node selectNewFollow(Node oldFollow, Iterator<Node> items) throws Exception {
-        if (selecting) throw new VotingException("cluster is voting,please retry later.");
+        if (selecting) throw new VotingException("cluster is voting new follow,please retry later.");
         selecting = true;
         List<Node> follows = null;
         try {
             lock.lock();
             if (ClusterService.CURRENTNODE.getFollows().contains(oldFollow)) {
                 if (items != null) items.remove();//如果使用以下List集合方法移除，会导致下次items.next()方法报错
-                log.info("leader remove follow {0}", oldFollow.getAddress());
+                log.info("leader remove follow {}", oldFollow.getAddress());
             } else
                 ClusterService.CURRENTNODE.getFollows().remove(oldFollow);//移除失效的follow
             //多线程下，如果follows已经选好，则让客户端重新提交任务。以后可以优化为获取选举后的follow
             if (ClusterService.CURRENTNODE.getFollows() != null && ClusterService.CURRENTNODE.getFollows().size() >= AnnularQueue.getInstance().getConfig().getBackupCount())
-                throw new VotedException("cluster is voted,please retry again.");
+                throw new VotedException("cluster is voted follow,please retry again.");
             List<String> availableFollows = getAvailableFollows(Arrays.asList(oldFollow.getAddress()));
             follows = selectFollows(1, availableFollows);
             if (follows.size() < 1)
@@ -86,7 +86,7 @@ public class VoteFollows {
             selecting = false;//复原选举装填
             lock.unlock();
         }
-        if (follows == null || follows.size() == 0) throw new Exception("cluster is vote failed,please retry later.");
+        if (follows == null || follows.size() == 0) throw new Exception("cluster is vote follow failed,please retry later.");
         //通知follows当前Leader位置
         LeaderUtil.notifyFollowsLeaderPosition(follows, AnnularQueue.getInstance().getConfig().getTryCount());
         return follows.get(0);
