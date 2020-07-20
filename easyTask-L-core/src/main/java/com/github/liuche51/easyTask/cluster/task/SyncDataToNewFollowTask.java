@@ -55,7 +55,7 @@ public class SyncDataToNewFollowTask extends OnceTask {
                 String[] ids = list.stream().distinct().map(ScheduleSync::getScheduleId).toArray(String[]::new);
                 ScheduleSyncDao.updateStatusByFollowAndScheduleIds(newFollow.getAddress(), ids, ScheduleSyncStatusEnum.SYNCING);
                 List<Schedule> list1 = ScheduleDao.selectByIds(ids);
-                boolean ret = LeaderUtil.syncDataToFollowBatch(list1, oldFollow);
+                boolean ret = LeaderUtil.syncDataToFollowBatch(list1, newFollow);
                 if (ret)
                     ScheduleSyncDao.updateStatusByFollowAndStatus(newFollow.getAddress(), ScheduleSyncStatusEnum.SYNCING, ScheduleSyncStatusEnum.SYNCED);
             }
@@ -67,7 +67,7 @@ public class SyncDataToNewFollowTask extends OnceTask {
             //原因同上VotingException
             log.error("normally exception error.can ignore."+e.getMessage());
         } catch (Exception e) {
-            log.error("syncDataToNewFollow()", e);
+            log.error("syncDataToNewFollow() exception!", e);
         }
     }
 }
