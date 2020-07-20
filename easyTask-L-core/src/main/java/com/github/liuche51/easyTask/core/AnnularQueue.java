@@ -139,6 +139,10 @@ public class AnnularQueue {
         task.getScheduleExt().setId(Util.generateUniqueId());
         String path = task.getClass().getName();
         task.getScheduleExt().setTaskClassPath(path);
+        //周期任务，且为非立即执行的（EndTimestamp>当前时间），尽可能早点计算其下一个执行时间。免得因为持久化导致执行时间延迟
+        if (task.getTaskType().equals(TaskType.PERIOD)&&System.currentTimeMillis()<task.getEndTimestamp()) {
+            task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
+        }
         //以下两行代码不要调换，否则可能发生任务已经执行完成，而任务尚未持久化，导致无法执行删除持久化的任务风险
         ClusterService.saveTask(task);
         submitAddSlice(task);
@@ -147,8 +151,7 @@ public class AnnularQueue {
 
     /**
      * 新leader将旧leader的备份数据重新提交给自己
-     * 任务ID保持不变
-     *
+     * 任务ID保持不变。老周期任务不考虑立即执行的情况
      * @param task
      * @return
      * @throws Exception
@@ -212,10 +215,6 @@ public class AnnularQueue {
             if (task.getTaskType().equals(TaskType.ONECE)) {
                 return;
             }
-        }
-        //周期任务，在这里计算下一次执行时间
-        if (task.getTaskType().equals(TaskType.PERIOD)) {
-            task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
         }
         AddSlice(task);
     }
