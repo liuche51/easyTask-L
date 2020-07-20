@@ -215,6 +215,10 @@ public class AnnularQueue {
             if (task.getTaskType().equals(TaskType.ONECE)) {
                 return;
             }
+            //前面只处理了周期任务非立即执行的情况。这里处理立即执行的情况下。需要重新设置下一个执行周期
+            else if(task.getTaskType().equals(TaskType.PERIOD)){
+                task.setEndTimestamp(Task.getNextExcuteTimeStamp(task.getPeriod(), task.getUnit()));
+            }
         }
         AddSlice(task);
     }
