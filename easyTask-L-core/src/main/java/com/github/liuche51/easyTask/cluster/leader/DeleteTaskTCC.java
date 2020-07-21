@@ -13,6 +13,7 @@ import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.enume.*;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class DeleteTaskTCC {
         transactionLog.setStatus(TransactionStatusEnum.TRIED);
         transactionLog.setType(TransactionTypeEnum.DELETE);
         transactionLog.setFollows(JSONObject.toJSONString(cancelHost));
-        TransactionLogDao.save(transactionLog);
+        TransactionLogDao.saveBatch(Arrays.asList(transactionLog));
         retryDel( transactionId, taskId,  follows);
     }
     public static void retryDel(String transactionId,String taskId, List<Node> follows) throws Exception {

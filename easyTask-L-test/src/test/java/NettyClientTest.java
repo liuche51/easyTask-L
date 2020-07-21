@@ -57,7 +57,7 @@ public class NettyClientTest {
                 builder3.addSchedules(builder1.build());
                 Dto.Frame.Builder builder4=Dto.Frame.newBuilder();
                 builder4.setIdentity(StringConstant.EMPTY);
-                builder4.setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP_BATCH).setBodyBytes(builder3.build().toByteString());
+                builder4.setInterfaceName(NettyInterfaceEnum.LEADER_SYNC_DATA_TO_NEW_FOLLOW).setBodyBytes(builder3.build().toByteString());
                 System.out.println("发送任务:"+id);
                 Object msg= client.sendSyncMsg(builder4.build());
                 Dto.Frame frame= (Dto.Frame) msg;

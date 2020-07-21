@@ -26,9 +26,9 @@ public class NettyInterfaceEnum {
      */
     public static final String TRAN_CANCELDELTASK="Tran_CancelDelTask";
     /**
-     * 同步任务数据备份接口，批量方式
+     * leader同步任务数据给新follow备份接口
      */
-    public static final String SYNC_SCHEDULE_BACKUP_BATCH="SyncScheduleBackupBatch";
+    public static final String LEADER_SYNC_DATA_TO_NEW_FOLLOW="LeaderSyncDataToNewFollow";
     /**
      * 同步leader位置信息接口
      */

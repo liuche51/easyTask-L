@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.dao;
 
+import com.github.liuche51.easyTask.dto.ScheduleBak;
 import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
@@ -30,18 +31,16 @@ public class TransactionLogDao {
         }
         return false;
     }
-
-    public static void save(TransactionLog transactionLog) throws Exception {
+    public static void saveBatch(List<TransactionLog> transactionLogs) throws Exception {
         if (!DbInit.hasInit)
             DbInit.init();
-        transactionLog.setCreateTime(DateUtils.getCurrentDateTime());
-        transactionLog.setModifyTime(DateUtils.getCurrentDateTime());
-        transactionLog.setRetryCount(new Short("0"));
-        transactionLog.setRetryTime(StringConstant.EMPTY);
-        String sql = "insert into transaction_log(id,content,table_name,type,status,follows,retry_time,retry_count,create_time,modify_time) values('"
-                + transactionLog.getId() + "','" + transactionLog.getContent() + "','" + transactionLog.getTableName() + "','" + transactionLog.getType()
-                + "'," + transactionLog.getStatus() + ",'" + transactionLog.getFollows() + "','" + transactionLog.getRetryTime() + "',"
-                + transactionLog.getRetryCount() + ",'" + transactionLog.getCreateTime() + "','" + transactionLog.getModifyTime() + "');";
+        transactionLogs.forEach(x->{
+            x.setCreateTime(DateUtils.getCurrentDateTime());
+            x.setModifyTime(DateUtils.getCurrentDateTime());
+            x.setRetryCount(new Short("0"));
+            x.setRetryTime(StringConstant.EMPTY);
+        });
+        String sql = contactSaveSql(transactionLogs);
         SqliteHelper.executeUpdateForSync(sql,dbName,lock);
     }
     public static void updateStatusById(String id, short status) throws SQLException, ClassNotFoundException {
@@ -170,5 +169,23 @@ public class TransactionLogDao {
         transactionLog.setModifyTime(modifyTime);
         transactionLog.setCreateTime(createTime);
         return transactionLog;
+    }
+    private static String contactSaveSql(List<TransactionLog> transactionLogs) {
+        StringBuilder sql1 = new StringBuilder("insert into transaction_log(id,content,table_name,type,status,follows,retry_time,retry_count,create_time,modify_time) values");
+        for (TransactionLog log : transactionLogs) {
+            sql1.append("('");
+            sql1.append(log.getId()).append("','");
+            sql1.append(log.getContent()).append("',");
+            sql1.append(log.getTableName()).append(",'");
+            sql1.append(log.getType()).append("',");
+            sql1.append(log.getStatus()).append(",'");
+            sql1.append(log.getFollows()).append("','");
+            sql1.append(log.getRetryTime()).append("',");
+            sql1.append(log.getRetryCount()).append(",'");
+            sql1.append(log.getCreateTime()).append("','");
+            sql1.append(log.getModifyTime()).append("')").append(',');
+        }
+        String sql = sql1.substring(0, sql1.length() - 1);//去掉最后一个逗号
+        return sql.concat(";");
     }
 }

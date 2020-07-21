@@ -17,6 +17,7 @@ import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.enume.*;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class SaveTaskTCC {
         transactionLog.setStatus(TransactionStatusEnum.TRIED);
         transactionLog.setType(TransactionTypeEnum.SAVE);
         transactionLog.setFollows(JSONObject.toJSONString(cancelHost));
-        TransactionLogDao.save(transactionLog);
+        TransactionLogDao.saveBatch(Arrays.asList(transactionLog));
         Iterator<Node> items = follows.iterator();
         while (items.hasNext()) {
             Node follow = items.next();

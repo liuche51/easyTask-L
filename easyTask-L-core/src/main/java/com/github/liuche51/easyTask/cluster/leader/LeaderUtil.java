@@ -89,7 +89,7 @@ public class LeaderUtil {
             builder0.addSchedules(s);
         }
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
-        builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.SYNC_SCHEDULE_BACKUP_BATCH).setSource(AnnularQueue.getInstance().getConfig().getAddress())
+        builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.LEADER_SYNC_DATA_TO_NEW_FOLLOW).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                 .setBodyBytes(builder0.build().toByteString());
         NettyClient client = follow.getClientWithCount(AnnularQueue.getInstance().getConfig().getTryCount());
        /* if (client == null) {
