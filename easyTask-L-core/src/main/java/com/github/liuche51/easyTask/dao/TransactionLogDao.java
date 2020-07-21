@@ -175,8 +175,8 @@ public class TransactionLogDao {
         for (TransactionLog log : transactionLogs) {
             sql1.append("('");
             sql1.append(log.getId()).append("','");
-            sql1.append(log.getContent()).append("',");
-            sql1.append(log.getTableName()).append(",'");
+            sql1.append(log.getContent()).append("','");
+            sql1.append(log.getTableName()).append("','");
             sql1.append(log.getType()).append("',");
             sql1.append(log.getStatus()).append(",'");
             sql1.append(log.getFollows()).append("','");
