@@ -8,12 +8,15 @@ import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dao.SQLliteMultiPool;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ResultDto;
+import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.enume.NettyInterfaceEnum;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
 import com.github.liuche51.easyTask.util.StringConstant;
 import com.github.liuche51.easyTask.util.StringUtils;
 import com.github.liuche51.easyTask.util.Util;
+import com.github.liuche51.easyTask.zk.ZKService;
 
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -54,13 +57,18 @@ public class ClusterMonitor {
             Object ret = client.sendSyncMsg(builder.build());
             Dto.Frame frame = (Dto.Frame) ret;
             ResultDto.Result result = ResultDto.Result.parseFrom(frame.getBodyBytes());
-            if (result!=null&&StringConstant.TRUE.equals(result.getResult())
-                    &&!StringUtils.isNullOrEmpty(result.getBody())) {
-                Map<String, List> followInfo = JSONObject.parseObject(result.getBody(), new TypeReference<Map<String, List>>() {});
+            if (result != null && StringConstant.TRUE.equals(result.getResult())
+                    && !StringUtils.isNullOrEmpty(result.getBody())) {
+                Map<String, List> followInfo = JSONObject.parseObject(result.getBody(), new TypeReference<Map<String, List>>() {
+                });
                 map.put(item.getAddress(), followInfo);
-            }else
+            } else
                 continue;
         }
         return map;
+    }
+
+    public static ZKNode getCurrentZKNodeInfo() throws UnknownHostException {
+        return ZKService.getDataByCurrentNode();
     }
 }
