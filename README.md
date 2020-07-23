@@ -46,7 +46,7 @@
 ```
 * 定义好您要执行的任务类(Define the task class you want to perform)
 ```java
-public class CusTask1 extends Schedule implements Runnable {
+public class CusTask1 extends Task implements Runnable {
     private static Logger log = LoggerFactory.getLogger(CusTask1.class);
 
     @Override
@@ -86,3 +86,6 @@ public class Main {
     }
 }
 ```
+## 注意(Notice)
+
+* 此构件已在Windows和centos下做了适当测试，如需使用，请自行测试
