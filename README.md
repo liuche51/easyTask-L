@@ -45,6 +45,8 @@
 </dependency>
 ```
 * 定义好您要执行的任务类(Define the task class you want to perform)
+
+　　这个需要根据具体情况，创建你要处理的任务类。任务类都需要继承Task 这个父类以及实现Runnable 的run接口。这里可以写你的任务逻辑，getParam()可以获取到你提交任务时传入的参数。
 ```java
 public class CusTask1 extends Task implements Runnable {
     private static Logger log = LoggerFactory.getLogger(CusTask1.class);
