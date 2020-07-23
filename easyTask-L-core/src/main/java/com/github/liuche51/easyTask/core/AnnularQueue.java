@@ -172,7 +172,7 @@ public class AnnularQueue {
      *
      * @param list
      */
-    public void submitNewPeriodSchedule(List<Task> list) {
+    private void submitNewPeriodSchedule(List<Task> list) {
         for (Task schedule : list) {
             try {
                 schedule.setEndTimestamp(Task.getNextExcuteTimeStamp(schedule.getPeriod(), schedule.getUnit()));

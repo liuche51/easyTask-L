@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class EasyTaskConfig {
     private static final Logger log = LoggerFactory.getLogger(EasyTaskConfig.class);
     /**
-     * zk地址。如:127.0.0.1:2181
+     * zk地址。必填 如:127.0.0.1:2181
      */
     private String zkAddress;
     /**
@@ -23,7 +23,7 @@ public class EasyTaskConfig {
      */
     private int backupCount = 2;
     /**
-     * 自定义任务本地存储路径。默认以当前项目根路径
+     * 自定义任务本地存储路径。必填
      */
     private String taskStorePath;
     /**
@@ -31,7 +31,7 @@ public class EasyTaskConfig {
      */
     private int sQLlitePoolSize = Runtime.getRuntime().availableProcessors() * 2;
     /**
-     * 设置当前easyTask组件的集群服务端口号。默认2020
+     * 设置当前节点Netty服务端口号。默认2020
      */
     private int serverPort = 2020;
     /**
@@ -39,11 +39,11 @@ public class EasyTaskConfig {
      */
     private int timeOut = 3;
     /**
-     * ZK节点信息更新超过60s就判断为失效节点，任何其他节点可删除掉
+     * ZK节点信息失效超时时间。默认超过60s就判断为失效节点，任何其他节点可删除掉
      */
     private int loseTimeOut = 60;
     /**
-     * ZK节点信息更新超过30s就判断为Leader失效节点，其Follow节点可进入选举新Leader
+     * ZK节点信息死亡超时时间。默认超过30s就判断为Leader失效节点，其Follow节点可进入选举新Leader
      */
     private int deadTimeOut = 30;
     /**
@@ -51,7 +51,7 @@ public class EasyTaskConfig {
      */
     private int heartBeat = 2;
     /**
-     * 集群通信失败重试次数。默认2次
+     * 集群节点之间通信失败重试次数。默认2次
      */
     private int tryCount = 2;
     /**
