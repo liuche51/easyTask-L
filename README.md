@@ -86,6 +86,9 @@ public class Main {
     }
 }
 ```
+　　注意：AnnularQueue只需要在你的系统启动时调用一次start方法即可，切勿重复调用。
 ## 注意(Notice)
 
 * 此构件已在Windows和centos下做了适当测试，如需使用，请自行测试
+* 更多详细的介绍资料请访问网址:https://www.cnblogs.com/liuche/
+* 如需联系作者请加QQ：827756467
