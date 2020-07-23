@@ -91,7 +91,7 @@ public class Main {
 　　注意：AnnularQueue只需要在你的系统启动时调用一次start方法即可，切勿重复调用。
 ## 常用接口(API)
 　　easyTask-L的API设计比较简洁、易于理解和使用。主要涉及环形队列类、配置类、任务超类以及监控类四个方面。下面逐一做简单介绍。本文只对比较重要的API做介绍，其他API还望读者自行探索
-###环形队列(AnnularQueue)
+### 环形队列(AnnularQueue)
 　　环形队列类设计为单例模式。通过AnnularQueue.getInstance();获取。
 
 　　1、void start(EasyTaskConfig config) throws Exception：
@@ -105,7 +105,7 @@ public class Main {
 　　3、String submitAllowWait(Task task) throws Exception
 
 　　　  向环形队列中提交新任务。提交失败则抛出异常。如果环形队列还没有启动成功，则任务不抛出异常，等待启动后再正式提交任务。
-###配置类(EasyTaskConfig)
+### 配置类(EasyTaskConfig)
 　　前面说了环形队列(集群)启动时需要给一个启动配置参数。因为这是系统必须的东西。
 
 　　1、String zkAddress;
@@ -163,7 +163,7 @@ public class Main {
 　　14、ExecutorService workers
 
 　　环形队列工作任务线程池。默认为cpu核心数2倍
-###任务超类(Task)
+### 任务超类(Task)
 　　1、void setEndTimestamp(long endTimestamp)
 
 　　设置任务未来的执行时间戳。如果你设置的是一个过去的时间戳，则代表任务立即执行。适用于单次任务以及周期性任务
@@ -179,7 +179,7 @@ public class Main {
 　　4、void setParam(Map<String,String> param)
 
 　　设置当前任务携带的执行参数。仅支持字符串类型。其他类型都可以转化为字符串
-###环形队列监控(AnnularQueueMonitor)
+### 环形队列监控(AnnularQueueMonitor)
 　　1、int getTaskInAnnularQueueQty()
 
 　　获取环形队列中等待被触发执行的任务数
@@ -192,7 +192,7 @@ public class Main {
 
 　　获取执行任务线程池信息。包括：taskQty队列中等待执行的任务数，completedQty已经执行完成的任务数，activeQty正在执行任务的线程数，coreSize设置的核心线程数
 
-###集群监控（ClusterMonitor）
+### 集群监控（ClusterMonitor）
 　　1、String getCurrentNodeInfo()
 
 　　获取当前节点信息
@@ -205,7 +205,7 @@ public class Main {
 
 　　获取当前节点在zk上的注册信息
 
-###数据存储监控(DBMonitor)
+### 数据存储监控(DBMonitor)
 　　1、Map<String,List> getInfoByTaskId(String taskId)
 
 　　获取任务在本节点的数据存储信息
