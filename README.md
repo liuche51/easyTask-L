@@ -110,7 +110,7 @@ public class Main {
 
 　　1、String zkAddress;
 
-　　集群zookeeper地址配置。必填  如:127.0.0.1:2181
+　　集群zookeeper地址配置。必填  如:127.0.0.1:2181,192.168.1.128:2181
 
 　　2、int backupCount ;
 

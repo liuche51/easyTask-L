@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class EasyTaskConfig {
     private static final Logger log = LoggerFactory.getLogger(EasyTaskConfig.class);
     /**
-     * zk地址。必填 如:127.0.0.1:2181
+     * zk地址。必填 如:127.0.0.1:2181,192.168.1.128:2181
      */
     private String zkAddress;
     /**
