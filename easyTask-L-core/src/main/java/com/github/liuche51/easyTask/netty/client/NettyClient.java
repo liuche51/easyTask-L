@@ -105,7 +105,12 @@ public class NettyClient {
         handler.setPromise(promise);
         clientChannel.writeAndFlush(msg);
         promise.await(AnnularQueue.getInstance().getConfig().getTimeOut(), TimeUnit.SECONDS);//等待固定的时间，超时就认为失败，需要重发
-        return handler.getResponse();
+        try {
+            return handler.getResponse();
+        }finally {
+            close();//目前是一次通信一次连接，所以需要通信完成后释放连接资源
+        }
+
     }
 
     private void sendMsgPrintLog(Object msg) {
@@ -166,5 +171,6 @@ public class NettyClient {
         if (workerGroup != null) {
             workerGroup.shutdownGracefully();
         }
+        log.debug("close()->:客户端连接已关闭");
     }
 }

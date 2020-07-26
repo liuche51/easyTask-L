@@ -41,7 +41,7 @@
 <dependency>
     <groupId>com.github.liuche51</groupId>
     <artifactId>easyTask-L</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 * 定义好您要执行的任务类(Define the task class you want to perform)
@@ -212,5 +212,6 @@ public class Main {
 ## 注意(Notice)
 
 * 此构件已在Windows和centos下做了适当测试，如需使用，请自行测试
+* 为了能有更好的可用性，建议集群节点数不少于4个，这样其中一个节点宕机，就能立即得到补充。否则可能导致集群不可用。
 * 更多详细的介绍资料请访问网址:https://www.cnblogs.com/liuche/
 * 如需联系作者请加QQ：827756467

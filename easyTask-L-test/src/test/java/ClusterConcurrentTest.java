@@ -85,7 +85,7 @@ public class ClusterConcurrentTest {
         annularQueue.start(config);
         //触发一次
         startOnceTask(5, 2,10, name);
-        //startPeriodTask(5,2,false,10,  name);
+        startPeriodTask(5,2,false,10,  name);
         //JUnit默认是非守护线程启动和Main方法不同。这里防止当前主线程退出导致子线程也退出了
         while (true) {
             Thread.sleep(30000);

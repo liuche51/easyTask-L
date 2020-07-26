@@ -96,6 +96,12 @@ public class Node implements Serializable {
         return client;
     }
 
+    /**
+     * 获取Netty客户端连接。带重试次数
+     * 目前一次通信，新建一个Netty连接。
+     * @param tryCount
+     * @return
+     */
     public NettyClient getClientWithCount(int tryCount) {
         if (tryCount == 0) return client;
         try {
