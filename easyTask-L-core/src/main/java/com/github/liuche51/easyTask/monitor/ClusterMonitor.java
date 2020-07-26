@@ -11,6 +11,7 @@ import com.github.liuche51.easyTask.dto.proto.ResultDto;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.enume.NettyInterfaceEnum;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
+import com.github.liuche51.easyTask.netty.client.NettyMsgService;
 import com.github.liuche51.easyTask.util.StringConstant;
 import com.github.liuche51.easyTask.util.StringUtils;
 import com.github.liuche51.easyTask.util.Util;
@@ -54,7 +55,7 @@ public class ClusterMonitor {
             builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.GET_DBINFO_BY_TASKID).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                     .setBody(taskId);
             NettyClient client = item.getClientWithCount(AnnularQueue.getInstance().getConfig().getTryCount());
-            Object ret = client.sendSyncMsg(builder.build());
+            Object ret = NettyMsgService.sendSyncMsg(client,builder.build());
             Dto.Frame frame = (Dto.Frame) ret;
             ResultDto.Result result = ResultDto.Result.parseFrom(frame.getBodyBytes());
             if (result != null && StringConstant.TRUE.equals(result.getResult())

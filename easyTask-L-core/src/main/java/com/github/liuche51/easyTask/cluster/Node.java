@@ -5,6 +5,7 @@ import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.enume.NodeSyncDataStatusEnum;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
+import com.github.liuche51.easyTask.netty.client.NettyConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ public class Node implements Serializable {
     /**
      * 数据一致性状态。
      */
-    private int dataStatus= NodeSyncDataStatusEnum.SYNC;
+    private int dataStatus = NodeSyncDataStatusEnum.SYNC;
     /**
      * 当前节点的所有follows
      */
@@ -34,11 +35,6 @@ public class Node implements Serializable {
      * 当前节点的所有leader
      */
     private Map<String, Node> leaders = new HashMap<>();
-    /**
-     * 当前节点的客户端连接。
-     */
-    @JSONField(serialize = false)
-    private NettyClient client;
 
     public Node(String host, int port) {
         this.host = host;
@@ -84,45 +80,33 @@ public class Node implements Serializable {
     public void setLeaders(Map<String, Node> leaders) {
         this.leaders = leaders;
     }
-    public String getAddress(){
-        StringBuffer str=new StringBuffer(this.host);
+
+    public String getAddress() {
+        StringBuffer str = new StringBuffer(this.host);
         str.append(":").append(this.port);
         return str.toString();
     }
 
     public NettyClient getClient() throws InterruptedException {
-        if (client == null)
-            buildConnect();
-        return client;
+        return NettyConnectionFactory.getInstance().getConnection(host, port);
     }
 
     /**
      * 获取Netty客户端连接。带重试次数
-     * 目前一次通信，新建一个Netty连接。
+     * 目前一次通信，占用一个Netty连接。
      * @param tryCount
      * @return
      */
-    public NettyClient getClientWithCount(int tryCount) {
-        if (tryCount == 0) return client;
+    public NettyClient getClientWithCount(int tryCount) throws Exception {
+        if (tryCount == 0) throw new Exception("getClientWithCount()-> exception!");
         try {
             return getClient();
-        }catch (Exception e){
-            log.info("getClientWithCount tryCount="+tryCount+",objectHost="+client.getObjectAddress());
-            log.error("getClientWithCount()-> exception!",e);
+        } catch (Exception e) {
+            log.info("getClientWithCount tryCount=" + tryCount + ",objectHost="+this.getAddress());
+            log.error("getClientWithCount()-> exception!", e);
             return getClientWithCount(tryCount);
         } finally {
             tryCount--;
         }
-    }
-
-    public void setClient(NettyClient client) {
-        this.client = client;
-    }
-
-    /**
-     * 构建到当前节点的客户端连接
-     */
-    private void buildConnect() throws InterruptedException {
-        this.client = new NettyClient(new InetSocketAddress(host, port));
     }
 }

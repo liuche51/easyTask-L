@@ -34,7 +34,7 @@ public class NettyConnectionFactory {
 
     }
 
-    public NettyClient getConnection(String host, int port) {
+    public NettyClient getConnection(String host, int port) throws InterruptedException {
         String key = host + ":" + port;
         ConcurrentLinkedQueue<NettyClient> pool = pools.get(key);
         if (pool == null) {
@@ -58,8 +58,8 @@ public class NettyConnectionFactory {
         return conn;
     }
 
-    public void releaseConnection(NettyClient conn, String host, int port) {
-        String key = host + ":" + port;
+    public void releaseConnection(NettyClient conn) {
+        String key = conn.getHost() + ":" + conn.getPort();
         ConcurrentLinkedQueue<NettyClient> pool = pools.get(key);
         if (pool.size() < AnnularQueue.getInstance().getConfig().getNettyPoolSize()) {
             pool.add(conn);
@@ -68,12 +68,7 @@ public class NettyConnectionFactory {
         }
     }
 
-    private NettyClient createConnection(String host, int port) {
-        try {
-            return new NettyClient(new InetSocketAddress(host, port));
-        } catch (InterruptedException e) {
-            log.error("createConnection()-> exception!", e);
-            return null;
-        }
+    private NettyClient createConnection(String host, int port) throws InterruptedException {
+        return new NettyClient(host, port);
     }
 }

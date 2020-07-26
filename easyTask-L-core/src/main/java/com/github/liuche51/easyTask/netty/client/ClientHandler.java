@@ -33,8 +33,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
         log.debug("Received Server:" + ctx.channel().remoteAddress() + " send : " + msg);
         if (promise != null)
 		{
-			promise.setSuccess();
 			this.response=msg;
+            promise.setSuccess();
 		}else {
 
         }
