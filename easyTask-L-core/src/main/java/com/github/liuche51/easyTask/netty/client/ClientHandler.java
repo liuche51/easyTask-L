@@ -14,6 +14,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
     private ChannelHandlerContext ctx;
     /**
      * 线程同步信号量。用于客户端同步调用或异步调用需返回结果处理时
+     * 目前可能存在多线程环境下不是线程安全，被覆盖问题。因为Netty客户端初始化的时候传了一个单例
      */
     private ChannelPromise promise;
     /**
@@ -21,6 +22,12 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
      */
 	private Object response;
     public void setPromise(ChannelPromise promise){
+        if(this.promise!=null)
+            System.out.println("setPromise this.promise!=null");
+        else
+        {
+            System.out.println("setPromise this.promise==null this="+this.toString());
+        }
         this.promise=promise;
     }
 

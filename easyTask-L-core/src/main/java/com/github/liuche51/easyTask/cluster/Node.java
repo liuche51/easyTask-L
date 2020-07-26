@@ -98,13 +98,14 @@ public class Node implements Serializable {
 
     public NettyClient getClientWithCount(int tryCount) {
         if (tryCount == 0) return client;
-        buildConnect();
-        tryCount--;
-        if (client != null) return client;
-        else
-        {
+        try {
+            return getClient();
+        }catch (Exception e){
             log.info("getClientWithCount tryCount="+tryCount+",objectHost="+client.getObjectAddress());
+            log.error("getClientWithCount()-> exception!",e);
             return getClientWithCount(tryCount);
+        } finally {
+            tryCount--;
         }
     }
 

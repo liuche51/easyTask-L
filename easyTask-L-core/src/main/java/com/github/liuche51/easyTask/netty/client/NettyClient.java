@@ -42,53 +42,49 @@ public class NettyClient {
 
     public NettyClient(InetSocketAddress address) {
         this.handler = new ClientHandler();
-        this.address=address;
-        try {
-            log.info("nettyClinet start...");
-            bootstrap = new Bootstrap();
-            bootstrap.group(workerGroup);
-            bootstrap.channel(NioSocketChannel.class);
-            bootstrap.handler(new ChannelInitializer<SocketChannel>() {
-                @Override
-                protected void initChannel(SocketChannel socketChannel) {
-                    // 解码编码
-                    // 半包的处理
-                    socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
-                    // 需要解码的目标类
-                    socketChannel.pipeline().addLast(new ProtobufDecoder(Dto.Frame.getDefaultInstance()));
-                    socketChannel.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
-                    socketChannel.pipeline().addLast(new ProtobufEncoder());
-                    // 自己的逻辑Handler
-                    socketChannel.pipeline().addLast(handler);
-                }
-            });
-            channelFuture = bootstrap.connect(address).sync();
-            clientChannel = channelFuture.channel();
-            //注册连接事件
-            channelFuture.addListener((ChannelFutureListener) future -> {
-                future.get();
-                //如果连接成功
-                if (future.isSuccess()) {
-                    log.info("Client[" + channelFuture.channel().localAddress().toString() + "]connected...");
-                }
-                //如果连接失败，尝试重新连接
-                else {
-                    log.info("Client[" + channelFuture.channel().localAddress().toString() + "]connect failed，重新连接中...");
-                    future.channel().close();
-                    channelFuture = bootstrap.connect(address).sync();
-                    clientChannel = channelFuture.channel();
-                }
-            });
+        this.address = address;
+        log.info("nettyClinet start to " + getObjectAddress() + "...");
+        bootstrap = new Bootstrap();
+        bootstrap.group(workerGroup);
+        bootstrap.channel(NioSocketChannel.class);
+        bootstrap.handler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel socketChannel) {
+                // 解码编码
+                // 半包的处理
+                socketChannel.pipeline().addLast(new ProtobufVarint32FrameDecoder());
+                // 需要解码的目标类
+                socketChannel.pipeline().addLast(new ProtobufDecoder(Dto.Frame.getDefaultInstance()));
+                socketChannel.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());
+                socketChannel.pipeline().addLast(new ProtobufEncoder());
+                // 自己的逻辑Handler
+                socketChannel.pipeline().addLast(handler);
+            }
+        });
+        channelFuture = bootstrap.connect(address);//.sync();//sync表示同步阻塞，直到连接成功。
+        clientChannel = channelFuture.channel();
+        //注册异步连接事件
+        channelFuture.addListener((ChannelFutureListener) future -> {
+            //future.get();
+            //如果连接成功
+            if (future.isSuccess()) {
+                log.info("Client[" + channelFuture.channel().localAddress().toString() + "]connected...");
+            }
+            //如果连接失败，尝试重新连接
+            else {
+                log.info("Client[" + channelFuture.channel().localAddress().toString() + "]connect failed，重新连接中...");
+                future.channel().close();
+                channelFuture = bootstrap.connect(address);//.sync();
+                clientChannel = channelFuture.channel();
+            }
+        });
 
-            //注册关闭事件
-            channelFuture.channel().closeFuture().addListener(cfl -> {
-                close();
-                log.info("Client[" + channelFuture.channel().localAddress().toString() + "]disconnected...");
-            });
-            log.info("nettyClinet started...");
-        } catch (Exception e) {
-            log.error("nettyClinet started fail.", e);
-        }
+        //注册关闭事件
+        channelFuture.channel().closeFuture().addListener(cfl -> {
+            close();
+            log.info("Client[" + channelFuture.channel().localAddress().toString() + "]disconnected...");
+        });
+        log.info("nettyClinet started to " + getObjectAddress() + "...");
     }
 
     public Channel getClientChannel() {
@@ -103,7 +99,8 @@ public class NettyClient {
      */
     public Object sendSyncMsg(Object msg) throws InterruptedException, ConnectionException {
         sendMsgPrintLog(msg);
-        if(clientChannel==null) throw new ConnectionException("sendSyncMsg->"+this.address+": object node has disconnected!");
+        if (clientChannel == null)
+            throw new ConnectionException("sendSyncMsg->" + getObjectAddress() + ": object node has disconnected!");
         ChannelPromise promise = clientChannel.newPromise();
         handler.setPromise(promise);
         clientChannel.writeAndFlush(msg);
@@ -112,17 +109,18 @@ public class NettyClient {
     }
 
     private void sendMsgPrintLog(Object msg) {
-        StringBuilder str=new StringBuilder("Client send to:");
-        str.append(getObjectAddress()).append( " msg : ").append(msg);
+        StringBuilder str = new StringBuilder("Client send to:");
+        str.append(getObjectAddress()).append(" msg : ").append(msg);
         log.debug(str.toString());
     }
 
     /**
      * 获取目标连接主机地址
+     *
      * @return
      */
     public String getObjectAddress() {
-        return address.getHostName()+":"+address.getPort();
+        return address.getHostString() + ":" + address.getPort();
     }
 
     /**
@@ -133,22 +131,26 @@ public class NettyClient {
      */
     public ChannelFuture sendASyncMsg(Object msg) throws ConnectionException {
         sendMsgPrintLog(msg);
-        if(clientChannel==null) throw new ConnectionException("sendASyncMsg->"+this.address+": object node has disconnected!");
+        if (clientChannel == null)
+            throw new ConnectionException("sendASyncMsg->" + getObjectAddress() + ": object node has disconnected!");
         ChannelPromise promise = clientChannel.newPromise();
         handler.setPromise(promise);
         return clientChannel.writeAndFlush(msg);
     }
+
     /**
      * 发送异步消息。不通过信号量控制。
      * 可以实现一个Nettyclient并发处理N个请求。但不能使用future.addListener方式处理返回结果了。
-     *需要在com.github.liuche51.easyTask.backup.client.ClientHandler#channelRead0中统一处理。
+     * 需要在com.github.liuche51.easyTask.backup.client.ClientHandler#channelRead0中统一处理。
      * 这样需要每个请求中附带一个唯一标识。服务端返回结果时也戴上这个标识才行。否则就不知道处理的是哪个请求返回的结果。
+     *
      * @param msg
      * @return
      */
     public ChannelFuture sendASyncMsgWithoutPromise(Object msg) throws ConnectionException {
         sendMsgPrintLog(msg);
-        if(clientChannel==null) throw new ConnectionException("sendASyncMsg->"+this.address+": object node has disconnected!");
+        if (clientChannel == null)
+            throw new ConnectionException("sendASyncMsg->" + getObjectAddress() + ": object node has disconnected!");
         return clientChannel.writeAndFlush(msg);
     }
 
