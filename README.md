@@ -41,7 +41,7 @@
 <dependency>
     <groupId>com.github.liuche51</groupId>
     <artifactId>easyTask-L</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 * 定义好您要执行的任务类(Define the task class you want to perform)
