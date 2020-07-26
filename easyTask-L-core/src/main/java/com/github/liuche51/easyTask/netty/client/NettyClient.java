@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Netty网络连接客户端
+ * Netty网络连接客户端。
  */
 public class NettyClient {
 
@@ -40,7 +40,7 @@ public class NettyClient {
      */
     private Channel clientChannel;
 
-    public NettyClient(InetSocketAddress address) {
+    public NettyClient(InetSocketAddress address) throws InterruptedException {
         this.handler = new ClientHandler();
         this.address = address;
         log.info("nettyClinet start to " + getObjectAddress() + "...");
@@ -61,11 +61,10 @@ public class NettyClient {
                 socketChannel.pipeline().addLast(handler);
             }
         });
-        channelFuture = bootstrap.connect(address);//.sync();//sync表示同步阻塞，直到连接成功。
+        channelFuture = bootstrap.connect(address).sync();//sync表示同步阻塞，直到连接成功。
         clientChannel = channelFuture.channel();
         //注册异步连接事件
         channelFuture.addListener((ChannelFutureListener) future -> {
-            //future.get();
             //如果连接成功
             if (future.isSuccess()) {
                 log.info("Client[" + channelFuture.channel().localAddress().toString() + "]connected...");
@@ -162,7 +161,7 @@ public class NettyClient {
     /**
      * 客户端关闭
      */
-    private void close() {
+    public void close() {
         //关闭客户端套接字
         if (clientChannel != null) {
             clientChannel.close();

@@ -27,9 +27,13 @@ public class EasyTaskConfig {
      */
     private String taskStorePath;
     /**
-     * sqlite连接池大小设置。默认cpu数的两倍
+     * sqlite连接池大小设置。默认3
      */
-    private int sQLlitePoolSize = Runtime.getRuntime().availableProcessors() * 2;
+    private int sQLlitePoolSize = 3;
+    /**
+     * Netty客户端连接池大小设置。默认3
+     */
+    private int nettyPoolSize = 3;
     /**
      * 设置当前节点Netty服务端口号。默认2020
      */
@@ -109,15 +113,25 @@ public class EasyTaskConfig {
     }
 
     /**
-     * set SQLlitePool Size，default qty 15
+     * set SQLlitePool Size，default qty 3
      *
-     * @param count
+     * @param sQLlitePoolSize
      * @throws Exception
      */
-    public void setSQLlitePoolSize(int count) throws Exception {
-        if (count < 1)
-            throw new Exception("poolSize must >1");
-        this.sQLlitePoolSize = count;
+    public void setSQLlitePoolSize(int sQLlitePoolSize) throws Exception {
+        if (sQLlitePoolSize < 1)
+            throw new Exception("sQLlitePoolSize must >1");
+        this.sQLlitePoolSize = sQLlitePoolSize;
+    }
+
+    public int getNettyPoolSize() {
+        return nettyPoolSize;
+    }
+
+    public void setNettyPoolSize(int nettyPoolSize) throws Exception {
+        if (nettyPoolSize < 1)
+            throw new Exception("nettyPoolSize must >1");
+        this.nettyPoolSize = nettyPoolSize;
     }
 
     public String getAddress() throws UnknownHostException {

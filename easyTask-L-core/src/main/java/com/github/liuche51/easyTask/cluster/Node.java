@@ -90,7 +90,7 @@ public class Node implements Serializable {
         return str.toString();
     }
 
-    public NettyClient getClient() {
+    public NettyClient getClient() throws InterruptedException {
         if (client == null)
             buildConnect();
         return client;
@@ -122,7 +122,7 @@ public class Node implements Serializable {
     /**
      * 构建到当前节点的客户端连接
      */
-    private void buildConnect() {
+    private void buildConnect() throws InterruptedException {
         this.client = new NettyClient(new InetSocketAddress(host, port));
     }
 }
