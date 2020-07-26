@@ -35,9 +35,9 @@ public class EasyTaskConfig {
      */
     private int serverPort = 2020;
     /**
-     * 设置集群通信调用超时时间。默认3秒
+     * 设置集群Netty通信调用超时时间。默认30秒
      */
-    private int timeOut = 3;
+    private int timeOut = 30;
     /**
      * ZK节点信息失效超时时间。默认超过60s就判断为失效节点，任何其他节点可删除掉
      */
