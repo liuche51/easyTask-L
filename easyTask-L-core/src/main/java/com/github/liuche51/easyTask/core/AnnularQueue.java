@@ -24,6 +24,11 @@ public class AnnularQueue {
     private EasyTaskConfig config=null;
     public volatile boolean isRunning = false;//防止多线程运行环形队列
 
+    //测试时可能用到
+   /* public void setConfig(EasyTaskConfig config) {
+        this.config = config;
+    }*/
+
     public EasyTaskConfig getConfig() {
         return config;
     }
