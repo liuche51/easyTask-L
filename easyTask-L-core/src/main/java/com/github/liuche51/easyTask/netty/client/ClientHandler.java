@@ -31,6 +31,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
         // 收到消息直接打印输出
         log.debug("Received Server:" + ctx.channel().remoteAddress() + " send : " + msg);
+        //同步通信才会用到promise，异步不需要
         if (promise != null)
 		{
 			this.response=msg;

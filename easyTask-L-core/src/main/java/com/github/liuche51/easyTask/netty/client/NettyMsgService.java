@@ -35,7 +35,10 @@ public class NettyMsgService {
         }
     }
     /**
-     * 发送异步消息。
+     * 发送异步消息。不通过信号量控制。
+     * 可以实现一个Nettyclient并发处理N个请求。但不能使用future.addListener方式处理返回结果了。
+     *需要在com.github.liuche51.easyTask.backup.client.ClientHandler#channelRead0中统一处理。
+     * 这样需要每个请求中附带一个唯一标识。服务端返回结果时也戴上这个标识才行。否则就不知道处理的是哪个请求返回的结果。
      * @param msg
      * @return
      */
@@ -45,7 +48,6 @@ public class NettyMsgService {
             throw new ConnectionException("sendASyncMsg->"+conn.getObjectAddress()+": object node has disconnected!");
         return conn.getClientChannel().writeAndFlush(msg);
     }
-
 
     private static void sendMsgPrintLog(NettyClient conn,Object msg) {
         StringBuilder str = new StringBuilder("Client send to:");
