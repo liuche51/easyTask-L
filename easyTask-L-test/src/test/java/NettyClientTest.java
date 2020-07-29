@@ -38,7 +38,7 @@ public class NettyClientTest {
                 Dto.Frame frame= (Dto.Frame) msg;
                 String ret=frame.getBody();
                 System.out.println("服务器返回:"+ret);
-                Thread.sleep(5000);
+                Thread.sleep(500000);
             }
 
         } catch (Exception e) {

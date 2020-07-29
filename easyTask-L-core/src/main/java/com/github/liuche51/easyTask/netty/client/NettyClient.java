@@ -55,7 +55,7 @@ public class NettyClient {
         this.host=host;
         this.port=port;
         this.handler = new ClientHandler();
-        log.info("nettyClinet start to " + getObjectAddress() + "...");
+        log.info("nettyClinet start to " +getObjectAddress() + "...");
         bootstrap = new Bootstrap();
         bootstrap.group(workerGroup);
         bootstrap.channel(NioSocketChannel.class);
@@ -74,6 +74,7 @@ public class NettyClient {
             }
         });
         channelFuture = bootstrap.connect(new InetSocketAddress(host,port)).sync();//sync表示同步阻塞，直到连接成功。
+        log.info("nettyClinet started to " + getObjectAddress() + "...");
         clientChannel = channelFuture.channel();
         //注册异步连接事件
         channelFuture.addListener((ChannelFutureListener) future -> {
@@ -92,10 +93,8 @@ public class NettyClient {
 
         //注册关闭事件
         channelFuture.channel().closeFuture().addListener(cfl -> {
-            close();
-            log.info("Client[" + channelFuture.channel().localAddress().toString() + "]disconnected...");
+            log.info("Client[" + this.clientChannel.localAddress().toString() + "] from server["+this.clientChannel.remoteAddress()+"] has disconnected...");
         });
-        log.info("nettyClinet started to " + getObjectAddress() + "...");
     }
 
     /**
@@ -111,6 +110,7 @@ public class NettyClient {
      * 客户端关闭
      */
     public void close() {
+        log.info("close()->:客户端[" + channelFuture.channel().localAddress().toString() + "]对连接服务端["+this.clientChannel.remoteAddress()+"]发起主动关闭!");
         //关闭客户端套接字
         if (clientChannel != null) {
             clientChannel.close();
@@ -119,6 +119,6 @@ public class NettyClient {
         if (workerGroup != null) {
             workerGroup.shutdownGracefully();
         }
-        log.debug("close()->:客户端连接已关闭");
+
     }
 }

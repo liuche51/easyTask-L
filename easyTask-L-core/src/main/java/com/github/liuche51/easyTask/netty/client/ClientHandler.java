@@ -43,14 +43,14 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Client active ");
+        System.out.println("Client actived! ");
         super.channelActive(ctx);
         this.ctx = ctx;
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Client close ");
+        System.out.println("Client Inactived! ");
         super.channelInactive(ctx);
     }
 
