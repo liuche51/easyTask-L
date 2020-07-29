@@ -8,7 +8,6 @@ import com.github.liuche51.easyTask.cluster.leader.VoteFollows;
 import com.github.liuche51.easyTask.cluster.task.*;
 import com.github.liuche51.easyTask.cluster.task.tran.*;
 import com.github.liuche51.easyTask.core.AnnularQueue;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.util.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
@@ -96,7 +95,7 @@ public class ClusterService {
         String transactionId=Util.generateTransactionId();
         try {
             SaveTaskTCC.trySave(transactionId,task, follows);
-            SaveTaskTCC.confirm(transactionId, task.getScheduleExt().getId(), follows);
+            SaveTaskTCC.confirm(transactionId, task.getTaskExt().getId(), follows);
         } catch (Exception e) {
             log.error("saveTask():",e);
             try {
