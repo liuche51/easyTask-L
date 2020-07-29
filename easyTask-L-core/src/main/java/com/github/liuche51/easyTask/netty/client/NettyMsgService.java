@@ -1,7 +1,6 @@
 package com.github.liuche51.easyTask.netty.client;
 
 import com.github.liuche51.easyTask.core.AnnularQueue;
-import com.github.liuche51.easyTask.util.exception.ConnectionException;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelPromise;
 import org.slf4j.Logger;
@@ -20,10 +19,8 @@ public class NettyMsgService {
      * @param msg
      * @return
      */
-    public static Object sendSyncMsg(NettyClient conn,Object msg) throws InterruptedException, ConnectionException {
+    public static Object sendSyncMsg(NettyClient conn,Object msg) throws InterruptedException {
         sendMsgPrintLog(conn,msg);
-        if (conn.getClientChannel() == null)
-            throw new ConnectionException("sendSyncMsg->" + conn.getObjectAddress() + ": object node has disconnected!");
         ChannelPromise promise = conn.getClientChannel().newPromise();
         conn.getHandler().setPromise(promise);
         conn.getClientChannel().writeAndFlush(msg);
@@ -42,10 +39,8 @@ public class NettyMsgService {
      * @param msg
      * @return
      */
-    public static ChannelFuture sendASyncMsg(NettyClient conn,Object msg) throws ConnectionException {
+    public static ChannelFuture sendASyncMsg(NettyClient conn,Object msg) {
         sendMsgPrintLog(conn,msg);
-        if(conn.getClientChannel()==null)
-            throw new ConnectionException("sendASyncMsg->"+conn.getObjectAddress()+": object node has disconnected!");
         return conn.getClientChannel().writeAndFlush(msg);
     }
 

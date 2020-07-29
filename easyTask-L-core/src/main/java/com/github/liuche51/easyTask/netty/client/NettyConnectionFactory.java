@@ -3,8 +3,6 @@ package com.github.liuche51.easyTask.netty.client;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -15,9 +13,13 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class NettyConnectionFactory {
     private static final Logger log = LoggerFactory.getLogger(NettyConnectionFactory.class);
-    private Map<String, ConcurrentLinkedQueue<NettyClient>> pools = new HashMap<>(2);
+    private Map<String, ConcurrentLinkedQueue<NettyClient>> pools = new HashMap<>(AnnularQueue.getInstance().getConfig().getBackupCount());
     private ReentrantLock lock = new ReentrantLock();
     private static NettyConnectionFactory singleton = null;
+
+    public Map<String, ConcurrentLinkedQueue<NettyClient>> getPools() {
+        return pools;
+    }
 
     public static NettyConnectionFactory getInstance() {
         if (singleton == null) {
@@ -52,7 +54,8 @@ public class NettyConnectionFactory {
             }
         }
         NettyClient conn = pool.poll();
-        if (conn != null)
+        //获取连接时就判断连接是否是存活的
+        if (conn != null&&conn.getClientChannel()!=null&&conn.getClientChannel().isActive())
             return conn;
         conn = createConnection(host, port);
         return conn;
