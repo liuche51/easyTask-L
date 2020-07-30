@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.AnnularQueue;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.util.Util;
 import com.github.liuche51.easyTask.dao.ScheduleSyncDao;
 import com.github.liuche51.easyTask.dao.TransactionLogDao;
@@ -12,6 +11,8 @@ import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.enume.*;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,9 +20,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DeleteTaskTCC {
+    private static Logger log = LoggerFactory.getLogger(DeleteTaskTCC.class);
     /**
      * 删除任务事务第一阶段。
-     * 先记入事务表，等到第二阶段提交确认
+     * 先记入事务表
      * @param taskId  任务ID
      * @param follows
      * @throws Exception
@@ -36,7 +38,13 @@ public class DeleteTaskTCC {
         transactionLog.setType(TransactionTypeEnum.DELETE);
         transactionLog.setFollows(JSONObject.toJSONString(cancelHost));
         TransactionLogDao.saveBatch(Arrays.asList(transactionLog));
-        retryDel( transactionId, taskId,  follows);
+        try {
+            retryDel( transactionId, taskId,  follows);
+        }catch (Exception e){
+            //通知follow删除时异常，可视为删除成功，只要本节点本地已经写了删除事务日志。后续会重试删除
+            log.error("retryDel()-> exception!", e);
+        }
+
     }
     public static void retryDel(String transactionId,String taskId, List<Node> follows) throws Exception {
         //需要将同步记录表原来的提交已同步记录修改为删除中，并更新其事务ID

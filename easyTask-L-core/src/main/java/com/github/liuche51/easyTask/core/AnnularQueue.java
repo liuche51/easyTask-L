@@ -96,9 +96,9 @@ public class AnnularQueue {
             lastSecond = second;
             config.getDispatchs().submit(new Runnable() {
                 public void run() {
-                    ConcurrentSkipListMap<String, Task> schedules = slice.getList();
+                    ConcurrentSkipListMap<String, Task> list = slice.getList();
                     List<Task> periodSchedules = new LinkedList<>();
-                    for (Map.Entry<String, Task> entry : schedules.entrySet()) {
+                    for (Map.Entry<String, Task> entry : list.entrySet()) {
                         Task s = entry.getValue();
                         //因为计算时有一秒钟内的精度问题，所以判断时当前时间需多补上一秒。这样才不会导致某些任务无法得到及时的执行
                         if (System.currentTimeMillis() + 1000l >= s.getEndTimestamp()) {
@@ -106,7 +106,7 @@ public class AnnularQueue {
                             config.getWorkers().submit(proxy);
                             if (TaskType.PERIOD.equals(s.getTaskType()))//周期任务需要重新提交新任务
                                 periodSchedules.add(s);
-                            schedules.remove(entry.getKey());
+                            list.remove(entry.getKey());
                             log.debug("工作任务:{} 已提交分片:{}", s.getTaskExt().getId(), second);
                         }
                         //因为列表是已经按截止执行时间排好序的，可以节省后面元素的过期判断
@@ -154,6 +154,34 @@ public class AnnularQueue {
         return task.getTaskExt().getId();
     }
 
+    /**
+     * 删除已提交任务。
+     * 包括从环形队列中删除和持久化删除任务
+     * @param taskId
+     * @throws Exception
+     */
+    public void delete(String taskId) throws Exception {
+        if (!isRunning) throw new Exception("the easyTask has not started,please wait a moment!");
+        boolean ret=ClusterService.deleteTask(taskId);
+        if(!ret)
+            throw new Exception("delete failed! please try agin.");
+        boolean hasDel=false;
+        for(Slice slice:slices){
+            ConcurrentSkipListMap<String, Task> list=slice.getList();
+            Iterator<Map.Entry<String, Task>> items=list.entrySet().iterator();
+            while (items.hasNext()){
+                Map.Entry<String, Task> item=items.next();
+                if(item.getValue().getTaskExt().getId().endsWith(taskId))
+                {
+                    items.remove();
+                    hasDel=true;
+                    log.debug("the taskId="+taskId+" has removed from AnnularQueue!");
+                    break;
+                }
+            }
+            if(hasDel) break;
+        }
+    }
     /**
      * 新leader将旧leader的备份数据重新提交给自己
      * 任务ID保持不变。老周期任务不考虑立即执行的情况

@@ -109,7 +109,7 @@ public class ClusterService {
     }
 
     /**
-     * 删除完成的一次性任务。含同步至备份库
+     * 删除任务。含同步至备份库
      * 使用最大努力通知机制实现事务，达到数据最终一致性
      * 由于删除操作不需要回滚，不需要执行完整的TCC操作。必须要执行第一阶段即可
      * @param taskId
@@ -127,9 +127,10 @@ public class ClusterService {
             DeleteTaskTCC.tryDel(transactionId,taskId, follows);
             return true;
         } catch (Exception e) {
+            //如果写本地删除日志都失败了，那么就认为删除失败
             log.error("deleteTask exception!", e);
+            return false;
         }
-        return false;
     }
 
     /**
