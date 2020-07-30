@@ -89,7 +89,9 @@ public class Task {
     }
 
     public static Task valueOf(ScheduleBak scheduleBak) throws Exception {
-        Task task = new Task();
+        Class c = Class.forName(scheduleBak.getClassPath());
+        Object o = c.newInstance();
+        Task task = (Task) o;//强转后设置id，o对象值也会变，所以强转后的task也是对象的引用而已
         task.getTaskExt().setId(scheduleBak.getId());
         task.getTaskExt().setTaskClassPath(scheduleBak.getClassPath());
         task.getTaskExt().setSource(scheduleBak.getSource());
