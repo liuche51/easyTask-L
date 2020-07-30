@@ -102,15 +102,17 @@ public class AnnularQueue {
                 public void run() {
                     ConcurrentSkipListMap<String, Task> list = slice.getList();
                     List<Task> periodSchedules = new LinkedList<>();
-                    for (Map.Entry<String, Task> entry : list.entrySet()) {
-                        Task s = entry.getValue();
+                    Iterator<Map.Entry<String, Task>> items = list.entrySet().iterator();
+                    while (items.hasNext()) {
+                        Map.Entry<String, Task> item = items.next();
+                        Task s = item.getValue();
                         //因为计算时有一秒钟内的精度问题，所以判断时当前时间需多补上一秒。这样才不会导致某些任务无法得到及时的执行
                         if (System.currentTimeMillis() + 1000l >= s.getEndTimestamp()) {
                             Runnable proxy = (Runnable) new ProxyFactory(s).getProxyInstance();
                             config.getWorkers().submit(proxy);
                             if (TaskType.PERIOD.equals(s.getTaskType()))//周期任务需要重新提交新任务
                                 periodSchedules.add(s);
-                            list.remove(entry.getKey());
+                            list.remove(item.getKey());
                             log.debug("工作任务:{} 已提交执行。所属分片:{}", s.getTaskExt().getId(), second);
                         }
                         //因为列表是已经按截止执行时间排好序的，可以节省后面元素的过期判断
