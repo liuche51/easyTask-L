@@ -178,7 +178,7 @@ public class AnnularQueue {
             Iterator<Map.Entry<String, Task>> items = list.entrySet().iterator();
             while (items.hasNext()) {
                 Map.Entry<String, Task> item = items.next();
-                if (item.getValue().getTaskExt().getId().endsWith(taskId)) {
+                if (item.getValue().getTaskExt().getId().equals(taskId)) {
                     items.remove();
                     hasDel = true;
                     log.debug("the taskId=" + taskId + " has removed from AnnularQueue!");
