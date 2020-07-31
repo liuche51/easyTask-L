@@ -2,7 +2,6 @@ package com.github.liuche51.easyTask.dto;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.core.AnnularQueue;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 
 import java.net.UnknownHostException;
@@ -116,14 +115,14 @@ public class Schedule {
 
     public static Schedule valueOf(Task task){
         Schedule schedule=new Schedule();
-        schedule.id=task.getScheduleExt().getId();
-        schedule.classPath=task.getScheduleExt().getTaskClassPath();
+        schedule.id=task.getTaskExt().getId();
+        schedule.classPath=task.getTaskExt().getTaskClassPath();
         schedule.executeTime=task.getEndTimestamp();
         schedule.taskType=task.getTaskType().name();
         schedule.period=task.getPeriod();
         schedule.unit=task.getUnit() == null ? "" : task.getUnit().name();
         schedule.param= JSONObject.toJSONString(task.getParam());
-        schedule.setSource(task.getScheduleExt().getSource());
+        schedule.setSource(task.getTaskExt().getSource());
         return schedule;
     }
 

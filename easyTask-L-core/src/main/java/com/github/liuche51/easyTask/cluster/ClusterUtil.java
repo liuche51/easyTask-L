@@ -3,8 +3,8 @@ package com.github.liuche51.easyTask.cluster;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ResultDto;
+import com.github.liuche51.easyTask.netty.client.NettyMsgService;
 import com.github.liuche51.easyTask.util.StringConstant;
-import com.github.liuche51.easyTask.util.exception.ConnectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,15 +25,13 @@ public class ClusterUtil {
         Object ret=null;
         Dto.Frame frame=null;
         try {
-            ret = client.sendSyncMsg(msg);
+            ret =  NettyMsgService.sendSyncMsg(client,msg);
             frame = (Dto.Frame) ret;
             ResultDto.Result result = ResultDto.Result.parseFrom(frame.getBodyBytes());
             if (StringConstant.TRUE.equals(result.getResult()))
                 return true;
             else
                 error = result.getMsg();
-        }catch (ConnectionException e){//正常的连接断开异常，不打印错误日志
-            log.info("sendSyncMsgWithCount exception!"+e.getMessage());
         }
         catch (Exception e) {
             log.error("sendSyncMsgWithCount exception!error=" + error, e);

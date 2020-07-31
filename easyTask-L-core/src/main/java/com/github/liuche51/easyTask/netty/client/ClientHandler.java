@@ -31,10 +31,11 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
         // 收到消息直接打印输出
         log.debug("Received Server:" + ctx.channel().remoteAddress() + " send : " + msg);
+        //同步通信才会用到promise，异步不需要
         if (promise != null)
 		{
-			promise.setSuccess();
 			this.response=msg;
+            promise.setSuccess();
 		}else {
 
         }
@@ -42,14 +43,14 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Client active ");
+        System.out.println("Client actived! ");
         super.channelActive(ctx);
         this.ctx = ctx;
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Client close ");
+        System.out.println("Client Inactived! ");
         super.channelInactive(ctx);
     }
 

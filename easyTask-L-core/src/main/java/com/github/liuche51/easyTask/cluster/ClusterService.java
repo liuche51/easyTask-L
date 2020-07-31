@@ -8,7 +8,6 @@ import com.github.liuche51.easyTask.cluster.leader.VoteFollows;
 import com.github.liuche51.easyTask.cluster.task.*;
 import com.github.liuche51.easyTask.cluster.task.tran.*;
 import com.github.liuche51.easyTask.core.AnnularQueue;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.util.Util;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.ScheduleDao;
@@ -96,7 +95,7 @@ public class ClusterService {
         String transactionId=Util.generateTransactionId();
         try {
             SaveTaskTCC.trySave(transactionId,task, follows);
-            SaveTaskTCC.confirm(transactionId, task.getScheduleExt().getId(), follows);
+            SaveTaskTCC.confirm(transactionId, task.getTaskExt().getId(), follows);
         } catch (Exception e) {
             log.error("saveTask():",e);
             try {
@@ -110,7 +109,7 @@ public class ClusterService {
     }
 
     /**
-     * 删除完成的一次性任务。含同步至备份库
+     * 删除任务。含同步至备份库
      * 使用最大努力通知机制实现事务，达到数据最终一致性
      * 由于删除操作不需要回滚，不需要执行完整的TCC操作。必须要执行第一阶段即可
      * @param taskId
@@ -128,9 +127,10 @@ public class ClusterService {
             DeleteTaskTCC.tryDel(transactionId,taskId, follows);
             return true;
         } catch (Exception e) {
+            //如果写本地删除日志都失败了，那么就认为删除失败
             log.error("deleteTask exception!", e);
+            return false;
         }
-        return false;
     }
 
     /**

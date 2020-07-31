@@ -1,8 +1,6 @@
 package com.github.liuche51.easyTask.core;
 
 import com.github.liuche51.easyTask.cluster.ClusterService;
-import com.github.liuche51.easyTask.cluster.leader.LeaderService;
-import com.github.liuche51.easyTask.dao.ScheduleDao;
 import com.github.liuche51.easyTask.dto.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +23,7 @@ class ProxyFactory {
                 new InvocationHandler() {
                     @Override
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        String id=target.getScheduleExt().getId();
+                        String id=target.getTaskExt().getId();
                         log.debug("任务:{} 代理执行开始", id);
                         try {
                             return method.invoke(target, args);

@@ -1,3 +1,4 @@
+import com.alibaba.fastjson.JSONObject;
 import com.github.liuche51.easyTask.monitor.ClusterMonitor;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
@@ -88,7 +89,7 @@ public class ClusterConcurrentTest {
         startPeriodTask(5,2,false,10,  name);
         //JUnit默认是非守护线程启动和Main方法不同。这里防止当前主线程退出导致子线程也退出了
         while (true) {
-            Thread.sleep(30000);
+            Thread.sleep(1000);
             try {
                 //触发多次
                 //startOnceTask(5, 2,10, name);
@@ -96,7 +97,7 @@ public class ClusterConcurrentTest {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //printinfo();
+            printinfo();
         }
     }
     private void startOnceTask(int threadqty,int count,int time,String name){
@@ -169,6 +170,7 @@ public class ClusterConcurrentTest {
     }
 
     private void printinfo() {
-        log.info("集群节点信息：" + ClusterMonitor.getCurrentNodeInfo());
+        //log.info("集群节点信息：" + ClusterMonitor.getCurrentNodeInfo());
+        log.info("Netty客户端连接池信息："+JSONObject.toJSONString(ClusterMonitor.getNettyClientPoolInfo()));
     }
 }

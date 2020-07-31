@@ -5,12 +5,15 @@ import com.alibaba.fastjson.TypeReference;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.AnnularQueue;
+import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.SQLliteMultiPool;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ResultDto;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.enume.NettyInterfaceEnum;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
+import com.github.liuche51.easyTask.netty.client.NettyConnectionFactory;
+import com.github.liuche51.easyTask.netty.client.NettyMsgService;
 import com.github.liuche51.easyTask.util.StringConstant;
 import com.github.liuche51.easyTask.util.StringUtils;
 import com.github.liuche51.easyTask.util.Util;
@@ -54,7 +57,7 @@ public class ClusterMonitor {
             builder.setIdentity(Util.generateIdentityId()).setInterfaceName(NettyInterfaceEnum.GET_DBINFO_BY_TASKID).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                     .setBody(taskId);
             NettyClient client = item.getClientWithCount(AnnularQueue.getInstance().getConfig().getTryCount());
-            Object ret = client.sendSyncMsg(builder.build());
+            Object ret = NettyMsgService.sendSyncMsg(client,builder.build());
             Dto.Frame frame = (Dto.Frame) ret;
             ResultDto.Result result = ResultDto.Result.parseFrom(frame.getBodyBytes());
             if (result != null && StringConstant.TRUE.equals(result.getResult())
@@ -70,5 +73,18 @@ public class ClusterMonitor {
 
     public static ZKNode getCurrentZKNodeInfo() throws UnknownHostException {
         return ZKService.getDataByCurrentNode();
+    }
+    public static Map<String, String> getNettyClientPoolInfo(){
+        Map<String, String> map=new HashMap<>(AnnularQueue.getInstance().getConfig().getBackupCount());
+        Map<String, ConcurrentLinkedQueue<NettyClient>> pools=NettyConnectionFactory.getInstance().getPools();
+        Iterator<Map.Entry<String, ConcurrentLinkedQueue<NettyClient>>> items=pools.entrySet().iterator();
+        while (items.hasNext()){
+            Map.Entry<String, ConcurrentLinkedQueue<NettyClient>> item=items.next();
+            ConcurrentLinkedQueue<NettyClient> v=item.getValue();
+            StringBuilder builder=new StringBuilder();
+            builder.append("availableQty:").append(v.size());
+            map.put(item.getKey(),builder.toString());
+        }
+        return map;
     }
 }

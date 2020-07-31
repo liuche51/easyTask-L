@@ -8,6 +8,7 @@ import com.github.liuche51.easyTask.dto.Schedule;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.enume.NettyInterfaceEnum;
+import com.github.liuche51.easyTask.netty.client.NettyMsgService;
 import com.github.liuche51.easyTask.util.Util;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.Future;
@@ -54,7 +55,7 @@ public class LeaderUtil {
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
             builder.setInterfaceName(NettyInterfaceEnum.SYNC_LEADER_POSITION).setSource(AnnularQueue.getInstance().getConfig().getAddress())
                     .setBody(AnnularQueue.getInstance().getConfig().getAddress());
-            ChannelFuture future = follow.getClient().sendASyncMsgWithoutPromise(builder.build());
+            ChannelFuture future = NettyMsgService.sendASyncMsg(follow.getClient(),builder.build());
             tryCount--;
             future.addListener(new GenericFutureListener<Future<? super Void>>() {
                 @Override
