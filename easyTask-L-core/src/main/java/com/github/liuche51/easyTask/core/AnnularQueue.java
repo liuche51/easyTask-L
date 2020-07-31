@@ -96,7 +96,7 @@ public class AnnularQueue {
             }
             Slice slice = slices[second];
             //slice.getList().size()数量多时，会非常耗时。生产下需要关闭此处
-            log.debug("已执行时间分片:{}，任务数量:{}", second, slice.getList() == null ? 0 : slice.getList().size());
+           // log.debug("已执行时间分片:{}，任务数量:{}", second, slice.getList() == null ? 0 : slice.getList().size());
             lastSecond = second;
             config.getDispatchs().submit(new Runnable() {
                 public void run() {
