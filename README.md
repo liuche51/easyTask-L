@@ -41,7 +41,7 @@
 <dependency>
     <groupId>com.github.liuche51</groupId>
     <artifactId>easyTask-L</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 * 定义好您要执行的任务类(Define the task class you want to perform)
@@ -105,6 +105,10 @@ public class Main {
 　　3、String submitAllowWait(Task task) throws Exception
 
 　　　  向环形队列中提交新任务。提交失败则抛出异常。如果环形队列还没有启动成功，则任务不抛出异常，等待启动后再正式提交任务。
+
+　　4、void delete(String taskId) throws Exception
+
+　　　  删除已提交任务。包括从环形队列中删除和持久化删除任务
 ### 配置类(EasyTaskConfig)
 　　前面说了环形队列(集群)启动时需要给一个启动配置参数。因为这是系统必须的东西。
 
@@ -163,6 +167,10 @@ public class Main {
 　　14、ExecutorService workers
 
 　　环形队列工作任务线程池。默认为cpu核心数2倍
+
+　　15、int nettyPoolSize
+    
+　　Netty客户端连接池大小设置。默认3
 ### 任务超类(Task)
 　　1、void setEndTimestamp(long endTimestamp)
 
