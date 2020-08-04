@@ -38,11 +38,11 @@ public class CheckFollowsAliveTask extends TimerTask {
                         continue;
                     }
                     //如果最后心跳时间超过60s，则直接删除该节点信息。
-                    if (DateUtils.isGreaterThanLoseTime(node.getLastHeartbeat())) {
+                    if (DateUtils.isGreaterThanLoseTime(node.getLastHeartbeat(),oldFollow.getClockDiffer().getDifferSecond())) {
                         ZKService.deleteNodeByPathIgnoreResult(path);
                     }
                     //如果最后心跳时间超过30s，进入选举新follow流程
-                    else if (DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat())) {
+                    else if (DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat(),oldFollow.getClockDiffer().getDifferSecond())) {
                         log.info("heartBeatToFollow():start to selectNewFollow");
                         Node newFollow = VoteFollows.selectNewFollow(oldFollow, items);
                         log.info("heartBeatToFollow():start to syncDataToNewFollow");

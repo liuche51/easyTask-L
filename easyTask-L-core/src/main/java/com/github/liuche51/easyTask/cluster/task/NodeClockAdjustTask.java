@@ -3,17 +3,14 @@ package com.github.liuche51.easyTask.cluster.task;
 import com.github.liuche51.easyTask.cluster.ClusterService;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.AnnularQueue;
-import com.github.liuche51.easyTask.core.EasyTaskConfig;
-import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dto.ClockDiffer;
-import com.github.liuche51.easyTask.dto.ScheduleBak;
-import com.github.liuche51.easyTask.dto.Task;
-import com.github.liuche51.easyTask.util.DateUtils;
-import com.github.liuche51.easyTask.util.exception.VotingException;
 
 import java.time.ZonedDateTime;
 import java.util.*;
 
+/**
+ * 同步与其他关联节点的时钟差定时任务
+ */
 public class NodeClockAdjustTask extends TimerTask {
     @Override
     public void run() {

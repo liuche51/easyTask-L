@@ -72,6 +72,7 @@ public class ClusterService {
         timerTasks.add(cancelSaveTransactionTask());
         timerTasks.add(retryCancelSaveTransactionTask());
         timerTasks.add(retryDelTransactionTask());
+        timerTasks.add(nodeClockAdjustTask());
 
         return true;
     }
@@ -206,6 +207,14 @@ public class ClusterService {
      */
     public static TimerTask retryDelTransactionTask() {
         RetryDelTransactionTask task=new RetryDelTransactionTask();
+        task.start();
+        return task;
+    }
+    /**
+     * 启动同步与其他关联节点的时钟差定时任务
+     */
+    public static TimerTask nodeClockAdjustTask() {
+        NodeClockAdjustTask task=new NodeClockAdjustTask();
         task.start();
         return task;
     }

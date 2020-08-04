@@ -35,12 +35,12 @@ public class CheckLeadersAliveTask extends TimerTask {
                         continue;
                     }
                     //如果最后心跳时间超过60s，则直接删除该节点信息。并从自己的leader集合中移除掉
-                    if (DateUtils.isGreaterThanLoseTime(node.getLastHeartbeat())) {
+                    if (DateUtils.isGreaterThanLoseTime(node.getLastHeartbeat(),item.getValue().getClockDiffer().getDifferSecond())) {
                         items.remove();
                         ZKService.deleteNodeByPathIgnoreResult(path);
                     }
                     //如果最后心跳时间超过30s，进入选举新leader流程。并从自己的leader集合中移除掉
-                    else if (DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat())) {
+                    else if (DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat(),item.getValue().getClockDiffer().getDifferSecond())) {
                         log.info("heartBeatToLeader():start to selectNewLeader");
                         VoteLeader.selectNewLeader(node, item.getValue().getAddress());
                         items.remove();
