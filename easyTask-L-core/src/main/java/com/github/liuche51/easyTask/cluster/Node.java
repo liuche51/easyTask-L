@@ -2,6 +2,7 @@ package com.github.liuche51.easyTask.cluster;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.github.liuche51.easyTask.core.AnnularQueue;
+import com.github.liuche51.easyTask.dto.ClockDiffer;
 import com.github.liuche51.easyTask.enume.NodeSyncDataStatusEnum;
 import com.github.liuche51.easyTask.netty.client.NettyClient;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
@@ -27,6 +28,10 @@ public class Node implements Serializable {
      * 数据一致性状态。
      */
     private int dataStatus = NodeSyncDataStatusEnum.SYNC;
+    /**
+     * 与目标主机的时钟差距
+     */
+    private ClockDiffer clockDiffer=new ClockDiffer();
     /**
      * 当前节点的所有follows
      */
@@ -63,6 +68,14 @@ public class Node implements Serializable {
 
     public void setDataStatus(int dataStatus) {
         this.dataStatus = dataStatus;
+    }
+
+    public ClockDiffer getClockDiffer() {
+        return clockDiffer;
+    }
+
+    public void setClockDiffer(ClockDiffer clockDiffer) {
+        this.clockDiffer = clockDiffer;
     }
 
     public List<Node> getFollows() {

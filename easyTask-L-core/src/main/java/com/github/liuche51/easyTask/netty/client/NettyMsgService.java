@@ -1,6 +1,7 @@
 package com.github.liuche51.easyTask.netty.client;
 
 import com.github.liuche51.easyTask.core.AnnularQueue;
+import com.github.liuche51.easyTask.dto.proto.Dto;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelPromise;
 import org.slf4j.Logger;
@@ -19,14 +20,15 @@ public class NettyMsgService {
      * @param msg
      * @return
      */
-    public static Object sendSyncMsg(NettyClient conn,Object msg) throws InterruptedException {
+    public static Dto.Frame sendSyncMsg(NettyClient conn,Object msg) throws InterruptedException {
         sendMsgPrintLog(conn,msg);
         ChannelPromise promise = conn.getClientChannel().newPromise();
         conn.getHandler().setPromise(promise);
         conn.getClientChannel().writeAndFlush(msg);
         promise.await(AnnularQueue.getInstance().getConfig().getTimeOut(), TimeUnit.SECONDS);//等待固定的时间，超时就认为失败，需要重发
         try {
-            return conn.getHandler().getResponse();
+            Dto.Frame frame=(Dto.Frame)conn.getHandler().getResponse();
+            return frame;
         }finally {
             NettyConnectionFactory.getInstance().releaseConnection(conn);//目前是一次通信一次连接，所以需要通信完成后释放连接资源
         }

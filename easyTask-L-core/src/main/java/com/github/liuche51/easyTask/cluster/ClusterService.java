@@ -209,4 +209,12 @@ public class ClusterService {
         task.start();
         return task;
     }
+    /**
+     * 同步与目标主机的时间差
+     * @param node
+     * @return
+     */
+    public static void syncObjectNodeClockDiffer(Node node){
+        ClusterUtil.syncObjectNodeClockDiffer(node);
+    }
 }

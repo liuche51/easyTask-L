@@ -8,6 +8,7 @@ import com.github.liuche51.easyTask.dto.proto.ResultDto;
 import com.github.liuche51.easyTask.dto.proto.ScheduleDto;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.enume.NettyInterfaceEnum;
+import com.github.liuche51.easyTask.util.DateUtils;
 import com.github.liuche51.easyTask.util.StringConstant;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -79,6 +80,9 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
                     String tranId = frame.getBody();
                     Map<String, List> map=DBMonitor.getInfoByTaskId(tranId);
                     result.setBody(JSONObject.toJSONString(map));
+                    break;
+                case NettyInterfaceEnum.SYNC_CLOCK_DIFFER:
+                    result.setBody(String.valueOf(System.currentTimeMillis()));
                     break;
                 default:
                     throw new Exception("unknown interface method");
