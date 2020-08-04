@@ -1,5 +1,7 @@
 package com.github.liuche51.easyTask.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.time.ZonedDateTime;
 import java.util.Date;
 
@@ -19,6 +21,7 @@ public class ClockDiffer {
     /**
      * 最近一次同步时间
      */
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private ZonedDateTime lastSyncDate=null;
 
     public long getDifferSecond() {

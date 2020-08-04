@@ -3,6 +3,7 @@ import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.DbInit;
 import com.github.liuche51.easyTask.dao.TransactionLogDao;
+import com.github.liuche51.easyTask.dto.ClockDiffer;
 import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.TransactionLog;
 import com.github.liuche51.easyTask.enume.TransactionStatusEnum;
@@ -34,9 +35,9 @@ public class UnitTest {
 
     @Test
     public void test2() {
-        System.out.println(DateUtils.getCurrentDateTime());
-        ZonedDateTime t=ZonedDateTime.now().minusSeconds(10).minusSeconds(10);
-        System.out.println(t.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        ClockDiffer differ=new ClockDiffer();
+        differ.setLastSyncDate(ZonedDateTime.now());
+        System.out.println(JSONObject.toJSONString(differ));
     }
     @Test
     public void test3() {
