@@ -9,6 +9,7 @@ import com.github.liuche51.easyTask.dto.Task;
 import com.github.liuche51.easyTask.dto.zk.ZKHost;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.enume.NodeSyncDataStatusEnum;
+import com.github.liuche51.easyTask.netty.client.NettyConnectionFactory;
 import org.apache.zookeeper.server.quorum.Leader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,5 +60,7 @@ public class VoteLeader {
             }
 
         }
+        //选完新leader后，将旧leader的Netty连接池移除
+        NettyConnectionFactory.getInstance().removeHostPool(oldLeaderAddress);
     }
 }
