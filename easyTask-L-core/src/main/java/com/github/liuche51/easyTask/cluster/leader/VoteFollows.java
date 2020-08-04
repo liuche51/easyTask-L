@@ -7,6 +7,7 @@ import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
 import com.github.liuche51.easyTask.enume.NodeSyncDataStatusEnum;
+import com.github.liuche51.easyTask.netty.client.NettyConnectionFactory;
 import com.github.liuche51.easyTask.util.exception.VotedException;
 import com.github.liuche51.easyTask.util.exception.VotingException;
 import com.github.liuche51.easyTask.zk.ZKService;
@@ -68,10 +69,13 @@ public class VoteFollows {
         try {
             lock.lock();
             if (ClusterService.CURRENTNODE.getFollows().contains(oldFollow)) {
-                if (items != null) items.remove();//如果使用以下List集合方法移除，会导致下次items.next()方法报错
+                if (items != null)
+                    items.remove();//如果使用以下List集合方法移除，会导致下次items.next()方法报错
+                else
+                    ClusterService.CURRENTNODE.getFollows().remove(oldFollow);//移除失效的follow
+                NettyConnectionFactory.getInstance().removeHostPool(oldFollow.getAddress());
                 log.info("leader remove follow {}", oldFollow.getAddress());
-            } else
-                ClusterService.CURRENTNODE.getFollows().remove(oldFollow);//移除失效的follow
+            }
             //多线程下，如果follows已经选好，则让客户端重新提交任务。以后可以优化为获取选举后的follow
             if (ClusterService.CURRENTNODE.getFollows() != null && ClusterService.CURRENTNODE.getFollows().size() >= AnnularQueue.getInstance().getConfig().getBackupCount())
                 throw new VotedException("cluster is voted follow,please retry again.");

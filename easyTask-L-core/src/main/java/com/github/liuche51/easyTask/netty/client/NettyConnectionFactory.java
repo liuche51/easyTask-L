@@ -72,6 +72,24 @@ public class NettyConnectionFactory {
         }
     }
 
+    /**
+     * 移除目标主机的连接池。
+     * @param key
+     */
+    public void removeHostPool(String key){
+        try {
+            ConcurrentLinkedQueue<NettyClient> pool=this.pools.get(key);
+            if(pool!=null){
+                pool.forEach(x->{
+                    x.close();
+                });
+            }
+        }catch (Exception e){
+            log.error("removeHostPool()-> exception!key="+key,e);
+        }
+        this.pools.remove(key);
+    }
+
     private NettyClient createConnection(String host, int port) throws InterruptedException {
         return new NettyClient(host, port);
     }
