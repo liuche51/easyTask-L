@@ -100,13 +100,13 @@ public class ClusterMonitor {
         Iterator<Map.Entry<String, Node>> items = leaders.entrySet().iterator();
         while (items.hasNext()) {
             Map.Entry<String, Node> item = items.next();
-            map.put(item.getValue().getAddress(),item.getValue().getClockDiffer());
+            map.put("leader-"+item.getValue().getAddress(),item.getValue().getClockDiffer());
         }
         List<Node> follows = ClusterService.CURRENTNODE.getFollows();
         Iterator<Node> items2 = follows.iterator();
         while (items2.hasNext()) {
             Node item = items2.next();
-            map.put(item.getAddress(),item.getClockDiffer());
+            map.put("follow-"+item.getAddress(),item.getClockDiffer());
         }
         return map;
     }
