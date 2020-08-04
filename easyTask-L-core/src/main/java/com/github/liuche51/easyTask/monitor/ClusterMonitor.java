@@ -94,6 +94,7 @@ public class ClusterMonitor {
      * @return
      */
     public static Map<String,ClockDiffer> getNodeClockDifferInfo(){
+        if(ClusterService.CURRENTNODE==null) return null;
         Map<String,ClockDiffer> map=new HashMap<>();
         Map<String, Node> leaders = ClusterService.CURRENTNODE.getLeaders();
         Iterator<Map.Entry<String, Node>> items = leaders.entrySet().iterator();
