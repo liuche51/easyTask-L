@@ -91,6 +91,7 @@ public class VoteFollows {
         if (follows == null || follows.size() == 0) throw new Exception("cluster is vote follow failed,please retry later.");
         //通知follows当前Leader位置
         LeaderUtil.notifyFollowsLeaderPosition(follows, AnnularQueue.getInstance().getConfig().getTryCount());
+        ClusterService.syncObjectNodeClockDiffer(follows, AnnularQueue.getInstance().getConfig().getTryCount());
         return follows.get(0);
     }
 
