@@ -11,6 +11,7 @@ import com.github.liuche51.easyTask.util.DateUtils;
 import org.junit.Test;
 
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -33,59 +34,9 @@ public class UnitTest {
 
     @Test
     public void test2() {
-        try {
-            ConcurrentSkipListMap<Long, Task> list = new ConcurrentSkipListMap<>();
-            Thread th1 = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-                        list.put(System.currentTimeMillis(), new Task());
-                        try {
-                            Thread.sleep(10l);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            th1.start();
-            Thread.sleep(10000l);
-            Thread th2 = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-                        try {
-                            Thread.sleep(1000l);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        System.out.println("list.size()=" + list.size());
-                       /* for (Map.Entry<Long, Task> entry : list.entrySet()) {
-                            if (entry.getKey() % 2 == 0)
-                            {
-                                list.remove(entry.getKey());
-                                System.out.println(" list.remove()="+entry.getKey());
-                            }
-                        }*/
-                        Iterator<Map.Entry<Long, Task>> items = list.entrySet().iterator();
-                        while (items.hasNext()) {
-                            Map.Entry<Long, Task> item = items.next();
-                            if (item.getKey() % 2 == 0) {
-                                items.remove();
-                                System.out.println(" list.remove()=" + item.getKey());
-                            }
-                        }
-                    }
-                }
-            });
-            th2.start();
-            while (true) {
-                Thread.sleep(1000);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        System.out.println(DateUtils.getCurrentDateTime());
+        ZonedDateTime t=ZonedDateTime.now().minusSeconds(10).minusSeconds(10);
+        System.out.println(t.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     }
     @Test
     public void test3() {
