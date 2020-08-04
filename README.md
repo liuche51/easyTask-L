@@ -213,6 +213,10 @@ public class Main {
 
 　　获取当前节点在zk上的注册信息
 
+　　4、Map<String,ClockDiffer> getNodeClockDifferInfo()
+
+　　获取当前节点关联的主机时钟差值信息
+
 ### 数据存储监控(DBMonitor)
 　　1、Map<String,List> getInfoByTaskId(String taskId)
 
@@ -221,6 +225,7 @@ public class Main {
 
 * 此构件已在Windows和centos下做了适当测试，如需使用，请自行测试
 * 成功测试环境:JDK1.8,zookeeper3.4.8
+* 集群机器请设置为相同时区，且尽量保持时间同步，尽管系统有时钟差值纠错机制。
 * 为了能有更好的可用性，建议集群节点数不少于4个，这样其中一个节点宕机，就能立即得到补充。否则可能导致集群不可用。
 * 更多详细的介绍资料请访问网址:https://www.cnblogs.com/liuche/
 * 如需联系作者请加QQ：827756467
