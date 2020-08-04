@@ -1,5 +1,6 @@
 package com.github.liuche51.easyTask.dto;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 /**
@@ -18,7 +19,7 @@ public class ClockDiffer {
     /**
      * 最近一次同步时间
      */
-    private Date lastSyncDate=null;
+    private ZonedDateTime lastSyncDate=null;
 
     public long getDifferSecond() {
         return differSecond;
@@ -36,11 +37,11 @@ public class ClockDiffer {
         this.hasSync = hasSync;
     }
 
-    public Date getLastSyncDate() {
+    public ZonedDateTime getLastSyncDate() {
         return lastSyncDate;
     }
 
-    public void setLastSyncDate(Date lastSyncDate) {
+    public void setLastSyncDate(ZonedDateTime lastSyncDate) {
         this.lastSyncDate = lastSyncDate;
     }
 }

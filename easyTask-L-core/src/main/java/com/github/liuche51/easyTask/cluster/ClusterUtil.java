@@ -14,6 +14,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class ClusterUtil {
@@ -72,7 +73,7 @@ public class ClusterUtil {
                 log.info("Object host["+node.getAddress()+"] clock differ "+second+"s.");
                 node.getClockDiffer().setDifferSecond(second);
                 node.getClockDiffer().setHasSync(true);
-                node.getClockDiffer().setLastSyncDate(new Date());
+                node.getClockDiffer().setLastSyncDate(ZonedDateTime.now());
                 return true;
             }else
                 error = result.getMsg();

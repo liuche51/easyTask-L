@@ -136,7 +136,7 @@ public class NettyClientTest {
             config.setTimeOut(30);
             config.setNettyPoolSize(2);
             //AnnularQueue.getInstance().setConfig(config);
-            ClusterUtil.syncObjectNodeClockDiffer(new Node("127.0.0.1", 2021));
+            ClusterUtil.syncObjectNodeClockDiffer(new Node("127.0.0.1", 2021),2,5);
         } catch (Exception e) {
             e.printStackTrace();
         }
