@@ -211,10 +211,20 @@ public class ClusterService {
     }
     /**
      * 同步与目标主机的时间差
-     * @param node
+     * @param nodes
      * @return
      */
-    public static void syncObjectNodeClockDiffer(Node node){
-        ClusterUtil.syncObjectNodeClockDiffer(node);
+    public static void syncObjectNodeClockDiffer(List<Node> nodes, int tryCount)
+    {
+        AnnularQueue.getInstance().getConfig().getClusterPool().submit(new Runnable() {
+            @Override
+            public void run() {
+                if (nodes != null) {
+                    nodes.forEach(x -> {
+                        ClusterUtil.syncObjectNodeClockDiffer(x,tryCount,5);
+                    });
+                }
+            }
+        });
     }
 }

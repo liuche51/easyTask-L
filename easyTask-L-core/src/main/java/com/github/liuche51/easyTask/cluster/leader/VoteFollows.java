@@ -1,6 +1,7 @@
 package com.github.liuche51.easyTask.cluster.leader;
 
 import com.github.liuche51.easyTask.cluster.ClusterService;
+import com.github.liuche51.easyTask.cluster.ClusterUtil;
 import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
@@ -49,6 +50,7 @@ public class VoteFollows {
             ClusterService.CURRENTNODE.setFollows(follows);
             //通知follows当前Leader位置
             LeaderUtil.notifyFollowsLeaderPosition(follows, AnnularQueue.getInstance().getConfig().getTryCount());
+            ClusterService.syncObjectNodeClockDiffer(follows, AnnularQueue.getInstance().getConfig().getTryCount());
         }
     }
 

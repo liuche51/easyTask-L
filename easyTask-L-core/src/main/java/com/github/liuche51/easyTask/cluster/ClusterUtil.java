@@ -14,6 +14,8 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 public class ClusterUtil {
     private static final Logger log = LoggerFactory.getLogger(ClusterUtil.class);
 
@@ -51,7 +53,9 @@ public class ClusterUtil {
      * @param node
      * @return
      */
-    public static void syncObjectNodeClockDiffer(Node node) {
+    public static boolean syncObjectNodeClockDiffer(Node node, int tryCount, int waiteSecond) {
+        if (tryCount == 0) return false;
+        String error = StringConstant.EMPTY;
         Dto.Frame frame = null;
         try {
             Dto.Frame.Builder builder = Dto.Frame.newBuilder();
@@ -67,9 +71,22 @@ public class ClusterUtil {
                 long second=differ/1000;
                 log.info("Object host["+node.getAddress()+"] clock differ "+second+"s.");
                 node.getClockDiffer().setDifferSecond(second);
-            }
+                node.getClockDiffer().setHasSync(true);
+                node.getClockDiffer().setLastSyncDate(new Date());
+                return true;
+            }else
+                error = result.getMsg();
         } catch (Exception e) {
             log.error("syncObjectNodeClockDiffer() exception!", e);
+        }finally {
+            tryCount--;
         }
+        log.info("syncObjectNodeClockDiffer()-> error" + error + ",tryCount=" + tryCount + ",objectHost=" + node.getAddress());
+        try {
+            Thread.sleep(waiteSecond*1000);
+        } catch (InterruptedException e) {
+            log.error("",e);
+        }
+        return syncObjectNodeClockDiffer(node, tryCount,waiteSecond);
     }
 }

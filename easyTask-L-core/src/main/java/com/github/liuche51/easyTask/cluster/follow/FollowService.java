@@ -6,6 +6,7 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.cluster.leader.LeaderService;
 import com.github.liuche51.easyTask.cluster.task.CheckLeadersAliveTask;
 import com.github.liuche51.easyTask.cluster.task.TimerTask;
+import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.dao.ScheduleBakDao;
 import com.github.liuche51.easyTask.dao.TransactionLogDao;
 import com.github.liuche51.easyTask.dto.ScheduleBak;
@@ -138,7 +139,9 @@ public class FollowService {
             String[] temp = leader.split(":");
             if (temp.length != 2) return false;
             Map<String, Node> leaders = ClusterService.CURRENTNODE.getLeaders();
-            leaders.put(leader, new Node(temp[0], Integer.valueOf(temp[1]).intValue()));
+            Node newleader=new Node(temp[0], Integer.valueOf(temp[1]).intValue());
+            leaders.put(leader, newleader);
+            ClusterService.syncObjectNodeClockDiffer(Arrays.asList(newleader), AnnularQueue.getInstance().getConfig().getTryCount());
             return true;
         } catch (Exception e) {
             log.error("updateLeaderPosition", e);
