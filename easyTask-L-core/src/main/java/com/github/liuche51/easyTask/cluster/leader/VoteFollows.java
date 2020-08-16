@@ -104,7 +104,7 @@ public class VoteFollows {
         Optional<String> temp = availableFollows.stream().filter(x -> {
             try {
                 return x.equals(AnnularQueue.getInstance().getConfig().getAddress());
-            } catch (UnknownHostException e) {
+            } catch (Exception e) {
                 log.error("", e);
                 return false;
             }

@@ -71,7 +71,7 @@ public class ClusterMonitor {
         return map;
     }
 
-    public static ZKNode getCurrentZKNodeInfo() throws UnknownHostException {
+    public static ZKNode getCurrentZKNodeInfo() throws Exception {
         return ZKService.getDataByCurrentNode();
     }
     public static Map<String, String> getNettyClientPoolInfo(){

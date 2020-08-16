@@ -36,7 +36,21 @@ public class Util {
         return courseFile;
     }
 
-    public static String getLocalIP() throws UnknownHostException {
+    public static String getLocalIP() throws Exception {
+        if(isLinux()){
+            return getLinuxLocalIP();
+        }else if(isWindows()){
+            return getWindowsLocalIP();
+        }else
+            throw new Exception("Unknown System Type!Only support Linux and Windows System.");
+    }
+    /**
+     * 获取windows下IP地址
+     * 如果在Linux下，则结果都是127.0.0.1
+     * @return
+     * @throws UnknownHostException
+     */
+    private static String getWindowsLocalIP() throws UnknownHostException {
         String ip = InetAddress.getLocalHost().getHostAddress();
         String[] temp = ip.split("/");
         if (temp.length == 1) return temp[0];
@@ -44,7 +58,13 @@ public class Util {
         else return ip;
     }
 
-    public static String getLinuxLocalIP() throws SocketException {
+    /**
+     * 获取Linux下的IP地址
+     * 如果在windows下，则结果都是127.0.0.1
+     * @return
+     * @throws SocketException
+     */
+    private static String getLinuxLocalIP() throws SocketException {
         Enumeration allNetInterfaces = NetworkInterface.getNetworkInterfaces();
         InetAddress ip = null;
         while (allNetInterfaces.hasMoreElements()) {
@@ -60,7 +80,12 @@ public class Util {
         }
         return null;
     }
-
+    private static boolean isLinux() {
+        return System.getProperty("os.name").toLowerCase().contains("linux");
+    }
+    private static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().contains("windows");
+    }
     /**
      * 集合对象转换
      *
@@ -134,7 +159,7 @@ public class Util {
      * @param oldSource
      * @return
      */
-    public static String getSource(String oldSource) throws UnknownHostException {
+    public static String getSource(String oldSource) throws Exception {
         String source=StringConstant.EMPTY;
         if(oldSource==null||oldSource== StringConstant.EMPTY)
             source= AnnularQueue.getInstance().getConfig().getAddress();

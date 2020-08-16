@@ -26,7 +26,7 @@ public class VoteLeader {
      * @param node
      * @param oldLeaderAddress
      */
-    public static void selectNewLeader(ZKNode node,String oldLeaderAddress) throws UnknownHostException {
+    public static void selectNewLeader(ZKNode node,String oldLeaderAddress) throws Exception {
         List<ZKHost> follows = node.getFollows();
         List<ZKHost> syncFollows=follows.stream().filter(x-> NodeSyncDataStatusEnum.SYNC==x.getDataStatus()).collect(Collectors.toList());
         ZKHost newLeader = null;

@@ -130,7 +130,7 @@ public class Schedule {
      * 转换为protocol buffer对象
      * @return
      */
-    public ScheduleDto.Schedule toScheduleDto() throws UnknownHostException {
+    public ScheduleDto.Schedule toScheduleDto() throws Exception {
         ScheduleDto.Schedule.Builder builder=ScheduleDto.Schedule.newBuilder();
         builder.setId(this.id).setClassPath(this.classPath).setExecuteTime(this.executeTime)
                 .setTaskType(this.taskType).setPeriod(this.period).setUnit(this.unit)
