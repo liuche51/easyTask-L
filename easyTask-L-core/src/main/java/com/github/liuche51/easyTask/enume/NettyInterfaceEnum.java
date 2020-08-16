@@ -37,4 +37,8 @@ public class NettyInterfaceEnum {
      * 获取数据库表信息接口
      */
     public static final String GET_DBINFO_BY_TASKID="GetDBInfoByTaskId";
+    /**
+     * 获取与目标主机的时钟差距接口
+     */
+    public static final String SYNC_CLOCK_DIFFER="SyncClockDiffer";
 }

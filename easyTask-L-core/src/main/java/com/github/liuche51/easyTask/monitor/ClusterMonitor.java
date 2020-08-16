@@ -7,6 +7,7 @@ import com.github.liuche51.easyTask.cluster.Node;
 import com.github.liuche51.easyTask.core.AnnularQueue;
 import com.github.liuche51.easyTask.core.EasyTaskConfig;
 import com.github.liuche51.easyTask.dao.SQLliteMultiPool;
+import com.github.liuche51.easyTask.dto.ClockDiffer;
 import com.github.liuche51.easyTask.dto.proto.Dto;
 import com.github.liuche51.easyTask.dto.proto.ResultDto;
 import com.github.liuche51.easyTask.dto.zk.ZKNode;
@@ -84,6 +85,28 @@ public class ClusterMonitor {
             StringBuilder builder=new StringBuilder();
             builder.append("availableQty:").append(v.size());
             map.put(item.getKey(),builder.toString());
+        }
+        return map;
+    }
+
+    /**
+     * 获取当前节点关联的主机时钟差值信息
+     * @return
+     */
+    public static Map<String,ClockDiffer> getNodeClockDifferInfo(){
+        if(ClusterService.CURRENTNODE==null) return null;
+        Map<String,ClockDiffer> map=new HashMap<>();
+        Map<String, Node> leaders = ClusterService.CURRENTNODE.getLeaders();
+        Iterator<Map.Entry<String, Node>> items = leaders.entrySet().iterator();
+        while (items.hasNext()) {
+            Map.Entry<String, Node> item = items.next();
+            map.put("leader-"+item.getValue().getAddress(),item.getValue().getClockDiffer());
+        }
+        List<Node> follows = ClusterService.CURRENTNODE.getFollows();
+        Iterator<Node> items2 = follows.iterator();
+        while (items2.hasNext()) {
+            Node item = items2.next();
+            map.put("follow-"+item.getAddress(),item.getClockDiffer());
         }
         return map;
     }

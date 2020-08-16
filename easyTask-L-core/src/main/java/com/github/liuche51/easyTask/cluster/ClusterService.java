@@ -72,6 +72,7 @@ public class ClusterService {
         timerTasks.add(cancelSaveTransactionTask());
         timerTasks.add(retryCancelSaveTransactionTask());
         timerTasks.add(retryDelTransactionTask());
+        timerTasks.add(nodeClockAdjustTask());
 
         return true;
     }
@@ -208,5 +209,31 @@ public class ClusterService {
         RetryDelTransactionTask task=new RetryDelTransactionTask();
         task.start();
         return task;
+    }
+    /**
+     * 启动同步与其他关联节点的时钟差定时任务
+     */
+    public static TimerTask nodeClockAdjustTask() {
+        NodeClockAdjustTask task=new NodeClockAdjustTask();
+        task.start();
+        return task;
+    }
+    /**
+     * 同步与目标主机的时间差
+     * @param nodes
+     * @return
+     */
+    public static void syncObjectNodeClockDiffer(List<Node> nodes, int tryCount)
+    {
+        AnnularQueue.getInstance().getConfig().getClusterPool().submit(new Runnable() {
+            @Override
+            public void run() {
+                if (nodes != null) {
+                    nodes.forEach(x -> {
+                        ClusterUtil.syncObjectNodeClockDiffer(x,tryCount,5);
+                    });
+                }
+            }
+        });
     }
 }

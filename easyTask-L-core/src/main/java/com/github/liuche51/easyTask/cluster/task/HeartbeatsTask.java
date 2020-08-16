@@ -20,7 +20,7 @@ public class HeartbeatsTask extends TimerTask{
                 ZKNode node = ZKService.getDataByCurrentNode();
                 //防止节点信息已经被其他节点删除了。说明当前节点实际上已经失去了和zk的心跳。重新初始化集群
                 //心跳超出死亡时间的也重新初始化集群
-                if(node==null|| DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat())){
+                if(node==null|| DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat(),0)){
                     Thread th2=new Thread(new Runnable() {
                         @Override
                         public void run() {

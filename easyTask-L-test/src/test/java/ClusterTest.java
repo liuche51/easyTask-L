@@ -94,7 +94,7 @@ public class ClusterTest {
         };
         task1.setParam(param);
         CusTask1 task2 = new CusTask1();
-        task2.setPeriod(30);
+        task2.setPeriod(10);
         task2.setEndTimestamp(ZonedDateTime.now().plusSeconds(10).toInstant().toEpochMilli());
         task2.setTaskType(TaskType.PERIOD);
         task2.setUnit(TimeUnit.SECONDS);
