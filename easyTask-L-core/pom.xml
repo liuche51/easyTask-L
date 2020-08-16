@@ -12,7 +12,7 @@
     <!--发版至Maven时开启 发版参数：mvn clean deploy -P release-->
    <!--  <groupId>com.github.liuche51</groupId>
      <artifactId>easyTask-L</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>-->
     <url>https://github.com/liuche51</url>
