@@ -47,12 +47,12 @@ public class CheckLeadersAliveTask extends TimerTask {
 
                 }
             } catch (Exception e) {
-                log.error("heartBeatToLeader()", e);
+                log.error("CheckLeadersAliveTask()", e);
             }
             try {
                 Thread.sleep(AnnularQueue.getInstance().getConfig().getHeartBeat());
             } catch (InterruptedException e) {
-                log.error("heartBeatToLeader()", e);
+                log.error("CheckLeadersAliveTask()", e);
             }
         }
     }

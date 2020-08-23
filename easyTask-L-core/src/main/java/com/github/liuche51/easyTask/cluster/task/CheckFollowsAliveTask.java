@@ -61,12 +61,12 @@ public class CheckFollowsAliveTask extends TimerTask {
                 //原因同上VotingException
                 log.error("normally exception error.can ignore."+e.getMessage());
             } catch (Exception e) {
-                log.error("heartBeatToFollow()", e);
+                log.error("CheckFollowsAliveTask()", e);
             }
             try {
                 Thread.sleep(AnnularQueue.getInstance().getConfig().getHeartBeat());
             } catch (InterruptedException e) {
-                log.error("heartBeatToFollow()", e);
+                log.error("CheckFollowsAliveTask()", e);
             }
         }
     }
