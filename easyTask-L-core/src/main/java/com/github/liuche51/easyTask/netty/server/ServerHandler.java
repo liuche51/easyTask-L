@@ -40,10 +40,10 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
         Dto.Frame.Builder builder = Dto.Frame.newBuilder();
         ResultDto.Result.Builder result = ResultDto.Result.newBuilder();
         result.setResult(StringConstant.TRUE);
-        builder.setInterfaceName(StringConstant.TRUE);
         try {
             builder.setSource(AnnularQueue.getInstance().getConfig().getAddress());
             Dto.Frame frame = (Dto.Frame) msg;
+            builder.setInterfaceName(frame.getInterfaceName());
             builder.setIdentity(frame.getIdentity());
             switch (frame.getInterfaceName()) {
                 case NettyInterfaceEnum
