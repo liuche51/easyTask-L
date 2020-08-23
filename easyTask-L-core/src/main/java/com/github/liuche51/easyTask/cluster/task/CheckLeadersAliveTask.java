@@ -27,10 +27,9 @@ public class CheckLeadersAliveTask extends TimerTask {
                     Map.Entry<String, Node> item = items.next();
                     String path = StringConstant.CHAR_SPRIT + item.getValue().getAddress();
                     ZKNode node = ZKService.getDataByPath(path);
-                    if (node == null)//防止leader节点已经不在zk。
+                    if (node == null)//防止leader节点已经不在zk。此处不需要选leader
                     {
-                        log.info("heartBeatToLeader():leader is not exist in zk,so to selectNewLeader.");
-                        VoteLeader.selectNewLeader(node, item.getValue().getAddress());
+                        log.info("CheckLeadersAliveTask():leader is not exist in zk.");
                         items.remove();
                         continue;
                     }
@@ -41,7 +40,7 @@ public class CheckLeadersAliveTask extends TimerTask {
                     }
                     //如果最后心跳时间超过30s，进入选举新leader流程。并从自己的leader集合中移除掉
                     else if (DateUtils.isGreaterThanDeadTime(node.getLastHeartbeat(),item.getValue().getClockDiffer().getDifferSecond())) {
-                        log.info("heartBeatToLeader():start to selectNewLeader");
+                        log.info("CheckLeadersAliveTask():start to selectNewLeader");
                         VoteLeader.selectNewLeader(node, item.getValue().getAddress());
                         items.remove();
                     }
