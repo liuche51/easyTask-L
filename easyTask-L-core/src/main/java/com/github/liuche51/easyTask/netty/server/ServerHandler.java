@@ -90,6 +90,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Object> {
         } catch (Exception e) {
             log.error("Deal client msg occured error！", e);
             result.setResult(StringConstant.FALSE);
+            result.setMsg(e.getMessage());
         }
         builder.setBodyBytes(result.build().toByteString());
         ctx.writeAndFlush(builder.build());
