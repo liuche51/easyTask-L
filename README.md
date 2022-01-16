@@ -2,7 +2,7 @@
 
 * 一个方便触发一次性或周期性任务执行的分布式架构组件，支持海量,高并发,高可用的任务处理
 * A distributed architecture component that facilitates the triggering of one-time or periodic task execution, supporting massive, highly concurrent, and highly available task processing
-
+* 当前项目已经不在继续维护，后续主推easyTask-X项目，一个独立的分布式中间件实现方案
 ## 使用场景(Usage scenarios)
 
 * 乘坐网约车结单后30分钟若顾客未评价，则系统将默认提交一条评价信息
